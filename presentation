@@ -7,20 +7,26 @@ title = "Presentor"
 class PresentationScreen(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, wx.ID_ANY, title)
-        self.Show(True)
+        self.box = wx.BoxSizer(wx.HORIZONTAL)
+        self.panel = wx.Panel(self)
+        self.panel.SetBackgroundColour(wx.Colour(0,0,0))
     def display(self, filename):
         self.filename = filename
         self.ShowFullScreen(True)
-        self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY, size=wx.DisplaySize())
+        self.static_bitmap = wx.StaticBitmap(self.panel, wx.ID_ANY, size=wx.DisplaySize())
         self.f = open(self.filename, "rb")
         self.image = wx.ImageFromStream(self.f)
         self.bitmap = wx.BitmapFromImage(self.image)
         self.static_bitmap.SetBitmap(self.bitmap)
         self.f.close()
-        self.Show(True)
+        self.box.AddStretchSpacer()
+        self.box.Add(self.static_bitmap, 0, flag=wx.ALIGN_CENTER)
+        self.box.AddStretchSpacer()
+        self.panel.SetSizer(self.box)
+        self.Layout()
 
 
-app = wx.PySimpleApp()
+app = wx.App()
 Beamer = PresentationScreen()
 Beamer.display("test.jpeg")
 app.MainLoop()
