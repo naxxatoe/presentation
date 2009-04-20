@@ -7,7 +7,7 @@ title = "Presentor"
 class PresentationScreen(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, wx.ID_ANY, title)
-        self.box = wx.BoxSizer(wx.HORIZONTAL)
+        self.box = wx.BoxSizer(wx.VERTICAL)
     def display(self, filename):
         self.ShowFullScreen(True)
 
@@ -17,10 +17,11 @@ class PresentationScreen(wx.Frame):
         self.bitmap = wx.BitmapFromImage(self.image)
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY, size=wx.DisplaySize())
         self.static_bitmap.SetBitmap(self.bitmap)
+        print self.static_bitmap.GetSize()
         self.f.close()
 
         self.box.Add((0, 0), 1, wx.EXPAND)
-        self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER)
+        self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.SHAPED)
         self.box.Add((0, 0), 1, wx.EXPAND)
         self.SetSizerAndFit(self.box)
         self.Layout()
