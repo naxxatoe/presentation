@@ -15,7 +15,7 @@ class PresentationScreen(wx.Frame):
         self.f = open(self.filename, "rb")
         self.image = wx.ImageFromStream(self.f)
         self.bitmap = wx.BitmapFromImage(self.image)
-        self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY, size=wx.DisplaySize())
+        self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
         self.static_bitmap.SetBitmap(self.bitmap)
         print self.static_bitmap.GetSize()
         self.f.close()
