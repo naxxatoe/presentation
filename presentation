@@ -8,28 +8,26 @@ class PresentationScreen(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, wx.ID_ANY, title)
         self.box = wx.BoxSizer(wx.VERTICAL)
-    def display(self, filename):
-        self.ShowFullScreen(True)
-
+        self.SetBackgroundColour(wx.Colour(0,0,0))
+    def load(self, filename):
         self.filename = filename
         self.f = open(self.filename, "rb")
         self.image = wx.ImageFromStream(self.f)
         self.bitmap = wx.BitmapFromImage(self.image)
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
         self.static_bitmap.SetBitmap(self.bitmap)
-        print self.static_bitmap.GetSize()
         self.f.close()
-
-        self.box.Add((0, 0), 1, wx.EXPAND)
         self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.SHAPED)
-        self.box.Add((0, 0), 1, wx.EXPAND)
         self.SetSizerAndFit(self.box)
+    def display(self):
+        self.ShowFullScreen(True)
         self.Layout()
 
 
 app = wx.App()
 Beamer = PresentationScreen()
-Beamer.display("test.jpeg")
+Beamer.load("test.jpeg")
+Beamer.display()
 app.MainLoop()
 
 # vim:nnoremap <silent> <F5> :!./presentation: #
