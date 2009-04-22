@@ -66,6 +66,11 @@ class PresentationScreen(wx.Frame):
         if key == wx.WXK_ESCAPE:
             self.Maximize()
 
+class PresentorsScreen(wx.Frame):
+    def __init__(self):
+        style = wx.NO_BORDER | wx.STAY_ON_TOP
+        wx.Frame.__init__(self, None, wx.ID_ANY, title, style = style)
+
 class MyApp(wx.App):
     def OnInit(self):
         Beamer = PresentationScreen()
@@ -74,8 +79,8 @@ class MyApp(wx.App):
         return True
 
 
-
-app = MyApp()
-app.MainLoop()
+if __name__ == "__main__":
+    app = MyApp()
+    app.MainLoop()
 
 # vim:nnoremap <silent> <F5> :!./p      resentation: #
