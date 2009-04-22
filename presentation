@@ -6,6 +6,7 @@ import sys
 import pdb
 
 title = "Presentor"
+numberFontSize = 150
 
 try:
     basedir = sys.argv[1]
@@ -79,13 +80,37 @@ class PresentorsScreen(wx.Frame):
         self.panel = wx.Panel(self, wx.ID_ANY)
         self.Show()
 
+class NumberFrame(wx.Frame):
+    def __init__(self, displayindex):
+        geometry = wx.Display(displayindex).GetGeometry()
+        style = wx.NO_BORDER | wx.STAY_ON_TOP
+        wx.Frame.__init__(self, None, wx.ID_ANY, title, style = style)
+        self.SetBackgroundColour(wx.Colour(255, 255, 255))
+        box = wx.BoxSizer(wx.VERTICAL)
+        font = wx.Font(numberFontSize, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        text = wx.StaticText(self, wx.ID_ANY, str(displayindex))
+        text.SetFont(font)
+        box.Add(text, 0, wx.ALIGN_CENTER)
+        self.SetSizerAndFit(box)
+        size = self.GetSize()
+        position = (geometry[0] + (geometry[2] / 2) - (size[0] / 2),
+                    geometry[1] + (geometry[3] / 2) - (size[1] / 2))
+        self.SetPosition(position)
+        self.Show()
+
 class MyApp(wx.App):
     def OnInit(self):
-        Beamer = PresentationScreen()
-        Beamer.load("test.jpeg")
-        Beamer.display()
-        Presentor = PresentorsScreen()
-        Presentor.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+        displays = wx.Display.GetCount()
+        numberFrames= []
+        for d in range(displays):
+            print wx.Display(d).GetGeometry()
+            numberFrames.append(NumberFrame(d))
+            
+        #Beamer = PresentationScreen()
+        #Beamer.load("test.jpeg")
+        #Beamer.display()
+        #Presentor = PresentorsScreen()
+        #Presentor.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         return True
 
     def OnKeyPress(self, event):
@@ -94,6 +119,9 @@ class MyApp(wx.App):
         key = event.GetKeyCode()
         if key == ord("f"):
             Beamer.Maximize()
+
+    def LoadImage(self, filename):
+        pass
 
 
 def main():
