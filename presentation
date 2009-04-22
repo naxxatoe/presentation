@@ -38,20 +38,31 @@ class PresentationScreen(wx.Frame):
         style = wx.NO_BORDER | wx.STAY_ON_TOP
         wx.Frame.__init__(self, None, wx.ID_ANY, title, style = style)
         self.box = wx.BoxSizer(wx.VERTICAL)
-        self.SetBackgroundColour(wx.Colour(0,0,0))
+        self.SetBackgroundColour(wx.Colour(0, 0, 0))
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
-        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyPress)
-        self.static_bitmap.Bind(wx.EVT_KEY_DOWN, self.OnKeyPress)
     def load(self, filename):
         self.filename = filename
         try:
             self.f = open(self.filename, "rb")
             self.image = wx.ImageFromStream(self.f)
+            ImageSize = self.image.GetSize()
+            DisplaySize = wx.DisplaySize()
+            if (DisplaySize[0] < ImageSize[0]) or (DisplaySize[1] < ImageSize[1]):
+                if (float(DisplaySize[0]) / ImageSize[0]) < (float(DisplaySize[1]) / ImageSize[1]):
+                    ImageSize[0] = DisplaySize[0]
+                    ImageSize[1] = ImageSize[1] * (DisplaySize[0] / ImageSize[0])
+                else:
+                    ImageSize[0] = ImageSize[0] * (DisplaySize[1] / ImageSize[1])
+                    ImageSize[1] = DisplaySize[1]
+                
+                self.image.Rescale(ImageSize[0], ImageSize[1])
+
             self.bitmap = wx.BitmapFromImage(self.image)
             self.static_bitmap.SetBitmap(self.bitmap)
             self.f.close()
         except:
             print "Cant load image"
+
         self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.SHAPED)
         self.SetSizerAndFit(self.box)
     def display(self):
@@ -59,28 +70,36 @@ class PresentationScreen(wx.Frame):
     def Maximize(self):
         self.ShowFullScreen(True)
         self.Layout()
-    def OnKeyPress(self, event):
-        pdb.set_trace()
-        event.Skip()
-        key = event.GetKeyCode()
-        if key == wx.WXK_ESCAPE:
-            self.Maximize()
 
 class PresentorsScreen(wx.Frame):
     def __init__(self):
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        wx.Frame.__init__(self, None, wx.ID_ANY, title, style = style)
+        wx.Frame.__init__(self, None, wx.ID_ANY, title, style = style, size = (320, 240))
+        self.SetBackgroundColour(wx.Colour(255, 255, 255))
+        self.panel = wx.Panel(self, wx.ID_ANY)
+        self.Show()
 
 class MyApp(wx.App):
     def OnInit(self):
         Beamer = PresentationScreen()
         Beamer.load("test.jpeg")
         Beamer.display()
+        Presentor = PresentorsScreen()
+        Presentor.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         return True
 
+    def OnKeyPress(self, event):
+        pdb.set_trace()
+        event.Skip()
+        key = event.GetKeyCode()
+        if key == ord("f"):
+            Beamer.Maximize()
 
-if __name__ == "__main__":
+
+def main():
     app = MyApp()
     app.MainLoop()
+
+if __name__ == "__main__": main()
 
 # vim:nnoremap <silent> <F5> :!./p      resentation: #
