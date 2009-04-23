@@ -98,13 +98,33 @@ class NumberFrame(wx.Frame):
         self.SetPosition(position)
         self.Show()
 
+class DisplayChoice(wx.Frame):
+    def __init__(self):
+        pdb.set_trace()
+        wx.Frame.__init__(self, None, wx.ID_ANY, title, style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP)
+        choices = ["-- Nothing --", "Presentation Screen", "Presentors Screen"]
+        displays = wx.Display.GetCount()
+        box = wx.BoxSizer(wx.VERTICAL)
+        selections = []
+        for d in range(displays):
+            choice = wx.Choice(self, wx.ID_ANY, choices = choices)
+            choice.SetSelection(0)
+            selections.append(choice)
+
+        for selection in selections:
+            box.Add(selection, 0, wx.ALIGN_CENTER_HORIZONTAL)
+
+        self.SetSizerAndFit(box)
+        self.Show()
+
 class MyApp(wx.App):
     def OnInit(self):
         displays = wx.Display.GetCount()
-        numberFrames= []
+        numberFrames = []
         for d in range(displays):
             print wx.Display(d).GetGeometry()
             numberFrames.append(NumberFrame(d))
+        DisplayChoice()
             
         #Beamer = PresentationScreen()
         #Beamer.load("test.jpeg")
