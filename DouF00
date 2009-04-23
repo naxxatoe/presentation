@@ -36,13 +36,19 @@ print "\n".join(pictures)
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
+        geometry = wx.Display(displayindex).GetGeometry()
+        position = (geometry[0], geometry[1])
+        size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentationScreen, self).__init__(None, wx.ID_ANY, title, style = style)
+        super(PresentationScreen, self).__init__(None, wx.ID_ANY, title, style = style, pos = position, size = size)
         self.box = wx.BoxSizer(wx.VERTICAL)
         self.SetBackgroundColour(wx.Colour(0, 0, 0))
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
+        self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.SHAPED)
     def load(self, filename):
         self.filename = filename
+        if self.filename == "":
+            pass
         try:
             self.f = open(self.filename, "rb")
             self.image = wx.ImageFromStream(self.f)
@@ -64,13 +70,9 @@ class PresentationScreen(wx.Frame):
         except:
             print "Cant load image"
 
-        self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.SHAPED)
-        self.SetSizerAndFit(self.box)
+        self.SetSizer(self.box)
     def Display(self):
         self.Show()
-    def Maximize(self):
-        self.ShowFullScreen(True)
-        self.Layout()
 
 class PresentorsScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -154,12 +156,14 @@ class MyApp(wx.App):
         self.presentorsScreens = []
         for displayindex in range(displayCount):
             if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentation Screen":
-                presentationScreens.append(PresentationScreen(displayindex = displayindex))
+                self.presentationScreens.append(PresentationScreen(displayindex = displayindex))
             elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentors Screen":
-                presentorsScreens.append(PresentorsScreen(displayindex = displayindex))
+                self.presentorsScreens.append(PresentorsScreen(displayindex = displayindex))
         self.choice.Destroy()
         for numberFrame in self.numberFrames:
             numberFrame.Destroy()
+        for presentationScreen in self.presentationScreens:
+            presentationScreen.Show()
 
 
 def main():
