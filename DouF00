@@ -5,7 +5,7 @@ import os
 import sys
 import pdb
 
-title = "Presentor"
+title = "DouF00"
 numberFontSize = 150
 
 try:
@@ -83,7 +83,7 @@ class PresentorsScreen(wx.Frame):
 class NumberFrame(wx.Frame):
     def __init__(self, displayindex):
         geometry = wx.Display(displayindex).GetGeometry()
-        style = wx.NO_BORDER | wx.STAY_ON_TOP
+        style = wx.NO_BORDER | wx.STAY_ON_TOP | wx.FRAME_TOOL_WINDOW
         wx.Frame.__init__(self, None, wx.ID_ANY, title, style = style)
         self.SetBackgroundColour(wx.Colour(255, 255, 255))
         box = wx.BoxSizer(wx.VERTICAL)
@@ -100,18 +100,18 @@ class NumberFrame(wx.Frame):
 
 class DisplayChoice(wx.Frame):
     def __init__(self):
-        pdb.set_trace()
+        #pdb.set_trace()
         wx.Frame.__init__(self, None, wx.ID_ANY, title, style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP)
         choices = ["-- Nothing --", "Presentation Screen", "Presentors Screen"]
         displays = wx.Display.GetCount()
         box = wx.BoxSizer(wx.VERTICAL)
-        selections = []
+        self.selections = []
         for d in range(displays):
             choice = wx.Choice(self, wx.ID_ANY, choices = choices)
             choice.SetSelection(0)
-            selections.append(choice)
+            self.selections.append(choice)
 
-        for selection in selections:
+        for selection in self.selections:
             box.Add(selection, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizerAndFit(box)
