@@ -115,6 +115,9 @@ class DisplayChoice(wx.Frame):
         for selection in self.selections:
             box.Add(selection, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
+        button = wx.Button(self, wx.ID_ANY, label = "OK")
+        box.Add(button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+
         self.SetSizerAndFit(box)
         self.Show()
 
