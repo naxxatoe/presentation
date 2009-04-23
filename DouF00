@@ -35,56 +35,63 @@ for file in files:
 pictures.sort()
 print "\n".join(pictures)
 
+def loadImage(filename, size):
+    try:
+        if filename == "":
+            array = numpy.zeros((size[1], size[0], 3), 'uint8')
+            image = wx.EmptyImage(size[0], size[1])
+            image.SetData(array.tostring())
+            bitmap = wx.BitmapFromImage(image)
+        else:
+            f = open(filename, "rb")
+            image = wx.ImageFromStream(f)
+            f.close()
+            ImageSize = image.GetSize()
+            if (size[0] < ImageSize[0]) or (size[1] < ImageSize[1]):
+                ratioX = float(size[0]) / ImageSize[0]
+                ratioY = float(size[1]) / ImageSize[1]
+                if ratioX < ratioY:
+                    ImageSize[0] = int(ImageSize[0] * ratioX)
+                    ImageSize[1] = int(ImageSize[1] * ratioX)
+                else:
+                    ImageSize[0] = int(ImageSize[0] * ratioY)
+                    ImageSize[1] = int(ImageSize[1] * ratioY)
+                
+                image.Rescale(ImageSize[0], ImageSize[1])
+
+            print ImageSize
+
+            bitmap = wx.BitmapFromImage(image)
+        return bitmap
+    #except:
+    #    print "Cant load image"
+    finally:
+        pass
+
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
         geometry = wx.Display(displayindex).GetGeometry()
         position = (geometry[0], geometry[1])
-        size = (geometry[2], geometry[3])
+        self.size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentationScreen, self).__init__(None, wx.ID_ANY, title, style = style, pos = position, size = size)
+        super(PresentationScreen, self).__init__(None, wx.ID_ANY, title, style = style, pos = position, size = self.size)
         self.box = wx.BoxSizer(wx.VERTICAL)
         self.SetBackgroundColour(wx.Colour(0, 0, 0))
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
         self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL)
-    def load(self, filename):
-        self.filename = filename
-        try:
-            if self.filename == "":
-                array = numpy.zeros((1, 1, 3), 'uint8')
-                self.image = wx.EmptyImage(1, 1)
-                self.image.SetData(array.tostring())
-                self.bitmap = wx.BitmapFromImage(self.image)
-            else:
-                self.f = open(self.filename, "rb")
-                self.image = wx.ImageFromStream(self.f)
-                ImageSize = self.image.GetSize()
-                DisplaySize = wx.DisplaySize()
-                if (DisplaySize[0] < ImageSize[0]) or (DisplaySize[1] < ImageSize[1]):
-                    if (float(DisplaySize[0]) / ImageSize[0]) < (float(DisplaySize[1]) / ImageSize[1]):
-                        ImageSize[0] = DisplaySize[0]
-                        ImageSize[1] = ImageSize[1] * (DisplaySize[0] / ImageSize[0])
-                    else:
-                        ImageSize[0] = ImageSize[0] * (DisplaySize[1] / ImageSize[1])
-                        ImageSize[1] = DisplaySize[1]
-                    
-                    self.image.Rescale(ImageSize[0], ImageSize[1])
-
-                self.bitmap = wx.BitmapFromImage(self.image)
-                self.f.close()
-            self.static_bitmap.SetBitmap(self.bitmap)
-        except:
-            print "Cant load image"
-
         self.SetSizer(self.box)
+    def load(self, filename):
+        bitmap = loadImage(filename, self.size)
+        self.static_bitmap.SetBitmap(bitmap)
 
 class PresentorsScreen(wx.Frame):
     def __init__(self, displayindex = 0):
         geometry = wx.Display(displayindex).GetGeometry()
         position = (geometry[0], geometry[1])
-        size = (geometry[2], geometry[3])
+        self.size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentorsScreen, self).__init__(None, wx.ID_ANY, title, style = style, size = size, pos = position)
-        self.SetBackgroundColour(wx.Colour(128, 128, 128))
+        super(PresentorsScreen, self).__init__(None, wx.ID_ANY, title, style = style, size = self.size, pos = position)
+        self.SetBackgroundColour(wx.Colour(127, 127, 127))
         self.static_bitmap1 = wx.StaticBitmap(self, wx.ID_ANY)
         self.static_bitmap2 = wx.StaticBitmap(self, wx.ID_ANY)
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -99,37 +106,15 @@ class PresentorsScreen(wx.Frame):
         self.clock.SetFont(font)
         self.box.Add(self.clock , 19, wx.ALIGN_CENTER_HORIZONTAL)
         self.SetSizer(self.box)
-    def load(self, filename):
-        self.filename = filename
-        try:
-            if self.filename == "":
-                array = numpy.zeros((1, 1, 3), 'uint8')
-                self.image = wx.EmptyImage(1, 1)
-                self.image.SetData(array.tostring())
-                self.bitmap = wx.BitmapFromImage(self.image)
-            else:
-                self.f = open(self.filename, "rb")
-                self.image = wx.ImageFromStream(self.f)
-                ImageSize = self.image.GetSize()
-                DisplaySize = wx.DisplaySize()
-                if (DisplaySize[0] < ImageSize[0]) or (DisplaySize[1] < ImageSize[1]):
-                    if (float(DisplaySize[0]) / ImageSize[0]) < (float(DisplaySize[1]) / ImageSize[1]):
-                        ImageSize[0] = DisplaySize[0]
-                        ImageSize[1] = ImageSize[1] * (DisplaySize[0] / ImageSize[0])
-                    else:
-                        ImageSize[0] = ImageSize[0] * (DisplaySize[1] / ImageSize[1])
-                        ImageSize[1] = DisplaySize[1]
-                    
-                    self.image.Rescale(ImageSize[0], ImageSize[1])
-
-                self.bitmap = wx.BitmapFromImage(self.image)
-                self.f.close()
-            self.static_bitmap.SetBitmap(self.bitmap)
-        except:
-            print "Cant load image"
-
-        self.SetSizer(self.box)
-
+    def load(self, filename1, filename2):
+        width = int(float(self.size[0]) / 200 * 99)
+        height = int(float(self.size[1]) / 200 * 179)
+        print width, height
+        print self.size
+        bitmap1 = loadImage(filename1, (width, height))
+        bitmap2 = loadImage(filename2, (width, height))
+        self.static_bitmap1.SetBitmap(bitmap1)
+        self.static_bitmap2.SetBitmap(bitmap2)
 
 class NumberFrame(wx.Frame):
     def __init__(self, displayindex):
@@ -211,11 +196,12 @@ class MyApp(wx.App):
         self.choice.Destroy()
         for numberFrame in self.numberFrames:
             numberFrame.Destroy()
-        for presentationScreen in self.presentationScreens:
-            presentationScreen.load("")
-            presentationScreen.Show()
-        for presentorsScreen in self.presentorsScreens:
-            presentorsScreen.Show()
+        for p in self.presentationScreens:
+            p.load("test.jpeg")
+            p.Show()
+        for p in self.presentorsScreens:
+            p.load("test.jpeg", "test.jpeg")
+            p.Show()
 
 
 def main():
