@@ -35,7 +35,7 @@ pictures.sort()
 print "\n".join(pictures)
 
 class PresentationScreen(wx.Frame):
-    def __init__(self):
+    def __init__(self, displayindex = 0):
         style = wx.NO_BORDER | wx.STAY_ON_TOP
         super(PresentationScreen, self).__init__(None, wx.ID_ANY, title, style = style)
         self.box = wx.BoxSizer(wx.VERTICAL)
@@ -66,14 +66,14 @@ class PresentationScreen(wx.Frame):
 
         self.box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.SHAPED)
         self.SetSizerAndFit(self.box)
-    def display(self):
+    def Display(self):
         self.Show()
     def Maximize(self):
         self.ShowFullScreen(True)
         self.Layout()
 
 class PresentorsScreen(wx.Frame):
-    def __init__(self):
+    def __init__(self, displayindex = 0):
         style = wx.NO_BORDER | wx.STAY_ON_TOP
         super(PresentorsScreen, self).__init__(None, wx.ID_ANY, title, style = style, size = (320, 240))
         self.SetBackgroundColour(wx.Colour(255, 255, 255))
@@ -100,39 +100,40 @@ class NumberFrame(wx.Frame):
 
 class DisplayChoice(wx.Frame):
     def __init__(self):
-        #pdb.set_trace()
         style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
         super(DisplayChoice, self).__init__(None, wx.ID_ANY, title, style = style)
-        choices = ["-- Nothing --", "Presentation Screen", "Presentors Screen"]
+        self.choices = ["-- Nothing --", "Presentation Screen", "Presentors Screen"]
         displays = wx.Display.GetCount()
         box = wx.BoxSizer(wx.VERTICAL)
         self.selections = []
         for d in range(displays):
-            choice = wx.Choice(self, wx.ID_ANY, choices = choices)
+            choice = wx.Choice(self, wx.ID_ANY, choices = self.choices)
             choice.SetSelection(0)
             self.selections.append(choice)
+            hbox = wx.BoxSizer(wx.HORIZONTAL)
+            hbox.Add(wx.StaticText(self, wx.ID_ANY, "Display " + str(d) + ": "), 0, wx.ALIGN_CENTER_VERTICAL)
+            hbox.Add(choice, 0, wx.ALIGN_CENTER_VERTICAL)
+            box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
-        for selection in self.selections:
-            box.Add(selection, 0, wx.ALIGN_CENTER_HORIZONTAL)
-
-        button = wx.Button(self, wx.ID_ANY, label = "OK")
-        box.Add(button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        self.button = wx.Button(self, wx.ID_ANY, label = "OK")
+        box.Add(self.button, 1, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizerAndFit(box)
         self.Show()
 
 class MyApp(wx.App):
     def OnInit(self):
-        displays = wx.Display.GetCount()
-        numberFrames = []
-        for d in range(displays):
+        displayCount = wx.Display.GetCount()
+        self.numberFrames = []
+        for d in range(displayCount):
             print wx.Display(d).GetGeometry()
-            numberFrames.append(NumberFrame(d))
-        DisplayChoice()
+            self.numberFrames.append(NumberFrame(d))
+        self.choice = DisplayChoice()
+        self.choice.button.Bind(wx.EVT_BUTTON, self.Run)
             
         #Beamer = PresentationScreen()
         #Beamer.load("test.jpeg")
-        #Beamer.display()
+        #Beamer.Display()
         #Presentor = PresentorsScreen()
         #Presentor.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         return True
@@ -146,6 +147,19 @@ class MyApp(wx.App):
 
     def LoadImage(self, filename):
         pass
+
+    def Run(self, event):
+        displayCount = wx.Display.GetCount()
+        self.presentationScreens = []
+        self.presentorsScreens = []
+        for displayindex in range(displayCount):
+            if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentation Screen":
+                presentationScreens.append(PresentationScreen(displayindex = displayindex))
+            elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentors Screen":
+                presentorsScreens.append(PresentorsScreen(displayindex = displayindex))
+        self.choice.Destroy()
+        for numberFrame in self.numberFrames:
+            numberFrame.Destroy()
 
 
 def main():
