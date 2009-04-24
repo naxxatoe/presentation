@@ -5,6 +5,8 @@ import os
 import sys
 import pdb
 import numpy
+import threading
+import time
 
 title = "DouF00"
 numberFontSize = 150
@@ -13,12 +15,12 @@ try:
     basedir = sys.argv[1]
 except IndexError:
     basedir = os.getcwd()
-    print "No basedir specified, using current directory.."
+    print("No basedir specified, using current directory..")
 
 try:
     os.chdir(basedir)
 except OSError:
-    print "No such file or directory"
+    print("No such file or directory")
     sys.exit(1)
 
 basedir = os.getcwd()
@@ -62,7 +64,7 @@ def loadImage(filename, size, method = "scale"):
             bitmap = wx.BitmapFromImage(image)
         return bitmap
     except:
-        print "Cant load image"
+        print("Cant load image")
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -96,16 +98,18 @@ class PresentorsScreen(wx.Frame):
         self.hbox.Add(self.static_bitmap2, 99, wx.ALIGN_CENTER_VERTICAL)
         self.box = wx.BoxSizer(wx.VERTICAL)
         self.box.Add(self.hbox, 179, wx.ALIGN_CENTER_HORIZONTAL)
-        self.box.AddStretchSpacer(2)
+        self.box.AddStretchSpacer(1)
         font = wx.Font(30, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         self.clock = wx.StaticText(self, wx.ID_ANY, "13:37")
         self.clock.SetFont(font)
-        self.box.Add(self.clock , 19, wx.ALIGN_CENTER_HORIZONTAL)
+        self.box.Add(self.clock , 17, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.panel = wx.Panel(self, wx.ID_ANY)
-        self.box.Add(self.panel, 5, wx.EXPAND)
+        self.panel.SetBackgroundColour(wx.Colour(0, 255, 0))
+        self.box.Add(self.panel, 3, wx.EXPAND)
 
         self.SetSizer(self.box)
+
     def load(self, filename1, filename2):
         method = "scale"
         if (self.size[0] < 1024) or (self.size[1] < 768):
@@ -202,6 +206,19 @@ class MyApp(wx.App):
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
+        self.Clock(self.presentorsScreens).start()
+
+    class Clock(threading.Thread):
+        def __init__(self, presentorsScreens):
+            self.presentorsScreens = presentorsScreens
+            threading.Thread.__init__(self)
+        def run(self):
+            while 1:
+                t = time.localtime()
+                tstr = str(t[3]) + ":" + str(t[4]) + "." + str(t[5])
+                for s in self.presentorsScreens:
+                    s.clock.SetLabel(tstr)
+                time.sleep(1)
 
     def NextSlide(self):
         if self.slideindex != len(pictures):
