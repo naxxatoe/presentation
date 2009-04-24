@@ -11,6 +11,13 @@ import time
 title = "DouF00"
 numberFontSize = 150
 
+EVT_CLOCK_ID = wx.NewId()
+
+class TriggerClock(wx.PyEvent):
+    def __init__(self):
+        wx.PyEvent.__init__(self)
+        self.SetEventType(EVT_CLOCK_ID)
+
 try:
     basedir = sys.argv[1]
 except IndexError:
@@ -206,19 +213,25 @@ class MyApp(wx.App):
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
-        self.Clock(self.presentorsScreens).start()
+        self.Clock(self, self.presentorsScreens).start()
+        self.Connect(-1, -1, EVT_CLOCK_ID, self.setClock)
+
+    def setClock(self, event):
+        t = time.localtime()
+        tstr = str(t[3]) + ":" + str(t[4]) + "." + str(t[5])
+        for s in self.presentorsScreens:
+            s.clock.SetLabel(tstr)
 
     class Clock(threading.Thread):
-        def __init__(self, presentorsScreens):
+        def __init__(self, mainApp, presentorsScreens):
+            self.mainApp = mainApp 
             self.presentorsScreens = presentorsScreens
             threading.Thread.__init__(self)
         def run(self):
             while 1:
-                t = time.localtime()
-                tstr = str(t[3]) + ":" + str(t[4]) + "." + str(t[5])
-                for s in self.presentorsScreens:
-                    s.clock.SetLabel(tstr)
+                wx.PostEvent(self.mainApp, TriggerClock())
                 time.sleep(1)
+
 
     def NextSlide(self):
         if self.slideindex != len(pictures):
