@@ -33,9 +33,8 @@ for file in files:
         pass
 
 pictures.sort()
-print "\n".join(pictures)
 
-def loadImage(filename, size):
+def loadImage(filename, size, method = "scale"):
     try:
         if filename == "":
             array = numpy.zeros((size[1], size[0], 3), 'uint8')
@@ -47,7 +46,9 @@ def loadImage(filename, size):
             image = wx.ImageFromStream(f)
             f.close()
             ImageSize = image.GetSize()
-            if (size[0] < ImageSize[0]) or (size[1] < ImageSize[1]):
+            if method == "stretch":
+                ImageSize = size
+            elif (size[0] < ImageSize[0]) or (size[1] < ImageSize[1]):
                 ratioX = float(size[0]) / ImageSize[0]
                 ratioY = float(size[1]) / ImageSize[1]
                 if ratioX < ratioY:
@@ -56,17 +57,12 @@ def loadImage(filename, size):
                 else:
                     ImageSize[0] = int(ImageSize[0] * ratioY)
                     ImageSize[1] = int(ImageSize[1] * ratioY)
-                
-                image.Rescale(ImageSize[0], ImageSize[1])
-
-            print ImageSize
-
+                    
+            image.Rescale(ImageSize[0], ImageSize[1])
             bitmap = wx.BitmapFromImage(image)
         return bitmap
-    #except:
-    #    print "Cant load image"
-    finally:
-        pass
+    except:
+        print "Cant load image"
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -105,14 +101,19 @@ class PresentorsScreen(wx.Frame):
         self.clock = wx.StaticText(self, wx.ID_ANY, "13:37")
         self.clock.SetFont(font)
         self.box.Add(self.clock , 19, wx.ALIGN_CENTER_HORIZONTAL)
+
+        self.panel = wx.Panel(self, wx.ID_ANY)
+        self.box.Add(self.panel, 5, wx.EXPAND)
+
         self.SetSizer(self.box)
     def load(self, filename1, filename2):
+        method = "scale"
+        if (self.size[0] < 1024) or (self.size[1] < 768):
+            method = "stretch"
         width = int(float(self.size[0]) / 200 * 99)
         height = int(float(self.size[1]) / 200 * 179)
-        print width, height
-        print self.size
-        bitmap1 = loadImage(filename1, (width, height))
-        bitmap2 = loadImage(filename2, (width, height))
+        bitmap1 = loadImage(filename1, (width, height), method = method)
+        bitmap2 = loadImage(filename2, (width, height), method = method)
         self.static_bitmap1.SetBitmap(bitmap1)
         self.static_bitmap2.SetBitmap(bitmap2)
 
@@ -162,29 +163,23 @@ class MyApp(wx.App):
         displayCount = wx.Display.GetCount()
         self.numberFrames = []
         for d in range(displayCount):
-            print wx.Display(d).GetGeometry()
             self.numberFrames.append(NumberFrame(d))
         self.choice = DisplayChoice()
         self.choice.button.Bind(wx.EVT_BUTTON, self.Run)
-            
-        #Beamer = PresentationScreen()
-        #Beamer.load("test.jpeg")
-        #Beamer.Display()
-        #Presentor = PresentorsScreen()
-        #Presentor.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         return True
 
     def OnKeyPress(self, event):
-        pdb.set_trace()
         event.Skip()
         key = event.GetKeyCode()
-        if key == ord("f"):
-            Beamer.Maximize()
-
-    def LoadImage(self, filename):
-        pass
+        if key == wx.WXK_RIGHT:
+            self.NextSlide()
+        elif key == wx.WXK_LEFT:
+            self.PrevSlide()
+        elif key == wx.WXK_ESCAPE:
+            sys.exit(0)
 
     def Run(self, event):
+        self.slideindex = -1
         displayCount = wx.Display.GetCount()
         self.presentationScreens = []
         self.presentorsScreens = []
@@ -197,12 +192,49 @@ class MyApp(wx.App):
         for numberFrame in self.numberFrames:
             numberFrame.Destroy()
         for p in self.presentationScreens:
-            p.load("test.jpeg")
+            p.load("")
             p.Show()
         for p in self.presentorsScreens:
-            p.load("test.jpeg", "test.jpeg")
+            if len(pictures) != 0:
+                p.load("", pictures[0])
+            else:
+                p.load("", "")
             p.Show()
+            p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            p.panel.SetFocus()
 
+    def NextSlide(self):
+        if self.slideindex != len(pictures):
+            self.slideindex += 1
+        currentSlide = ""
+        nextSlide = ""
+        if self.slideindex < len(pictures):
+            currentSlide = pictures[self.slideindex]
+        if self.slideindex + 1 < len(pictures):
+            nextSlide = pictures[self.slideindex + 1]
+        for p in self.presentationScreens:
+            p.load(currentSlide)
+            p.Show()
+        for p in self.presentorsScreens:
+            p.load(currentSlide, nextSlide)
+            p.Show()
+         
+    def PrevSlide(self):
+        if self.slideindex != -1:
+            self.slideindex -= 1
+        currentSlide = ""
+        nextSlide = ""
+        if -1 < self.slideindex < len(pictures):
+            currentSlide = pictures[self.slideindex]
+        if self.slideindex + 1 < len(pictures):
+            nextSlide = pictures[self.slideindex + 1]
+        for p in self.presentationScreens:
+            p.load(currentSlide)
+            p.Show()
+        for p in self.presentorsScreens:
+            p.load(currentSlide, nextSlide)
+            p.Show()
+         
 
 def main():
     app = MyApp()
