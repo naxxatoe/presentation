@@ -84,6 +84,8 @@ class PresentationScreen(wx.Frame):
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
         box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.SetSizer(box)
+        self.panel = wx.Panel(self, wx.ID_ANY, size = (0, 0), pos = (0, 0))
+        self.panel.SetBackgroundColour(wx.Colour(255, 0, 0))
     def load(self, filename):
         bitmap = loadImage(filename, self.size)
         self.static_bitmap.SetBitmap(bitmap)
@@ -222,6 +224,8 @@ class MyApp(wx.App):
         for p in self.presentationScreens:
             p.load("")
             p.Show()
+            p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            p.panel.SetFocus()
         for p in self.presentorsScreens:
             if len(pictures) != 0:
                 p.load("", pictures[0])
