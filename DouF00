@@ -3,7 +3,6 @@
 import wx
 import os
 import sys
-import pdb
 import numpy
 import threading
 import time
@@ -88,6 +87,7 @@ class PresentationScreen(wx.Frame):
     def load(self, filename):
         bitmap = loadImage(filename, self.size)
         self.static_bitmap.SetBitmap(bitmap)
+        self.Layout()
 
 class PresentorsScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -108,21 +108,20 @@ class PresentorsScreen(wx.Frame):
         box.AddStretchSpacer(1)
         font = wx.Font(30, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.clock = wx.StaticText(self, wx.ID_ANY, "13:37.0")
+        self.clock = wx.StaticText(self, wx.ID_ANY, "13:37:00")
         self.clock.SetFont(font)
         hbox2.Add(self.clock , 2, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
-        self.countDown = wx.StaticText(self, wx.ID_ANY, "10.0")
+        self.countDown = wx.StaticText(self, wx.ID_ANY, "10.00")
         self.countDown.SetFont(font)
         hbox2.Add(self.countDown , 2, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
-        self.countUp = wx.StaticText(self, wx.ID_ANY, "0.0")
+        self.countUp = wx.StaticText(self, wx.ID_ANY, "00:00")
         self.countUp.SetFont(font)
         hbox2.Add(self.countUp , 2, wx.ALIGN_CENTER_VERTICAL)
         box.Add(hbox2, 17, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.panel = wx.Panel(self, wx.ID_ANY)
-        self.panel.SetBackgroundColour(wx.Colour(0, 255, 0))
         box.Add(self.panel, 3, wx.EXPAND)
 
         self.SetSizer(box)
@@ -137,6 +136,7 @@ class PresentorsScreen(wx.Frame):
         bitmap2 = loadImage(filename2, (width, height), method = method)
         self.static_bitmap1.SetBitmap(bitmap1)
         self.static_bitmap2.SetBitmap(bitmap2)
+        self.Layout()
 
 class NumberFrame(wx.Frame):
     def __init__(self, displayindex):
@@ -164,7 +164,7 @@ class DisplayChoice(wx.Frame):
         displays = wx.Display.GetCount()
         box = wx.BoxSizer(wx.VERTICAL)
         self.selections = []
-        for d in range(displays):
+        for d in xrange(displays):
             choice = wx.Choice(self, wx.ID_ANY, choices = self.choices)
             choice.SetSelection(0)
             self.selections.append(choice)
@@ -173,8 +173,10 @@ class DisplayChoice(wx.Frame):
             hbox.Add(choice, 0, wx.ALIGN_CENTER_VERTICAL)
             box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
+        self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY, min = 1, max = 120, initial = 20)
+        box.Add(self.spinctrl, 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.button = wx.Button(self, wx.ID_ANY, label = "OK")
-        box.Add(self.button, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        box.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizerAndFit(box)
         self.Show()
@@ -183,10 +185,14 @@ class MyApp(wx.App):
     def OnInit(self):
         displayCount = wx.Display.GetCount()
         self.numberFrames = []
-        for d in range(displayCount):
+        for d in xrange(displayCount):
             self.numberFrames.append(NumberFrame(d))
         self.choice = DisplayChoice()
         self.choice.button.Bind(wx.EVT_BUTTON, self.Run)
+        self.runTime = 120
+        self.startTime = int(time.mktime(time.localtime()))
+        self.remainingTime = self.runTime
+        self.elapsedTime = 0
         return True
 
     def OnKeyPress(self, event):
@@ -200,11 +206,12 @@ class MyApp(wx.App):
             sys.exit(0)
 
     def Run(self, event):
+        self.runTime = self.choice.spinctrl.GetValue() * 60
         self.slideindex = -1
         displayCount = wx.Display.GetCount()
         self.presentationScreens = []
         self.presentorsScreens = []
-        for displayindex in range(displayCount):
+        for displayindex in xrange(displayCount):
             if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentation Screen":
                 self.presentationScreens.append(PresentationScreen(displayindex = displayindex))
             elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentors Screen":
@@ -223,14 +230,43 @@ class MyApp(wx.App):
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
+        self.setClock("f00")
         self.Clock(self, self.presentorsScreens).start()
         self.Connect(-1, -1, EVT_CLOCK_ID, self.setClock)
 
     def setClock(self, event):
         t = time.localtime()
-        tstr = str(t[3]) + ":" + str(t[4]) + "." + str(t[5])
+        now = int(time.mktime(t))
+        is_running = 0
+        if (0 <= self.slideindex < len(pictures)) and (self.remainingTime > 0):
+            is_running = 1
+        else:
+            self.startTime = now - self.elapsedTime
+
+        if is_running == 1:
+            self.elapsedTime = now - self.startTime + 1
+        else:
+            self.elapsedTime = now - self.startTime
+        self.remainingTime = self.runTime - self.elapsedTime
+
         for s in self.presentorsScreens:
+            tstr = "%02d:%02d:%02d" % (t[3], t[4], t[5])
             s.clock.SetLabel(tstr)
+            countUpStr = "%02d:%02d" % (self.elapsedTime / 60, self.elapsedTime % 60)
+            countDownStr = "%02d:%02d" % (self.remainingTime / 60, self.remainingTime % 60)
+            s.countUp.SetLabel(countUpStr)
+            s.countDown.SetLabel(countDownStr)
+
+            try:
+                red = int(float(255) * self.elapsedTime / self.runTime)
+                green = int(float(255) * self.remainingTime / self.runTime)
+                color = wx.Colour(red, green, 0)
+                s.panel.SetBackgroundColour(color)
+                if self.remainingTime < 120:
+                    color = wx.Colour(255, 0, 0)
+                    s.countDown.SetForegroundColour(color)
+            except:
+                pass
 
     class Clock(threading.Thread):
         def __init__(self, mainApp, presentorsScreens):
