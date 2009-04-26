@@ -56,7 +56,7 @@ def loadImage(filename, size, method = "scale"):
             ImageSize = image.GetSize()
             if method == "stretch":
                 ImageSize = size
-            elif (size[0] < ImageSize[0]) or (size[1] < ImageSize[1]):
+            else:
                 ratioX = float(size[0]) / ImageSize[0]
                 ratioY = float(size[1]) / ImageSize[1]
                 if ratioX < ratioY:
