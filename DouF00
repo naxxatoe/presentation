@@ -162,7 +162,7 @@ class DisplayChoice(wx.Frame):
     def __init__(self):
         style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
         super(DisplayChoice, self).__init__(None, wx.ID_ANY, title, style = style)
-        self.choices = ["-- Nothing --", "Presentation Screen", "Presentors Screen"]
+        self.choices = ["-- Nothing --", "Audience", "Presentor"]
         displays = wx.Display.GetCount()
         box = wx.BoxSizer(wx.VERTICAL)
         self.selections = []
@@ -214,9 +214,9 @@ class MyApp(wx.App):
         self.presentationScreens = []
         self.presentorsScreens = []
         for displayindex in xrange(displayCount):
-            if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentation Screen":
+            if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Audience":
                 self.presentationScreens.append(PresentationScreen(displayindex = displayindex))
-            elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentors Screen":
+            elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentor":
                 self.presentorsScreens.append(PresentorsScreen(displayindex = displayindex))
         self.choice.Destroy()
         for numberFrame in self.numberFrames:
