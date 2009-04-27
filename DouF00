@@ -84,7 +84,6 @@ class SlideList(list):
 
     def loadImage(self, slideindex):
         try:
-            print pictureFiles[slideindex]
             f = open(pictureFiles[slideindex], "rb")
             image = wx.ImageFromStream(f)
             f.close()
