@@ -68,6 +68,7 @@ def loadImage(filename, size, method = "scale"):
                     
             image.Rescale(ImageSize[0], ImageSize[1])
             bitmap = wx.BitmapFromImage(image)
+
         return bitmap
     except:
         print("Cant load image")
@@ -98,7 +99,7 @@ class PresentorsScreen(wx.Frame):
         self.size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
         super(PresentorsScreen, self).__init__(None, wx.ID_ANY, title, style = style, size = self.size, pos = position)
-        self.SetBackgroundColour(wx.Colour(127, 127, 127))
+        self.SetBackgroundColour(wx.Colour(80, 80, 80))
         self.static_bitmap1 = wx.StaticBitmap(self, wx.ID_ANY)
         self.static_bitmap2 = wx.StaticBitmap(self, wx.ID_ANY)
         hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -110,15 +111,19 @@ class PresentorsScreen(wx.Frame):
         box.AddStretchSpacer(1)
         font = wx.Font(30, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        textcolor = wx.Colour(210, 210 , 210)
         self.clock = wx.StaticText(self, wx.ID_ANY, "13:37:00")
+        self.clock.SetForegroundColour(textcolor)
         self.clock.SetFont(font)
         hbox2.Add(self.clock , 2, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
         self.countDown = wx.StaticText(self, wx.ID_ANY, "10.00")
+        self.countDown.SetForegroundColour(textcolor)
         self.countDown.SetFont(font)
         hbox2.Add(self.countDown , 2, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
         self.countUp = wx.StaticText(self, wx.ID_ANY, "00:00")
+        self.countUp.SetForegroundColour(textcolor)
         self.countUp.SetFont(font)
         hbox2.Add(self.countUp , 2, wx.ALIGN_CENTER_VERTICAL)
         box.Add(hbox2, 17, wx.ALIGN_CENTER_HORIZONTAL)
@@ -189,6 +194,7 @@ class MyApp(wx.App):
         self.numberFrames = []
         for d in xrange(displayCount):
             self.numberFrames.append(NumberFrame(d))
+
         self.choice = DisplayChoice()
         self.choice.button.Bind(wx.EVT_BUTTON, self.Run)
         self.runTime = 120
@@ -218,22 +224,27 @@ class MyApp(wx.App):
                 self.presentationScreens.append(PresentationScreen(displayindex = displayindex))
             elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentor":
                 self.presentorsScreens.append(PresentorsScreen(displayindex = displayindex))
+
         self.choice.Destroy()
         for numberFrame in self.numberFrames:
             numberFrame.Destroy()
+
         for p in self.presentationScreens:
             p.load("")
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
+
         for p in self.presentorsScreens:
             if len(pictures) != 0:
                 p.load("", pictures[0])
             else:
                 p.load("", "")
+
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
+
         self.setClock("f00")
         self.Clock(self, self.presentorsScreens).start()
         self.Connect(-1, -1, EVT_CLOCK_ID, self.setClock)
@@ -251,8 +262,8 @@ class MyApp(wx.App):
             self.elapsedTime = now - self.startTime + 1
         else:
             self.elapsedTime = now - self.startTime
-        self.remainingTime = self.runTime - self.elapsedTime
 
+        self.remainingTime = self.runTime - self.elapsedTime
         for s in self.presentorsScreens:
             tstr = "%02d:%02d:%02d" % (t[3], t[4], t[5])
             s.clock.SetLabel(tstr)
@@ -269,6 +280,7 @@ class MyApp(wx.App):
                 if self.remainingTime < 120:
                     color = wx.Colour(255, 0, 0)
                     s.countDown.SetForegroundColour(color)
+
             except:
                 pass
 
@@ -286,15 +298,19 @@ class MyApp(wx.App):
     def NextSlide(self):
         if self.slideindex != len(pictures):
             self.slideindex += 1
+
         currentSlide = ""
         nextSlide = ""
         if self.slideindex < len(pictures):
             currentSlide = pictures[self.slideindex]
+
         if self.slideindex + 1 < len(pictures):
             nextSlide = pictures[self.slideindex + 1]
+
         for p in self.presentationScreens:
             p.load(currentSlide)
             p.Show()
+
         for p in self.presentorsScreens:
             p.load(currentSlide, nextSlide)
             p.Show()
@@ -302,15 +318,19 @@ class MyApp(wx.App):
     def PrevSlide(self):
         if self.slideindex != -1:
             self.slideindex -= 1
+
         currentSlide = ""
         nextSlide = ""
         if -1 < self.slideindex < len(pictures):
             currentSlide = pictures[self.slideindex]
+
         if self.slideindex + 1 < len(pictures):
             nextSlide = pictures[self.slideindex + 1]
+
         for p in self.presentationScreens:
             p.load(currentSlide)
             p.Show()
+
         for p in self.presentorsScreens:
             p.load(currentSlide, nextSlide)
             p.Show()
@@ -322,4 +342,3 @@ def main():
 
 if __name__ == "__main__": main()
 
-# vim:nnoremap <silent> <F5> :!./presentation: #
