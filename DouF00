@@ -26,53 +26,66 @@ except OSError:
 
 basedir = os.getcwd()
 
-pictures = []
+pictureFiles = []
 files = os.listdir(basedir)
 for file in files:
     try:
         if (file[-4:].lower() == ".jpg") or (file[-5:].lower() == ".jpeg"):
-            pictures.append(file)
+            pictureFiles.append(file)
     except IndexError:
         pass
 
-pictures.sort()
+pictureFiles.sort()
 
 import wx
 EVT_CLOCK_ID = wx.NewId()
+
+def scaleImage(image, size, method = "scale"):
+    ImageSize = image.GetSize()
+    if method == "stretch":
+        ImageSize = size
+    else:
+        ratioX = float(size[0]) / ImageSize[0]
+        ratioY = float(size[1]) / ImageSize[1]
+        if ratioX < ratioY:
+            ImageSize[0] = int(ImageSize[0] * ratioX)
+            ImageSize[1] = int(ImageSize[1] * ratioX)
+        else:
+            ImageSize[0] = int(ImageSize[0] * ratioY)
+            ImageSize[1] = int(ImageSize[1] * ratioY)
+                
+    image.Rescale(ImageSize[0], ImageSize[1])
+    bitmap = wx.BitmapFromImage(image)
+
+    return bitmap
+
+class SlideList(list):
+    def __init__(self):
+        self.list = [None for i in xrange(len(pictureFiles))]
+
+    def __getitem__(self, index):
+        if (index < 0) or (index >= len(self.list)):
+            buffer = "\0\0\0"
+            image = wx.ImageFromBuffer(1, 1, buffer)
+        else:
+            if self.list[index] == None:
+                self.list[index] = self.loadImage(index)
+            image = self.list[index]
+        return image
+
+    def loadImage(self, slideindex):
+        try:
+            f = open(pictureFiles[slideindex], "rb")
+            image = wx.ImageFromStream(f)
+            f.close()
+        except Exception as e:
+            print("Cant load image: " + e)
+        return image
 
 class TriggerClock(wx.PyEvent):
     def __init__(self):
         wx.PyEvent.__init__(self)
         self.SetEventType(EVT_CLOCK_ID)
-
-def loadImage(filename, size, method = "scale"):
-    try:
-        if filename == "":
-            buffer = "\0\0\0" * size[0] * size[1]
-            bitmap = wx.BitmapFromBuffer(size[0], size[1], buffer)
-        else:
-            f = open(filename, "rb")
-            image = wx.ImageFromStream(f)
-            f.close()
-            ImageSize = image.GetSize()
-            if method == "stretch":
-                ImageSize = size
-            else:
-                ratioX = float(size[0]) / ImageSize[0]
-                ratioY = float(size[1]) / ImageSize[1]
-                if ratioX < ratioY:
-                    ImageSize[0] = int(ImageSize[0] * ratioX)
-                    ImageSize[1] = int(ImageSize[1] * ratioX)
-                else:
-                    ImageSize[0] = int(ImageSize[0] * ratioY)
-                    ImageSize[1] = int(ImageSize[1] * ratioY)
-                    
-            image.Rescale(ImageSize[0], ImageSize[1])
-            bitmap = wx.BitmapFromImage(image)
-
-        return bitmap
-    except:
-        print("Cant load image")
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -89,8 +102,9 @@ class PresentationScreen(wx.Frame):
         self.panel = wx.Panel(self, wx.ID_ANY, size = (0, 0), pos = (0, 0))
         self.panel.SetBackgroundColour(wx.Colour(0, 0, 0))
 
-    def load(self, filename):
-        bitmap = loadImage(filename, self.size)
+    def load(self, slideindex):
+        image = slidelist[slideindex]
+        bitmap = scaleImage(image, self.size)
         self.static_bitmap.SetBitmap(bitmap)
         self.Layout()
 
@@ -135,14 +149,16 @@ class PresentorsScreen(wx.Frame):
 
         self.SetSizer(box)
 
-    def load(self, filename1, filename2):
+    def load(self, slideindex):
         method = "scale"
         if (self.size[0] < 1024) or (self.size[1] < 768):
             method = "stretch"
         width = int(float(self.size[0]) / 200 * 99)
         height = int(float(self.size[1]) / 200 * 179)
-        bitmap1 = loadImage(filename1, (width, height), method = method)
-        bitmap2 = loadImage(filename2, (width, height), method = method)
+        image1 = slidelist[slideindex]
+        image2 = slidelist[slideindex + 1]
+        bitmap1 = scaleImage(image1, (width, height), method = method)
+        bitmap2 = scaleImage(image2, (width, height), method = method)
         self.static_bitmap1.SetBitmap(bitmap1)
         self.static_bitmap2.SetBitmap(bitmap2)
         self.Layout()
@@ -189,6 +205,8 @@ class DisplayChoice(wx.Frame):
 
         self.SetSizerAndFit(box)
         self.Show()
+
+slidelist = SlideList()
 
 class MyApp(wx.App):
     def OnInit(self):
@@ -239,17 +257,13 @@ class MyApp(wx.App):
             sys.exit()
 
         for p in self.presentationScreens:
-            p.load("")
+            p.load(self.slideindex)
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
 
         for p in self.presentorsScreens:
-            if len(pictures) != 0:
-                p.load("", pictures[0])
-            else:
-                p.load("", "")
-
+            p.load(self.slideindex)
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
@@ -262,7 +276,7 @@ class MyApp(wx.App):
         t = time.localtime()
         now = int(time.mktime(t))
         is_running = 0
-        if (0 <= self.slideindex < len(pictures)) and (self.remainingTime > 0):
+        if (0 <= self.slideindex < len(pictureFiles)) and (self.remainingTime > 0):
             is_running = 1
         else:
             self.startTime = now - self.elapsedTime
@@ -305,43 +319,27 @@ class MyApp(wx.App):
 
 
     def NextSlide(self):
-        if self.slideindex != len(pictures):
+        if self.slideindex != len(pictureFiles):
             self.slideindex += 1
 
-        currentSlide = ""
-        nextSlide = ""
-        if self.slideindex < len(pictures):
-            currentSlide = pictures[self.slideindex]
-
-        if self.slideindex + 1 < len(pictures):
-            nextSlide = pictures[self.slideindex + 1]
-
         for p in self.presentationScreens:
-            p.load(currentSlide)
+            p.load(self.slideindex)
             p.Show()
 
         for p in self.presentorsScreens:
-            p.load(currentSlide, nextSlide)
+            p.load(self.slideindex)
             p.Show()
          
     def PrevSlide(self):
         if self.slideindex != -1:
             self.slideindex -= 1
 
-        currentSlide = ""
-        nextSlide = ""
-        if -1 < self.slideindex < len(pictures):
-            currentSlide = pictures[self.slideindex]
-
-        if self.slideindex + 1 < len(pictures):
-            nextSlide = pictures[self.slideindex + 1]
-
         for p in self.presentationScreens:
-            p.load(currentSlide)
+            p.load(self.slideindex)
             p.Show()
 
         for p in self.presentorsScreens:
-            p.load(currentSlide, nextSlide)
+            p.load(self.slideindex)
             p.Show()
          
 
