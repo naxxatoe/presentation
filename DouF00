@@ -1,33 +1,28 @@
 #!/usr/bin/env python
 
-import wx
+title = "DouF00"
+version = "0.01"
+
 import os
 import sys
-import numpy
 import threading
 import time
 
-title = "DouF00"
 numberFontSize = 150
 
-EVT_CLOCK_ID = wx.NewId()
-
-class TriggerClock(wx.PyEvent):
-    def __init__(self):
-        wx.PyEvent.__init__(self)
-        self.SetEventType(EVT_CLOCK_ID)
+def printUsage():
+    print("Usage: " + sys.argv[0] + " [path]")
 
 try:
     basedir = sys.argv[1]
 except IndexError:
-    basedir = os.getcwd()
-    print("No basedir specified, using current directory..")
+    printUsage()
+    sys.exit("No basedir specified.")
 
 try:
     os.chdir(basedir)
 except OSError:
-    print("No such file or directory")
-    sys.exit(1)
+    sys.exit("No such file or directory")
 
 basedir = os.getcwd()
 
@@ -42,9 +37,18 @@ for file in files:
 
 pictures.sort()
 
+import wx
+EVT_CLOCK_ID = wx.NewId()
+
+class TriggerClock(wx.PyEvent):
+    def __init__(self):
+        wx.PyEvent.__init__(self)
+        self.SetEventType(EVT_CLOCK_ID)
+
 def loadImage(filename, size, method = "scale"):
     try:
         if filename == "":
+            import numpy
             array = numpy.zeros((size[1], size[0], 3), 'uint8')
             image = wx.EmptyImage(size[0], size[1])
             image.SetData(array.tostring())
@@ -212,6 +216,10 @@ class MyApp(wx.App):
         elif key == wx.WXK_LEFT:
             self.PrevSlide()
         elif key == wx.WXK_ESCAPE:
+            for p in self.presentationScreens:
+                p.Destroy()
+            for p in self.presentorsScreens:
+                p.Destroy()
             sys.exit(0)
 
     def Run(self, event):
@@ -229,6 +237,9 @@ class MyApp(wx.App):
         self.choice.Destroy()
         for numberFrame in self.numberFrames:
             numberFrame.Destroy()
+        
+        if (self.presentationScreens == []) and (self.presentorsScreens == []):
+            sys.exit()
 
         for p in self.presentationScreens:
             p.load("")
