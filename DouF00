@@ -87,6 +87,7 @@ class PresentationScreen(wx.Frame):
         self.SetSizer(box)
         self.panel = wx.Panel(self, wx.ID_ANY, size = (0, 0), pos = (0, 0))
         self.panel.SetBackgroundColour(wx.Colour(0, 0, 0))
+
     def load(self, filename):
         bitmap = loadImage(filename, self.size)
         self.static_bitmap.SetBitmap(bitmap)
