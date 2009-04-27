@@ -48,7 +48,7 @@ class TriggerClock(wx.PyEvent):
 def loadImage(filename, size, method = "scale"):
     try:
         if filename == "":
-            buffer = "".join(["\0\0\0" for x in xrange(size[0]) for y in xrange(size[1])])
+            buffer = "\0\0\0" * size[0] * size[1]
             bitmap = wx.BitmapFromBuffer(size[0], size[1], buffer)
         else:
             f = open(filename, "rb")
