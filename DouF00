@@ -6,9 +6,11 @@ version = "0.01"
 import os
 import sys
 import threading
+import Queue
 import time
 
 numberFontSize = 150
+preLoadCache = 5
 
 def printUsage():
     print("Usage: " + sys.argv[0] + " [path]")
@@ -61,30 +63,63 @@ def scaleImage(image, size, method = "scale"):
 
 class SlideList(list):
     def __init__(self):
+        super(SlideList, self).__init__()
         self.list = [None for i in xrange(len(pictureFiles))]
+        self.queue = Queue.Queue()
+        self.ParallelLoad(self.queue).start()
 
-    def __getitem__(self, index):
-        if (index < 0) or (index >= len(self.list)):
+    def __getitem__(self, slideindex):
+        if (slideindex < 0) or (slideindex >= len(self.list)):
             buffer = "\0\0\0"
             image = wx.ImageFromBuffer(1, 1, buffer)
         else:
-            if self.list[index] == None:
-                self.list[index] = self.loadImage(index)
-            image = self.list[index]
+            if self.list[slideindex] == None:
+                self.list[slideindex] = self.loadImage(slideindex)
+
+            image = self.list[slideindex]
+
+        self.queue.put(slideindex)
+
         return image
 
     def loadImage(self, slideindex):
         try:
+            print pictureFiles[slideindex]
             f = open(pictureFiles[slideindex], "rb")
             image = wx.ImageFromStream(f)
             f.close()
         except Exception as e:
-            print("Cant load image: " + e)
+            print("Cant load image: " + str(e))
+
         return image
+
+    class ParallelLoad(threading.Thread):
+        def __init__(self, queue):
+            self.queue = queue
+            super(SlideList.ParallelLoad, self).__init__()
+        def run(self):
+            slideindex = self.queue.get()
+            minIndex = slideindex - preLoadCache
+            maxIndex = slideindex + preLoadCache
+            if minIndex < 0:
+                minIndex = 0
+
+            if maxIndex > len(pictureFiles):
+                maxIndex = len(pictureFiles)
+
+            for i in xrange(minIndex, maxIndex):
+                if slidelist[i] == None:
+                    slidelist[i] = loadImage(i)
+
+            for i in xrange(minIndex):
+                slidelist[i] = None
+
+            for i in xrange(maxIndex, len(pictureFiles)):
+                slidelist[i] = None
 
 class TriggerClock(wx.PyEvent):
     def __init__(self):
-        wx.PyEvent.__init__(self)
+        super(TriggerClock, self).__init__()
         self.SetEventType(EVT_CLOCK_ID)
 
 class PresentationScreen(wx.Frame):
@@ -103,8 +138,7 @@ class PresentationScreen(wx.Frame):
         self.panel.SetBackgroundColour(wx.Colour(0, 0, 0))
 
     def load(self, slideindex):
-        image = slidelist[slideindex]
-        bitmap = scaleImage(image, self.size)
+        bitmap = scaleImage(slidelist[slideindex], self.size)
         self.static_bitmap.SetBitmap(bitmap)
         self.Layout()
 
@@ -153,12 +187,11 @@ class PresentorsScreen(wx.Frame):
         method = "scale"
         if (self.size[0] < 1024) or (self.size[1] < 768):
             method = "stretch"
+
         width = int(float(self.size[0]) / 200 * 99)
         height = int(float(self.size[1]) / 200 * 179)
-        image1 = slidelist[slideindex]
-        image2 = slidelist[slideindex + 1]
-        bitmap1 = scaleImage(image1, (width, height), method = method)
-        bitmap2 = scaleImage(image2, (width, height), method = method)
+        bitmap1 = scaleImage(slidelist[slideindex], (width, height), method = method)
+        bitmap2 = scaleImage(slidelist[slideindex + 1], (width, height), method = method)
         self.static_bitmap1.SetBitmap(bitmap1)
         self.static_bitmap2.SetBitmap(bitmap2)
         self.Layout()
@@ -233,8 +266,10 @@ class MyApp(wx.App):
         elif key == wx.WXK_ESCAPE:
             for p in self.presentationScreens:
                 p.Destroy()
+
             for p in self.presentorsScreens:
                 p.Destroy()
+
             sys.exit(0)
 
     def Run(self, event):
@@ -269,7 +304,9 @@ class MyApp(wx.App):
             p.panel.SetFocus()
 
         self.setClock("f00")
-        self.Clock(self, self.presentorsScreens).start()
+        t = self.Clock(self, self.presentorsScreens)
+        t.setDaemon(True)
+        t.start()
         self.Connect(-1, -1, EVT_CLOCK_ID, self.setClock)
 
     def setClock(self, event):
@@ -294,7 +331,6 @@ class MyApp(wx.App):
             countDownStr = "%02d:%02d" % (self.remainingTime / 60, self.remainingTime % 60)
             s.countUp.SetLabel(countUpStr)
             s.countDown.SetLabel(countDownStr)
-
             try:
                 red = int(float(255) * self.elapsedTime / self.runTime)
                 green = int(float(255) * self.remainingTime / self.runTime)
@@ -303,7 +339,6 @@ class MyApp(wx.App):
                 if self.remainingTime < 120:
                     color = wx.Colour(255, 0, 0)
                     s.countDown.SetForegroundColour(color)
-
             except:
                 pass
 
@@ -311,7 +346,7 @@ class MyApp(wx.App):
         def __init__(self, mainApp, presentorsScreens):
             self.mainApp = mainApp 
             self.presentorsScreens = presentorsScreens
-            threading.Thread.__init__(self)
+            super(MyApp.Clock, self).__init__()
         def run(self):
             while 1:
                 wx.PostEvent(self.mainApp, TriggerClock())
