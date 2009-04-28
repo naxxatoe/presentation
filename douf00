@@ -113,7 +113,7 @@ class SlideList(list):
             for i in xrange(minIndex):
                 slidelist[i] = None
 
-            for i in xrange(maxIndex, len(pictureFiles)):
+            for i in xrange(maxIndex, len(slidelist)):
                 slidelist[i] = None
 
 class TriggerClock(wx.PyEvent):
