@@ -1,4 +1,4 @@
-Name:		DouF00
+Name:		douf00
 Summary:	A simple and fatfree presentation software
 Version:	0.01
 Release:	1
@@ -17,7 +17,7 @@ including timers, previews an audience and presentor screen
 %setup -q
 
 %build
-touch DouF00
+touch douf00
 touch README
 
 %install
@@ -27,13 +27,13 @@ mkdir -p %{buildroot}
 fi
 mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/share/doc/DouF00/
-install -pm 0755 DouF00 %{buildroot}/usr/bin/DouF00
-install -pm 0644 README %{buildroot}/usr/share/doc/DouF00/README
+install -pm 0755 douf00 %{buildroot}/usr/bin/douf00
+install -pm 0644 README %{buildroot}/usr/share/doc/douf00/README
 
 %files
 %defattr(-,root,root)
-/usr/bin/DouF00
-%doc /usr/share/doc/DouF00/README
+/usr/bin/douf00
+%doc /usr/share/doc/douf00/README
 
 %clean
 if test "%{buildroot}" != ""; then
