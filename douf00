@@ -39,6 +39,12 @@ for file in files:
 
 pictureFiles.sort()
 
+blankslide = ""
+if "blank.jpg" in pictureFiles:
+    blankslide = "blank.jpg"
+    pictureFiles.remove(blankslide)
+
+
 import wx
 EVT_CLOCK_ID = wx.NewId()
 
@@ -69,26 +75,31 @@ class SlideList(list):
         self.ParallelLoad(self.queue).start()
 
     def __getitem__(self, slideindex):
-        if (slideindex < 0) or (slideindex >= len(self.list)):
-            buffer = "\0\0\0"
-            image = wx.ImageFromBuffer(1, 1, buffer)
-        else:
-            if self.list[slideindex] == None:
-                self.list[slideindex] = self.loadImage(slideindex)
+        if self.list[slideindex] == None:
+            self.list[slideindex] = self.loadImage(slideindex)
 
-            image = self.list[slideindex]
+        image = self.list[slideindex]
 
         self.queue.put(slideindex)
 
         return image
 
     def loadImage(self, slideindex):
-        try:
-            f = open(pictureFiles[slideindex], "rb")
-            image = wx.ImageFromStream(f)
-            f.close()
-        except:
-            print("Cant load image: ")
+        if (slideindex < 0) or (slideindex >= len(self.list)):
+            if blankslide == "":
+                buffer = "\0\0\0"
+                image = wx.ImageFromBuffer(1, 1, buffer)
+            else:
+                f = open(blankslide, "rb")
+                image = wx.ImageFromStream(f)
+                f
+        else:
+            try:
+                f = open(pictureFiles[slideindex], "rb")
+                image = wx.ImageFromStream(f)
+                f.close()
+            except:
+                print("Cant load image: ")
 
         return image
 
