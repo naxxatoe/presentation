@@ -87,8 +87,8 @@ class SlideList(list):
             f = open(pictureFiles[slideindex], "rb")
             image = wx.ImageFromStream(f)
             f.close()
-        except Exception as e:
-            print("Cant load image: " + str(e))
+        except:
+            print("Cant load image: ")
 
         return image
 
