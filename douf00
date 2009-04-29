@@ -286,11 +286,11 @@ class MyApp(wx.App):
     def OnKeyPress(self, event):
         event.Skip()
         key = event.GetKeyCode()
-        if key == wx.WXK_RIGHT:
+        if (key == wx.WXK_RIGHT) or (key == wx.WXK_SPACE):
             self.NextSlide()
         elif key == wx.WXK_LEFT:
             self.PrevSlide()
-        elif key == wx.WXK_ESCAPE:
+        elif (key == wx.WXK_ESCAPE) or (key == ord('q')) or (key == ord('Q')):
             for p in self.presentationScreens:
                 p.Destroy()
 
@@ -298,6 +298,8 @@ class MyApp(wx.App):
                 p.Destroy()
 
             sys.exit(0)
+        elif (key == ord('r')) or (key == ord('R')):
+            self.startTime = int(time.time())
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
@@ -338,7 +340,7 @@ class MyApp(wx.App):
 
     def setClock(self, event):
         t = time.localtime()
-        now = int(time.mktime(t))
+        now = int(time.time())
         is_running = 0
         if (0 <= self.slideindex < len(pictureFiles)) and \
             (self.remainingTime > 0):

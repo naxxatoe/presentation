@@ -7,7 +7,7 @@ License:	GPL
 Group:		Applications/Publishing
 Buildroot:	%{_tmppath}/root-%{name}-%{version}
 BuildRequires:	python >= 2.5
-Requires:	python >= 2.5, wxPython
+Requires:	python >= 2.5, wxPython >= 2.8
 
 %description
 DouF00 is a simple presentation- and screenmanagement software,
