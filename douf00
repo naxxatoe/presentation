@@ -12,16 +12,13 @@ import wx
 
 numberFontSize = 150
 preLoadCache = 5
-
+pictureFiles = None
+blankslide = None
+slidelist = None
 EVT_CLOCK_ID = wx.NewId()
 
 def printUsage():
     print("Usage: " + sys.argv[0] + " [path]")
-
-pictureFiles = None
-blankslide = None
-slidelist = None
-
 
 def scaleImage(image, size, method = "scale"):
     ImageSize = image.GetSize()
@@ -93,6 +90,7 @@ class SlideList(list):
         def run(self):
             global pictureFiles
             global slidelist
+            global preLoadCache
 
             slideindex = self.queue.get()
             minIndex = slideindex - preLoadCache
@@ -115,6 +113,8 @@ class SlideList(list):
 
 class TriggerClock(wx.PyEvent):
     def __init__(self):
+        global EVT_CLOCK_ID
+
         super(TriggerClock, self).__init__()
         self.SetEventType(EVT_CLOCK_ID)
 
@@ -208,6 +208,8 @@ class PresentorsScreen(wx.Frame):
 
 class NumberFrame(wx.Frame):
     def __init__(self, displayindex):
+        global numberFontSize
+
         geometry = wx.Display(displayindex).GetGeometry()
         style = wx.NO_BORDER | wx.STAY_ON_TOP | wx.FRAME_TOOL_WINDOW
         super(NumberFrame, self).__init__(None, wx.ID_ANY, title,
@@ -331,6 +333,8 @@ class MyApp(wx.App):
             self.startTime = int(time.time())
 
     def Run(self, event):
+        global EVT_CLOCK_ID
+
         self.runTime = self.choice.spinctrl.GetValue() * 60
         self.slideindex = -1
         displayCount = wx.Display.GetCount()
