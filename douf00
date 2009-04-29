@@ -1,270 +1,27 @@
 #!/usr/bin/env python
 
-title = "DouF00"
-version = "0.01"
-
 import os
 import sys
 import threading
-import Queue
 import time
 import wx
-
-numberFontSize = 150
-preLoadCache = 5
-pictureFiles = None
-blankslide = None
-slidelist = None
-EVT_CLOCK_ID = wx.NewId()
+import config as cfg
+from PresentorsScreen import PresentorsScreen
+from PresentationScreen import PresentationScreen
+from SlideList import SlideList
+from NumberFrame import NumberFrame
+from DisplayChoice import DisplayChoice
 
 def printUsage():
     print("Usage: " + sys.argv[0] + " [path]")
 
-def scaleImage(image, size, method = "scale"):
-    ImageSize = image.GetSize()
-    if method == "stretch":
-        ImageSize = size
-    else:
-        ratioX = float(size[0]) / ImageSize[0]
-        ratioY = float(size[1]) / ImageSize[1]
-        if ratioX < ratioY:
-            ImageSize[0] = int(ImageSize[0] * ratioX)
-            ImageSize[1] = int(ImageSize[1] * ratioX)
-        else:
-            ImageSize[0] = int(ImageSize[0] * ratioY)
-            ImageSize[1] = int(ImageSize[1] * ratioY)
-                
-    image.Rescale(ImageSize[0], ImageSize[1])
-    bitmap = wx.BitmapFromImage(image)
-
-    return bitmap
-
-class SlideList(list):
-    def __init__(self):
-        global pictureFiles
-
-        super(SlideList, self).__init__()
-        self.list = [None for i in xrange(len(pictureFiles))]
-        self.queue = Queue.Queue()
-        self.ParallelLoad(self.queue).start()
-
-    def __getitem__(self, slideindex):
-        if (slideindex < 0) or (slideindex >= len(self.list)):
-            image = self.loadImage(slideindex)
-        elif (self.list[slideindex] == None):
-            self.list[slideindex] = self.loadImage(slideindex)
-            image = self.list[slideindex]
-        else:
-            image = self.list[slideindex]
-
-        self.queue.put(slideindex)
-
-        return image
-
-    def loadImage(self, slideindex):
-        global pictureFiles
-        global blankslide
-
-        if (slideindex < 0) or (slideindex >= len(self.list)):
-            if blankslide == "":
-                buffer = "\0\0\0"
-                image = wx.ImageFromBuffer(1, 1, buffer)
-            else:
-                f = open(blankslide, "rb")
-                image = wx.ImageFromStream(f)
-                f
-        else:
-            try:
-                f = open(pictureFiles[slideindex], "rb")
-                image = wx.ImageFromStream(f)
-                f.close()
-            except:
-                print("Cant load image: ")
-
-        return image
-
-    class ParallelLoad(threading.Thread):
-        def __init__(self, queue):
-            self.queue = queue
-            super(SlideList.ParallelLoad, self).__init__()
-        def run(self):
-            global pictureFiles
-            global slidelist
-            global preLoadCache
-
-            slideindex = self.queue.get()
-            minIndex = slideindex - preLoadCache
-            maxIndex = slideindex + preLoadCache
-            if minIndex < 0:
-                minIndex = 0
-
-            if maxIndex > len(pictureFiles):
-                maxIndex = len(pictureFiles)
-
-            for i in xrange(minIndex, maxIndex):
-                if slidelist[i] == None:
-                    slidelist[i] = loadImage(i)
-
-            for i in xrange(minIndex):
-                slidelist[i] = None
-
-            for i in xrange(maxIndex, len(slidelist)):
-                slidelist[i] = None
-
 class TriggerClock(wx.PyEvent):
     def __init__(self):
-        global EVT_CLOCK_ID
-
         super(TriggerClock, self).__init__()
-        self.SetEventType(EVT_CLOCK_ID)
-
-class PresentationScreen(wx.Frame):
-    def __init__(self, displayindex = 0):
-        geometry = wx.Display(displayindex).GetGeometry()
-        position = (geometry[0], geometry[1])
-        self.size = (geometry[2], geometry[3])
-        style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentationScreen, self).__init__(None, wx.ID_ANY, title,
-                                                 style = style,
-                                                 pos = position,
-                                                 size = self.size)
-        box = wx.BoxSizer(wx.VERTICAL)
-        self.SetBackgroundColour(wx.Colour(0, 0, 0))
-        self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
-        box.Add(self.static_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        self.SetSizer(box)
-        self.panel = wx.Panel(self, wx.ID_ANY, size = (0, 0), pos = (0, 0))
-        self.panel.SetBackgroundColour(wx.Colour(0, 0, 0))
-
-    def load(self, slideindex):
-        global slidelist
-
-        bitmap = scaleImage(slidelist[slideindex], self.size)
-        self.static_bitmap.SetBitmap(bitmap)
-        self.Layout()
-
-class PresentorsScreen(wx.Frame):
-    def __init__(self, displayindex = 0):
-        geometry = wx.Display(displayindex).GetGeometry()
-        position = (geometry[0], geometry[1])
-        self.size = (geometry[2], geometry[3])
-        style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentorsScreen, self).__init__(None, wx.ID_ANY, title,
-                                               style = style,
-                                               size = self.size,
-                                               pos = position)
-        self.SetBackgroundColour(wx.Colour(80, 80, 80))
-        self.static_bitmap1 = wx.StaticBitmap(self, wx.ID_ANY)
-        self.static_bitmap2 = wx.StaticBitmap(self, wx.ID_ANY)
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(self.static_bitmap1, 99, wx.ALIGN_CENTER_VERTICAL)
-        hbox.AddStretchSpacer(2)
-        hbox.Add(self.static_bitmap2, 99, wx.ALIGN_CENTER_VERTICAL)
-        box = wx.BoxSizer(wx.VERTICAL)
-        box.Add(hbox, 179, wx.ALIGN_CENTER_HORIZONTAL)
-        box.AddStretchSpacer(1)
-        font = wx.Font(30, wx.DEFAULT, wx.NORMAL, wx.BOLD)
-        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        textcolor = wx.Colour(210, 210 , 210)
-        self.clock = wx.StaticText(self, wx.ID_ANY, "13:37:00")
-        self.clock.SetForegroundColour(textcolor)
-        self.clock.SetFont(font)
-        hbox2.Add(self.clock , 2, wx.ALIGN_CENTER_VERTICAL)
-        hbox2.AddStretchSpacer(1)
-        self.countDown = wx.StaticText(self, wx.ID_ANY, "10.00")
-        self.countDown.SetForegroundColour(textcolor)
-        self.countDown.SetFont(font)
-        hbox2.Add(self.countDown , 2, wx.ALIGN_CENTER_VERTICAL)
-        hbox2.AddStretchSpacer(1)
-        self.countUp = wx.StaticText(self, wx.ID_ANY, "00:00")
-        self.countUp.SetForegroundColour(textcolor)
-        self.countUp.SetFont(font)
-        hbox2.Add(self.countUp , 2, wx.ALIGN_CENTER_VERTICAL)
-        box.Add(hbox2, 17, wx.ALIGN_CENTER_HORIZONTAL)
-
-        self.panel = wx.Panel(self, wx.ID_ANY)
-        box.Add(self.panel, 3, wx.EXPAND)
-
-        self.SetSizer(box)
-
-    def load(self, slideindex):
-        global slidelist
-
-        method = "scale"
-        if (self.size[0] < 1024) or (self.size[1] < 768):
-            method = "stretch"
-
-        width = int(float(self.size[0]) / 200 * 99)
-        height = int(float(self.size[1]) / 200 * 179)
-        bitmap1 = scaleImage(slidelist[slideindex],
-                             (width, height),
-                             method = method)
-        bitmap2 = scaleImage(slidelist[slideindex + 1],
-                             (width, height),
-                             method = method)
-        self.static_bitmap1.SetBitmap(bitmap1)
-        self.static_bitmap2.SetBitmap(bitmap2)
-        self.Layout()
-
-class NumberFrame(wx.Frame):
-    def __init__(self, displayindex):
-        global numberFontSize
-
-        geometry = wx.Display(displayindex).GetGeometry()
-        style = wx.NO_BORDER | wx.STAY_ON_TOP | wx.FRAME_TOOL_WINDOW
-        super(NumberFrame, self).__init__(None, wx.ID_ANY, title,
-                                          style = style)
-        self.SetBackgroundColour(wx.Colour(255, 255, 255))
-        box = wx.BoxSizer(wx.VERTICAL)
-        font = wx.Font(numberFontSize, wx.DEFAULT, wx.NORMAL, wx.BOLD)
-        text = wx.StaticText(self, wx.ID_ANY, str(displayindex))
-        text.SetFont(font)
-        box.Add(text, 0, wx.ALIGN_CENTER)
-        self.SetSizerAndFit(box)
-        size = self.GetSize()
-        position = (geometry[0] + (geometry[2] / 2) - (size[0] / 2),
-                    geometry[1] + (geometry[3] / 2) - (size[1] / 2))
-        self.SetPosition(position)
-        self.Show()
-
-class DisplayChoice(wx.Frame):
-    def __init__(self):
-        style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
-        super(DisplayChoice, self).__init__(None, wx.ID_ANY, title,
-                                            style = style)
-        self.choices = ["-- Nothing --", "Audience", "Presentor"]
-        displays = wx.Display.GetCount()
-        box = wx.BoxSizer(wx.VERTICAL)
-        self.selections = []
-        for d in xrange(displays):
-            choice = wx.Choice(self, wx.ID_ANY, choices = self.choices)
-            choice.SetSelection(0)
-            self.selections.append(choice)
-            hbox = wx.BoxSizer(wx.HORIZONTAL)
-            hbox.Add(wx.StaticText(self, wx.ID_ANY,
-                                   "Display " + str(d) + ": "),
-                     0, wx.ALIGN_CENTER_VERTICAL)
-            hbox.Add(choice, 0, wx.ALIGN_CENTER_VERTICAL)
-            box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
-
-        self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY,
-                                    min = 1,
-                                    max = 120,
-                                    initial = 20)
-        box.Add(self.spinctrl, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        self.button = wx.Button(self, wx.ID_ANY, label = "OK")
-        box.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
-
-        self.SetSizerAndFit(box)
-        self.Show()
-
+        self.SetEventType(cfg.EVT_CLOCK_ID)
 
 class MyApp(wx.App):
     def OnInit(self):
-        global pictureFiles
-        global blankslide
-        global slidelist
-
         try:
             basedir = sys.argv[1]
         except IndexError:
@@ -283,23 +40,23 @@ class MyApp(wx.App):
 
         basedir = os.getcwd()
 
-        pictureFiles = []
+        cfg.pictureFiles = []
         files = os.listdir(basedir)
         for file in files:
             try:
                 if (file[-4:].lower() == ".jpg") or (file[-5:].lower() == ".jpeg"):
-                    pictureFiles.append(file)
+                    cfg.pictureFiles.append(file)
             except IndexError:
                 pass
 
-        pictureFiles.sort()
+        cfg.pictureFiles.sort()
 
-        blankslide = ""
-        if "blank.jpg" in pictureFiles:
-            blankslide = "blank.jpg"
-            pictureFiles.remove(blankslide)
+        cfg.blankslide = ""
+        if "blank.jpg" in cfg.pictureFiles:
+            cfg.blankslide = "blank.jpg"
+            cfg.pictureFiles.remove(cfg.blankslide)
 
-        slidelist = SlideList()
+        cfg.slidelist = SlideList()
 
         displayCount = wx.Display.GetCount()
         self.numberFrames = []
@@ -333,8 +90,6 @@ class MyApp(wx.App):
             self.startTime = int(time.time())
 
     def Run(self, event):
-        global EVT_CLOCK_ID
-
         self.runTime = self.choice.spinctrl.GetValue() * 60
         self.slideindex = -1
         displayCount = wx.Display.GetCount()
@@ -369,13 +124,13 @@ class MyApp(wx.App):
         t = self.Clock(self, self.presentorsScreens)
         t.setDaemon(True)
         t.start()
-        self.Connect(-1, -1, EVT_CLOCK_ID, self.setClock)
+        self.Connect(-1, -1, cfg.EVT_CLOCK_ID, self.setClock)
 
     def setClock(self, event):
         t = time.localtime()
         now = int(time.time())
         is_running = 0
-        if (0 <= self.slideindex < len(pictureFiles)) and \
+        if (0 <= self.slideindex < len(cfg.pictureFiles)) and \
             (self.remainingTime > 0):
             is_running = 1
         else:
@@ -419,7 +174,7 @@ class MyApp(wx.App):
 
 
     def NextSlide(self):
-        if self.slideindex < len(pictureFiles):
+        if self.slideindex < len(cfg.pictureFiles):
             self.slideindex += 1
 
         for p in self.presentationScreens:
