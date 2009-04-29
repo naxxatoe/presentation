@@ -75,10 +75,13 @@ class SlideList(list):
         self.ParallelLoad(self.queue).start()
 
     def __getitem__(self, slideindex):
-        if self.list[slideindex] == None:
+        if (slideindex < 0) or (slideindex >= len(self.list)):
+            image = self.loadImage(slideindex)
+        elif (self.list[slideindex] == None):
             self.list[slideindex] = self.loadImage(slideindex)
-
-        image = self.list[slideindex]
+            image = self.list[slideindex]
+        else:
+            image = self.list[slideindex]
 
         self.queue.put(slideindex)
 
@@ -386,7 +389,7 @@ class MyApp(wx.App):
 
 
     def NextSlide(self):
-        if self.slideindex != len(pictureFiles):
+        if self.slideindex < len(pictureFiles):
             self.slideindex += 1
 
         for p in self.presentationScreens:
