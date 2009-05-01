@@ -11,6 +11,7 @@ from PresentationScreen import PresentationScreen
 from SlideList import SlideList
 from NumberFrame import NumberFrame
 from DisplayChoice import DisplayChoice
+from ThumbnailList import ThumbnailList
 
 def printUsage():
     print("Usage: " + sys.argv[0] + " [path]")
@@ -57,6 +58,7 @@ class MyApp(wx.App):
             cfg.pictureFiles.remove(cfg.blankslide)
 
         cfg.slidelist = SlideList()
+        cfg.thumbnaillist = ThumbnailList()
 
         displayCount = wx.Display.GetCount()
         self.numberFrames = []
@@ -88,6 +90,8 @@ class MyApp(wx.App):
             sys.exit(0)
         elif (key == ord('r')) or (key == ord('R')):
             self.startTime = int(time.time())
+        elif (key == ord('p')) or (key == ord('P')):
+            cfg.pause = not cfg.pause
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
@@ -130,8 +134,8 @@ class MyApp(wx.App):
         t = time.localtime()
         now = int(time.time())
         is_running = 0
-        if (0 <= self.slideindex < len(cfg.pictureFiles)) and \
-            (self.remainingTime > 0):
+        if ((0 <= self.slideindex < len(cfg.pictureFiles)) and \
+            (self.remainingTime > 0)) and (not cfg.pause):
             is_running = 1
         else:
             self.startTime = now - self.elapsedTime
