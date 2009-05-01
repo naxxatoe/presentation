@@ -16,7 +16,7 @@ class PresentorsScreen(wx.Frame):
         self.static_bitmap = []
         for i in xrange(9):
             self.static_bitmap.append(wx.StaticBitmap(self, wx.ID_ANY))
-        self.hbox = wx.GridSizer(1, 2, 0, 10)
+        self.hbox = wx.GridSizer(1, 2, 10, 10)
         self.hbox.Add(self.static_bitmap[0])
         self.hbox.Add(self.static_bitmap[1])
         self.box = wx.BoxSizer(wx.VERTICAL)
@@ -54,14 +54,18 @@ class PresentorsScreen(wx.Frame):
         width = int(float(self.size[0]) / 2) - 5
         height = int(float(self.size[1]) / 200 * 179)
         if cfg.index:
+            self.hbox.SetRows(3)
+            self.hbox.SetCols(3)
             width = int(float(self.size[0]) / 3) - 5
             height = int(float(height) / 3)
             for i in xrange(9):
-                bitmap = scaleImage(cfg.thumbnaillist[i - 4 + i],
+                bitmap = scaleImage(cfg.thumbnaillist[slideindex + i - 4],
                                     (width, height),
-                                    method = "scale")
+                                    method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
         else:
+            self.hbox.SetRows(1)
+            self.hbox.SetCols(2)
             bitmap1 = scaleImage(cfg.slidelist[slideindex],
                                  (width, height),
                                  method = method)
@@ -74,8 +78,6 @@ class PresentorsScreen(wx.Frame):
 
     def index(self, slideindex):
         if cfg.index:
-            self.hbox.SetRows(3)
-            self.hbox.SetRows(3)
             for i in xrange(2, 9):
                 self.static_bitmap[i].Show()
                 self.hbox.Add(self.static_bitmap[i])
@@ -84,8 +86,6 @@ class PresentorsScreen(wx.Frame):
                 self.thumbs.append(cfg.thumbnaillist[i])
             self.load(slideindex)
         else:
-            self.hbox.SetRows(1)
-            self.hbox.SetCols(2)
             for i in xrange(2, 9):
                 self.static_bitmap[i].Hide()
                 self.hbox.Detach(self.static_bitmap[i])
