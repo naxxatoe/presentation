@@ -10,3 +10,4 @@ slidelist = None
 thumbnaillist = None
 EVT_CLOCK_ID = wx.NewId()
 pause = False
+index = False

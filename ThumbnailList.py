@@ -25,5 +25,9 @@ class ThumbnailList(list):
             self.list.append(image)
 
     def __getitem__(self, index):
+        if (index < 0) or (index >= len(cfg.pictureFiles)):
+            buffer = "\0\0\0"
+            image = wx.ImageFromBuffer(1, 1, buffer)
+            return image
         return self.list[index]
 

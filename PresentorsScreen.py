@@ -15,36 +15,35 @@ class PresentorsScreen(wx.Frame):
         self.SetBackgroundColour(wx.Colour(80, 80, 80))
         self.static_bitmap1 = wx.StaticBitmap(self, wx.ID_ANY)
         self.static_bitmap2 = wx.StaticBitmap(self, wx.ID_ANY)
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(self.static_bitmap1, 99, wx.ALIGN_CENTER_VERTICAL)
-        hbox.AddStretchSpacer(2)
-        hbox.Add(self.static_bitmap2, 99, wx.ALIGN_CENTER_VERTICAL)
-        box = wx.BoxSizer(wx.VERTICAL)
-        box.Add(hbox, 179, wx.ALIGN_CENTER_HORIZONTAL)
-        box.AddStretchSpacer(1)
+        self.hbox = wx.GridSizer(1, 2, 5, 5)
+        self.hbox.Add(self.static_bitmap1, 99, wx.ALIGN_CENTER_VERTICAL)
+        self.hbox.Add(self.static_bitmap2, 99, wx.ALIGN_CENTER_VERTICAL)
+        self.box = wx.BoxSizer(wx.VERTICAL)
+        self.box.Add(self.hbox, 179, wx.ALIGN_CENTER_HORIZONTAL)
+        self.box.AddStretchSpacer(1)
         font = wx.Font(30, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         textcolor = wx.Colour(210, 210 , 210)
         self.clock = wx.StaticText(self, wx.ID_ANY, "13:37:00")
         self.clock.SetForegroundColour(textcolor)
         self.clock.SetFont(font)
-        hbox2.Add(self.clock , 2, wx.ALIGN_CENTER_VERTICAL)
+        hbox2.Add(self.clock , 3, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
         self.countDown = wx.StaticText(self, wx.ID_ANY, "10.00")
         self.countDown.SetForegroundColour(textcolor)
         self.countDown.SetFont(font)
-        hbox2.Add(self.countDown , 2, wx.ALIGN_CENTER_VERTICAL)
+        hbox2.Add(self.countDown , 3, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
         self.countUp = wx.StaticText(self, wx.ID_ANY, "00:00")
         self.countUp.SetForegroundColour(textcolor)
         self.countUp.SetFont(font)
-        hbox2.Add(self.countUp , 2, wx.ALIGN_CENTER_VERTICAL)
-        box.Add(hbox2, 17, wx.ALIGN_CENTER_HORIZONTAL)
+        hbox2.Add(self.countUp , 3, wx.ALIGN_CENTER_VERTICAL)
+        self.box.Add(hbox2, 17, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.panel = wx.Panel(self, wx.ID_ANY)
-        box.Add(self.panel, 3, wx.EXPAND)
+        self.box.Add(self.panel, 3, wx.EXPAND)
 
-        self.SetSizer(box)
+        self.SetSizer(self.box)
 
     def load(self, slideindex):
         method = "scale"
@@ -62,4 +61,13 @@ class PresentorsScreen(wx.Frame):
         self.static_bitmap1.SetBitmap(bitmap1)
         self.static_bitmap2.SetBitmap(bitmap2)
         self.Layout()
+
+    def index(self, slideindex):
+        self.thumbs = []
+        for i in xrange(slideindex - 4, slideindex + 4):
+            self.thumbs.append(cfg.thumbnaillist[i])
+        for i in xrange(9):
+            bitmap = scaleImage(self.thumbs[i], (320, 240), method = "scale")
+            self.static_thumbs[i].SetBitmap(bitmap)
+
 

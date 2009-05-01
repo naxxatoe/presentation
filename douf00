@@ -92,6 +92,16 @@ class MyApp(wx.App):
             self.startTime = int(time.time())
         elif (key == ord('p')) or (key == ord('P')):
             cfg.pause = not cfg.pause
+        elif (key == ord('i')) or (key == ord('I')):
+            cfg.index = not cfg.index
+            for p in self.presentorsScreens:
+                print type(p.hbox)
+                print type(p.indexsizer)
+                if cfg.index:
+                    p.box.Replace(p.hbox, p.indexsizer)
+                else:
+                    p.box.Replace(p.indexsizer, p.hbox)
+                p.Show()
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
