@@ -13,11 +13,12 @@ class PresentorsScreen(wx.Frame):
                                                size = self.size,
                                                pos = position)
         self.SetBackgroundColour(wx.Colour(80, 80, 80))
-        self.static_bitmap1 = wx.StaticBitmap(self, wx.ID_ANY)
-        self.static_bitmap2 = wx.StaticBitmap(self, wx.ID_ANY)
-        self.hbox = wx.GridSizer(1, 2, 5, 5)
-        self.hbox.Add(self.static_bitmap1, 99, wx.ALIGN_CENTER_VERTICAL)
-        self.hbox.Add(self.static_bitmap2, 99, wx.ALIGN_CENTER_VERTICAL)
+        self.static_bitmap = []
+        for i in xrange(9):
+            self.static_bitmap.append(wx.StaticBitmap(self, wx.ID_ANY))
+        self.hbox = wx.GridSizer(1, 2, 0, 10)
+        self.hbox.Add(self.static_bitmap[0])
+        self.hbox.Add(self.static_bitmap[1])
         self.box = wx.BoxSizer(wx.VERTICAL)
         self.box.Add(self.hbox, 179, wx.ALIGN_CENTER_HORIZONTAL)
         self.box.AddStretchSpacer(1)
@@ -50,24 +51,44 @@ class PresentorsScreen(wx.Frame):
         if (self.size[0] < 1024) or (self.size[1] < 768):
             method = "stretch"
 
-        width = int(float(self.size[0]) / 200 * 99)
+        width = int(float(self.size[0]) / 2) - 5
         height = int(float(self.size[1]) / 200 * 179)
-        bitmap1 = scaleImage(cfg.slidelist[slideindex],
-                             (width, height),
-                             method = method)
-        bitmap2 = scaleImage(cfg.slidelist[slideindex + 1],
-                             (width, height),
-                             method = method)
-        self.static_bitmap1.SetBitmap(bitmap1)
-        self.static_bitmap2.SetBitmap(bitmap2)
+        if cfg.index:
+            width = int(float(self.size[0]) / 3) - 5
+            height = int(float(height) / 3)
+            for i in xrange(9):
+                bitmap = scaleImage(cfg.thumbnaillist[i - 4 + i],
+                                    (width, height),
+                                    method = "scale")
+                self.static_bitmap[i].SetBitmap(bitmap)
+        else:
+            bitmap1 = scaleImage(cfg.slidelist[slideindex],
+                                 (width, height),
+                                 method = method)
+            bitmap2 = scaleImage(cfg.slidelist[slideindex + 1],
+                                 (width, height),
+                                 method = method)
+            self.static_bitmap[0].SetBitmap(bitmap1)
+            self.static_bitmap[1].SetBitmap(bitmap2)
         self.Layout()
 
     def index(self, slideindex):
-        self.thumbs = []
-        for i in xrange(slideindex - 4, slideindex + 4):
-            self.thumbs.append(cfg.thumbnaillist[i])
-        for i in xrange(9):
-            bitmap = scaleImage(self.thumbs[i], (320, 240), method = "scale")
-            self.static_thumbs[i].SetBitmap(bitmap)
+        if cfg.index:
+            self.hbox.SetRows(3)
+            self.hbox.SetRows(3)
+            for i in xrange(2, 9):
+                self.static_bitmap[i].Show()
+                self.hbox.Add(self.static_bitmap[i])
+            self.thumbs = []
+            for i in xrange(slideindex - 4, slideindex + 5):
+                self.thumbs.append(cfg.thumbnaillist[i])
+            self.load(slideindex)
+        else:
+            self.hbox.SetRows(1)
+            self.hbox.SetCols(2)
+            for i in xrange(2, 9):
+                self.static_bitmap[i].Hide()
+                self.hbox.Detach(self.static_bitmap[i])
+            self.load(slideindex)
 
 

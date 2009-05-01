@@ -95,12 +95,7 @@ class MyApp(wx.App):
         elif (key == ord('i')) or (key == ord('I')):
             cfg.index = not cfg.index
             for p in self.presentorsScreens:
-                print type(p.hbox)
-                print type(p.indexsizer)
-                if cfg.index:
-                    p.box.Replace(p.hbox, p.indexsizer)
-                else:
-                    p.box.Replace(p.indexsizer, p.hbox)
+                p.index(self.slideindex)
                 p.Show()
 
     def Run(self, event):
