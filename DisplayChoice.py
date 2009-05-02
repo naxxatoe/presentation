@@ -21,11 +21,15 @@ class DisplayChoice(wx.Frame):
             hbox.Add(choice, 0, wx.ALIGN_CENTER_VERTICAL)
             box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        timelabel = wx.StaticText(self, wx.ID_ANY, "Time:")
+        hbox.Add(timelabel, 0, wx.ALIGN_CENTER_VERTICAL)
         self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY,
                                     min = 1,
                                     max = 120,
                                     initial = 20)
-        box.Add(self.spinctrl, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        hbox.Add(self.spinctrl, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
+        box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.button = wx.Button(self, wx.ID_ANY, label = "OK")
         box.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
