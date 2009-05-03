@@ -51,18 +51,12 @@ class PresentorsScreen(wx.Frame):
         img = img.Copy()
         color = cfg.presentorBorderColor
         size = img.GetSize()
-        # top
-        rect = wx.Rect(0, 0, size[0], pixels)
-        img.SetRGBRect(rect, color[0], color[1], color[2])
-        # left
-        rect = wx.Rect(0, 0, pixels, size[1])
-        img.SetRGBRect(rect, color[0], color[1], color[2])
-        # bottom
-        rect = wx.Rect(0, size[1] - pixels, size[0], size[1])
-        img.SetRGBRect(rect, color[0], color[1], color[2])
-        # right
-        rect = wx.Rect(size[0] - pixels, 0, size[0], size[1])
-        img.SetRGBRect(rect, color[0], color[1], color[2])
+        for (x, y, width, height) in [(0, 0,                size[0], pixels ),
+                                      (0, 0,                pixels,  size[1]),
+                                      (0, size[1] - pixels, size[0], pixels ),
+                                      (size[0] - pixels, 0, pixels,  size[1])]:
+            rect = wx.Rect(x, y, width, height)
+            img.SetRGBRect(rect, color[0], color[1], color[2])
         return img
 
 
@@ -79,15 +73,18 @@ class PresentorsScreen(wx.Frame):
             width = int(float(self.size[0]) / 3) - 5
             height = int(float(height) / 3)
             for i in xrange(9):
-                img = cfg.thumbnaillist[slideindex + i - 4]
-                if i == 4:
+                slidelistindex = slideindex - 3 - ((slideindex + 1) % 3) + i
+                img = cfg.thumbnaillist[slidelistindex]
+                if i == (slideindex + 1) % 3 + 3:
                     img = self.makeImageBorder(img)
-                bitmap = scaleImage(img, (width, height), method = "scale")
+                bitmap = scaleImage(img, (width, height), method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
         else:
             self.hbox.SetRows(1)
             self.hbox.SetCols(2)
-            bitmap1 = scaleImage(cfg.slidelist[slideindex],
+            image1 = cfg.slidelist[slideindex]
+            image1 = self.makeImageBorder(image1)
+            bitmap1 = scaleImage(image1,
                                  (width, height),
                                  method = method)
             bitmap2 = scaleImage(cfg.slidelist[slideindex + 1],

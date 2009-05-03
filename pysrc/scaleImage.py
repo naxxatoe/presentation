@@ -14,7 +14,7 @@ def scaleImage(image, size, method = "scale"):
             ImageSize[0] = int(ImageSize[0] * ratioY)
             ImageSize[1] = int(ImageSize[1] * ratioY)
                 
-    image.Rescale(ImageSize[0], ImageSize[1])
+    image = image.Scale(ImageSize[0], ImageSize[1])
     bitmap = wx.BitmapFromImage(image)
 
     return bitmap
