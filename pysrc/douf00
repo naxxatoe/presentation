@@ -85,7 +85,7 @@ class MyApp(wx.App):
         elif (key == wx.WXK_UP):
             if cfg.index:
                 self.PrevSlide(3)
-        elif (key == wx.WXK_ESCAPE) or (key == ord('q')) or (key == ord('Q')):
+        elif (key == ord('q')) or (key == ord('Q')):
             for p in self.presentationScreens:
                 p.Destroy()
 
@@ -97,7 +97,7 @@ class MyApp(wx.App):
             self.startTime = int(time.time())
         elif (key == ord('p')) or (key == ord('P')):
             cfg.pause = not cfg.pause
-        elif (key == ord('i')) or (key == ord('I')):
+        elif (key == ord('i')) or (key == ord('I')) or (key == wx.WXK_ESCAPE) or (key == wx.WXK_F5):
             if cfg.index:
                 for p in self.presentationScreens:
                     p.load(self.slideindex)
