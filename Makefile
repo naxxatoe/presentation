@@ -20,7 +20,9 @@ dist/douf00.tar.bz2: dist_tmp
 	$(TAR) cvjf $@ --transform="s/dist_tmp/douf00/" $^
 
 clean:
-	test -e dist/douf00.tar.gz && rm dist/douf00.tar.gz
-	test -e dist/douf00.tar.bz2 && rm dist/douf00.tar.bz2
-	test -d dist_tmp && rm -rf dist_tmp
-	rm pysrc/*.pyc
+	test ! -e dist/douf00.tar.gz || rm dist/douf00.tar.gz
+	test ! -e dist/douf00.tar.bz2 || rm dist/douf00.tar.bz2
+	test ! -d dist_tmp || rm -rf dist_tmp
+	for file in pysrc/*.pyc; do \
+	(test -z "${file}" || test ! -e "${file}" || rm "${file}"); \
+	done
