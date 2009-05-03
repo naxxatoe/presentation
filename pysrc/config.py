@@ -11,4 +11,5 @@ thumbnaillist = None
 EVT_CLOCK_ID = wx.NewId()
 pause = False
 index = False
-presentorBackground = wx.Color(80, 80, 80)
+presentorBackgroundColor = wx.Color(80, 80, 80)
+presentorBorderColor = (255, 0, 0)
