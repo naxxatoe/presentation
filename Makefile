@@ -1,4 +1,4 @@
-SOURCE=README douf00.spec
+SOURCE=README
 TESTSOURCE=test-slides/
 PYSOURCE=pysrc/
 ALLSOURCE=$(SOURCE) $(TESTSOURCE) $(PYSOURCE)
@@ -23,6 +23,4 @@ clean:
 	test ! -e dist/douf00.tar.gz || rm dist/douf00.tar.gz
 	test ! -e dist/douf00.tar.bz2 || rm dist/douf00.tar.bz2
 	test ! -d dist_tmp || rm -rf dist_tmp
-	for file in pysrc/*.pyc; do \
-	(test -z "${file}" || test ! -e "${file}" || rm "${file}"); \
-	done
+	rm pysrc/*.pyc
