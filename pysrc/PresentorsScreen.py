@@ -61,9 +61,9 @@ class PresentorsScreen(wx.Frame):
             width = int(float(self.size[0]) / 3) - 5
             height = int(float(height) / 3)
             for i in xrange(9):
-                slidelistindex = slideindex - 3 - ((slideindex + 1) % 3) + i
+                slidelistindex = slideindex - ((slideindex + 1) % 9) + i
                 img = cfg.thumbnaillist[slidelistindex]
-                if i == (slideindex + 1) % 3 + 3:
+                if i == (slideindex + 1) % 9:
                     img = img.makeImageBorder()
 
                 bitmap = img.scaleImageToBitmap((width, height), method = "stretch")
