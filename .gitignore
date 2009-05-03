@@ -1,1 +1,3 @@
 *.pyc
+dist/douf00.tar.*
+dist_tmp/*
