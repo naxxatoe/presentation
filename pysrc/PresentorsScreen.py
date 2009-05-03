@@ -12,7 +12,7 @@ class PresentorsScreen(wx.Frame):
                                                style = style,
                                                size = self.size,
                                                pos = position)
-        self.SetBackgroundColour(wx.Colour(80, 80, 80))
+        #self.SetBackgroundColour(cfg.presentorBackground)
         self.static_bitmap = []
         for i in xrange(9):
             self.static_bitmap.append(wx.StaticBitmap(self, wx.ID_ANY))
@@ -45,6 +45,24 @@ class PresentorsScreen(wx.Frame):
         self.box.Add(self.panel, 3, wx.EXPAND)
 
         self.SetSizer(self.box)
+        self.Layout()
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+
+    def OnPaint(self, evt):
+    
+        if cfg.index:
+            i = 4
+        else:
+            i = 0
+        self.dc = wx.PaintDC(self)
+        self.dc.BeginDrawing()
+        self.dc.SetBackground(wx.Brush(cfg.presentorBackground, wx.SOLID))
+        self.dc.Clear()
+        self.dc.SetPen(wx.Pen("red", 20))
+        size = self.static_bitmap[i].GetSize()
+        pos = self.static_bitmap[i].GetPosition()
+        self.dc.DrawRectangle(pos[0], pos[1], size[0], size[1])
+        self.dc.EndDrawing()
 
     def load(self, slideindex):
         method = "scale"
@@ -59,9 +77,8 @@ class PresentorsScreen(wx.Frame):
             width = int(float(self.size[0]) / 3) - 5
             height = int(float(height) / 3)
             for i in xrange(9):
-                bitmap = scaleImage(cfg.thumbnaillist[slideindex + i - 4],
-                                    (width, height),
-                                    method = "stretch")
+                img = cfg.thumbnaillist[slideindex + i - 4]
+                bitmap = scaleImage(img, (width, height), method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
         else:
             self.hbox.SetRows(1)

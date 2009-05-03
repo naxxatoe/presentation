@@ -96,7 +96,6 @@ class MyApp(wx.App):
             cfg.index = not cfg.index
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
-                p.Show()
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
