@@ -1,6 +1,6 @@
 import wx
 import config as cfg
-from scaleImage import scaleImage
+from MyImage import *
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -21,7 +21,7 @@ class PresentationScreen(wx.Frame):
         self.panel.SetBackgroundColour(wx.Colour(0, 0, 0))
 
     def load(self, slideindex):
-        bitmap = scaleImage(cfg.slidelist[slideindex], self.size)
+        bitmap = cfg.slidelist[slideindex].scaleImageToBitmap(self.size)
         self.static_bitmap.SetBitmap(bitmap)
         self.Layout()
 

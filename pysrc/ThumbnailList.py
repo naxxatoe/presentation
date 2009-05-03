@@ -29,5 +29,6 @@ class ThumbnailList(list):
             buffer = "\0\0\0" * 320 * 240
             image = wx.ImageFromBuffer(320, 240, buffer)
             return image
+
         return self.list[index]
 

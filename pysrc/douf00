@@ -33,7 +33,6 @@ class MyApp(wx.App):
                 printUsage()
                 sys.exit("No path specified")
 
-
         try:
             os.chdir(basedir)
         except OSError:
@@ -81,9 +80,11 @@ class MyApp(wx.App):
         elif (key == wx.WXK_LEFT) or (key == wx.WXK_PAGEUP):
             self.PrevSlide()
         elif (key == wx.WXK_DOWN):
-            self.NextSlide(3)
+            if cfg.index:
+                self.NextSlide(3)
         elif (key == wx.WXK_UP):
-            self.PrevSlide(3)
+            if cfg.index:
+                self.PrevSlide(3)
         elif (key == wx.WXK_ESCAPE) or (key == ord('q')) or (key == ord('Q')):
             for p in self.presentationScreens:
                 p.Destroy()
@@ -100,6 +101,11 @@ class MyApp(wx.App):
             cfg.index = not cfg.index
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
+        elif (key == wx.WXK_RETURN):
+            if cfg.index:
+                cfg.index = not cfg.index
+                for p in self.presentorsScreens:
+                    p.index(self.slideindex)
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
@@ -189,9 +195,10 @@ class MyApp(wx.App):
         if self.slideindex + step <= len(cfg.pictureFiles):
             self.slideindex += step
 
-        for p in self.presentationScreens:
-            p.load(self.slideindex)
-            p.Show()
+        if cfg.index:
+            for p in self.presentationScreens:
+                p.load(self.slideindex)
+                p.Show()
 
         for p in self.presentorsScreens:
             p.load(self.slideindex)
@@ -201,9 +208,10 @@ class MyApp(wx.App):
         if self.slideindex - step >= -1:
             self.slideindex -= step
 
-        for p in self.presentationScreens:
-            p.load(self.slideindex)
-            p.Show()
+        if cfg.index:
+            for p in self.presentationScreens:
+                p.load(self.slideindex)
+                p.Show()
 
         for p in self.presentorsScreens:
             p.load(self.slideindex)

@@ -1,6 +1,6 @@
 import wx
 import config as cfg
-from scaleImage import scaleImage
+from MyImage import *
 
 class PresentorsScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -16,6 +16,7 @@ class PresentorsScreen(wx.Frame):
         self.static_bitmap = []
         for i in xrange(9):
             self.static_bitmap.append(wx.StaticBitmap(self, wx.ID_ANY))
+
         self.hbox = wx.GridSizer(1, 2, 10, 10)
         self.hbox.Add(self.static_bitmap[0], 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.hbox.Add(self.static_bitmap[1], 0, wx.ALIGN_CENTER_HORIZONTAL)
@@ -47,19 +48,6 @@ class PresentorsScreen(wx.Frame):
         self.SetSizer(self.box)
         self.Layout()
 
-    def makeImageBorder(self, img, pixels = 5):
-        img = img.Copy()
-        color = cfg.presentorBorderColor
-        size = img.GetSize()
-        for (x, y, width, height) in [(0, 0,                size[0], pixels ),
-                                      (0, 0,                pixels,  size[1]),
-                                      (0, size[1] - pixels, size[0], pixels ),
-                                      (size[0] - pixels, 0, pixels,  size[1])]:
-            rect = wx.Rect(x, y, width, height)
-            img.SetRGBRect(rect, color[0], color[1], color[2])
-        return img
-
-
     def load(self, slideindex):
         method = "scale"
         if (self.size[0] < 1024) or (self.size[1] < 768):
@@ -76,22 +64,23 @@ class PresentorsScreen(wx.Frame):
                 slidelistindex = slideindex - 3 - ((slideindex + 1) % 3) + i
                 img = cfg.thumbnaillist[slidelistindex]
                 if i == (slideindex + 1) % 3 + 3:
-                    img = self.makeImageBorder(img)
-                bitmap = scaleImage(img, (width, height), method = "stretch")
+                    img = img.makeImageBorder()
+
+                bitmap = img.scaleImageToBitmap((width, height), method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
         else:
             self.hbox.SetRows(1)
             self.hbox.SetCols(2)
             image1 = cfg.slidelist[slideindex]
-            image1 = self.makeImageBorder(image1)
-            bitmap1 = scaleImage(image1,
-                                 (width, height),
-                                 method = method)
-            bitmap2 = scaleImage(cfg.slidelist[slideindex + 1],
-                                 (width, height),
-                                 method = method)
+            image1 = image1.makeImageBorder()
+            bitmap1 = image1.scaleImageToBitmap((width, height),
+                                                method = method)
+            bitmap2 = cfg.slidelist[slideindex + 1].scaleImageToBitmap(
+                                                        (width, height),
+                                                        method = method)
             self.static_bitmap[0].SetBitmap(bitmap1)
             self.static_bitmap[1].SetBitmap(bitmap2)
+
         self.Layout()
 
     def index(self, slideindex):
@@ -99,14 +88,17 @@ class PresentorsScreen(wx.Frame):
             for i in xrange(2, 9):
                 self.static_bitmap[i].Show()
                 self.hbox.Add(self.static_bitmap[i], 0, wx.ALIGN_CENTER_HORIZONTAL)
+
             self.thumbs = []
             for i in xrange(slideindex - 4, slideindex + 5):
                 self.thumbs.append(cfg.thumbnaillist[i])
+
             self.load(slideindex)
+
         else:
             for i in xrange(2, 9):
                 self.static_bitmap[i].Hide()
                 self.hbox.Detach(self.static_bitmap[i])
-            self.load(slideindex)
 
+            self.load(slideindex)
 
