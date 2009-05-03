@@ -78,8 +78,12 @@ class MyApp(wx.App):
         key = event.GetKeyCode()
         if (key == wx.WXK_RIGHT) or (key == wx.WXK_SPACE) or (key == wx.WXK_PAGEDOWN):
             self.NextSlide()
-        elif (key == wx.WXK_LEFT) or (key == wx.WXK_DOWN) or (key == wx.WXK_PAGEUP):
+        elif (key == wx.WXK_LEFT) or (key == wx.WXK_PAGEUP):
             self.PrevSlide()
+        elif (key == wx.WXK_DOWN):
+            self.NextSlide(3)
+        elif (key == wx.WXK_UP):
+            self.PrevSlide(3)
         elif (key == wx.WXK_ESCAPE) or (key == ord('q')) or (key == ord('Q')):
             for p in self.presentationScreens:
                 p.Destroy()
@@ -181,9 +185,9 @@ class MyApp(wx.App):
                 time.sleep(1)
 
 
-    def NextSlide(self):
-        if self.slideindex < len(cfg.pictureFiles):
-            self.slideindex += 1
+    def NextSlide(self, step = 1):
+        if self.slideindex + step <= len(cfg.pictureFiles):
+            self.slideindex += step
 
         for p in self.presentationScreens:
             p.load(self.slideindex)
@@ -193,9 +197,9 @@ class MyApp(wx.App):
             p.load(self.slideindex)
             p.Show()
          
-    def PrevSlide(self):
-        if self.slideindex != -1:
-            self.slideindex -= 1
+    def PrevSlide(self, step = 1):
+        if self.slideindex - step >= -1:
+            self.slideindex -= step
 
         for p in self.presentationScreens:
             p.load(self.slideindex)
