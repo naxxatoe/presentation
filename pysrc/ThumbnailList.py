@@ -26,9 +26,16 @@ class ThumbnailList(list):
 
     def __getitem__(self, index):
         if (index < 0) or (index >= len(cfg.pictureFiles)):
-            buffer = "\0\0\0" * 320 * 240
-            image = wx.ImageFromBuffer(320, 240, buffer)
-            return image
+            if (index > len(cfg.pictureFiles)) or (cfg.blankslide == ""):
+                buffer = "\0\0\0" * 320 * 240
+                image = wx.ImageFromBuffer(320, 240, buffer)
+                return image
+            else:
+                f = open(cfg.blankslide, "rb")
+                image = wx.ImageFromStream(f)
+                image.Rescale(320, 240)
+                f.close()
+                return image
 
         return self.list[index]
 

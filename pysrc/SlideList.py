@@ -25,7 +25,7 @@ class SlideList(list):
 
     def loadImage(self, slideindex):
         if (slideindex < 0) or (slideindex >= len(self.list)):
-            if cfg.blankslide == "":
+            if (slideindex > len(self.list)) or (cfg.blankslide == ""):
                 buffer = "\0\0\0"
                 image = wx.ImageFromBuffer(1, 1, buffer)
             else:
