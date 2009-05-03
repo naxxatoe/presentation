@@ -98,6 +98,10 @@ class MyApp(wx.App):
         elif (key == ord('p')) or (key == ord('P')):
             cfg.pause = not cfg.pause
         elif (key == ord('i')) or (key == ord('I')):
+            if cfg.index:
+                for p in self.presentationScreens:
+                    p.load(self.slideindex)
+                    p.Show()
             cfg.index = not cfg.index
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
@@ -106,6 +110,10 @@ class MyApp(wx.App):
                 cfg.index = not cfg.index
                 for p in self.presentorsScreens:
                     p.index(self.slideindex)
+                for p in self.presentationScreens:
+                    p.load(self.slideindex)
+                    p.Show()
+                
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
@@ -195,7 +203,7 @@ class MyApp(wx.App):
         if self.slideindex + step <= len(cfg.pictureFiles):
             self.slideindex += step
 
-        if cfg.index:
+        if not cfg.index:
             for p in self.presentationScreens:
                 p.load(self.slideindex)
                 p.Show()
@@ -208,7 +216,7 @@ class MyApp(wx.App):
         if self.slideindex - step >= -1:
             self.slideindex -= step
 
-        if cfg.index:
+        if not cfg.index:
             for p in self.presentationScreens:
                 p.load(self.slideindex)
                 p.Show()
