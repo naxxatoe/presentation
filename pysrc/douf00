@@ -171,9 +171,9 @@ class MyApp(wx.App):
         for s in self.presentorsScreens:
             tstr = "%02d:%02d:%02d" % (t[3], t[4], t[5])
             s.clock.SetLabel(tstr)
-            countUpStr = "%02d:%02d" % (self.elapsedTime / 60,
+            countUpStr = "  %02d:%02d  " % (self.elapsedTime / 60,
                                         self.elapsedTime % 60)
-            countDownStr = "%02d:%02d" % (self.remainingTime / 60,
+            countDownStr = "  %02d:%02d  " % (self.remainingTime / 60,
                                           self.remainingTime % 60)
             s.countUp.SetLabel(countUpStr)
             s.countDown.SetLabel(countDownStr)

@@ -31,21 +31,28 @@ class PresentorsScreen(wx.Frame):
         self.clock.SetFont(font)
         hbox2.Add(self.clock , 3, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
-        self.countDown = wx.StaticText(self, wx.ID_ANY, "10.00")
+        self.countDown = wx.StaticText(self, wx.ID_ANY, "  10.00  ")
         self.countDown.SetForegroundColour(textcolor)
         self.countDown.SetFont(font)
         hbox2.Add(self.countDown , 3, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
-        self.countUp = wx.StaticText(self, wx.ID_ANY, "00:00")
+        self.countUp = wx.StaticText(self, wx.ID_ANY, "  00:00  ")
         self.countUp.SetForegroundColour(textcolor)
         self.countUp.SetFont(font)
         hbox2.Add(self.countUp , 3, wx.ALIGN_CENTER_VERTICAL)
         self.box.Add(hbox2, 17, wx.ALIGN_CENTER_HORIZONTAL)
-
         self.panel = wx.Panel(self, wx.ID_ANY)
         self.box.Add(self.panel, 3, wx.EXPAND)
-
         self.SetSizer(self.box)
+        self.numbers = []
+
+        textcolor = wx.Colour(210, 210 , 210)
+        font = wx.Font(25, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        for i in xrange(9):
+            self.numbers.append(wx.StaticText(self, wx.ID_ANY, "0"))
+            self.numbers[i].Hide()
+            self.numbers[i].SetForegroundColour(textcolor)
+            self.numbers[i].SetFont(font)
         self.Layout()
 
     def load(self, slideindex):
@@ -68,6 +75,12 @@ class PresentorsScreen(wx.Frame):
 
                 bitmap = img.scaleImageToBitmap((width, height), method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
+            self.Layout()
+            for i in xrange(9):
+                slidelistindex = slideindex - ((slideindex + 1) % 9) + i
+                pos = self.static_bitmap[i].GetPosition()
+                self.numbers[i].SetPosition((pos[0]+5, pos[1]+5))
+                self.numbers[i].SetLabel(str(slidelistindex + 1))
         else:
             self.hbox.SetRows(1)
             self.hbox.SetCols(2)
@@ -93,12 +106,18 @@ class PresentorsScreen(wx.Frame):
             for i in xrange(slideindex - 4, slideindex + 5):
                 self.thumbs.append(cfg.thumbnaillist[i])
 
+            for i in xrange(9):
+                self.numbers[i].Show()
+
             self.load(slideindex)
 
         else:
             for i in xrange(2, 9):
                 self.static_bitmap[i].Hide()
                 self.hbox.Detach(self.static_bitmap[i])
+
+            for i in xrange(9):
+                self.numbers[i].Hide()
 
             self.load(slideindex)
 
