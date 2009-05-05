@@ -87,9 +87,13 @@ class PresentorsScreen(wx.Frame):
             if not update:
                 for i in xrange(9):
                     slidelistindex = slideindex - ((slideindex + 1) % 9) + i
-                    pos = self.static_bitmap[i].GetPosition()
-                    self.numbers[i].SetPosition((pos[0]+5, pos[1]+5))
                     self.numbers[i].SetLabel(str(slidelistindex + 1))
+                self.Layout()
+                for i in xrange(9):
+                    pos = self.static_bitmap[i].GetPosition()
+                    x = pos[0] + self.static_bitmap[i].GetSize()[0] - self.numbers[i].GetSize()[0] - 5
+                    y = pos[1] + 5
+                    self.numbers[i].SetPosition((x, y))
 
         else:
             self.hbox.SetRows(1)
