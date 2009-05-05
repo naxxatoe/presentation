@@ -179,7 +179,7 @@ class MyApp(wx.App):
             s.countDown.SetLabel(countDownStr)
             try:
                 red = int(float(255) * self.elapsedTime / self.runTime)
-                green = int(float(255) * self.remainingTime / self.runTime)
+                green = int(float(150) * self.remainingTime / self.runTime)
                 color = wx.Colour(red, green, 0)
                 s.panel.SetBackgroundColour(color)
                 if self.remainingTime < 120:
