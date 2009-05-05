@@ -31,7 +31,7 @@ class SlideList(list):
             else:
                 f = open(cfg.blankslide, "rb")
                 image = wx.ImageFromStream(f)
-                f
+                f.close()
         else:
             try:
                 f = open(cfg.pictureFiles[slideindex], "rb")

@@ -95,6 +95,7 @@ class MyApp(wx.App):
             sys.exit(0)
         elif (key == ord('r')) or (key == ord('R')):
             self.startTime = int(time.time())
+            self.elapsedTime = 0
         elif (key == ord('p')) or (key == ord('P')):
             cfg.pause = not cfg.pause
         elif (key == ord('i')) or (key == ord('I')) or (key == wx.WXK_ESCAPE) or (key == wx.WXK_F5):
