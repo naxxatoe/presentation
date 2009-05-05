@@ -55,7 +55,7 @@ class PresentorsScreen(wx.Frame):
             self.numbers[i].SetFont(font)
         self.Layout()
 
-    def load(self, slideindex):
+    def load(self, slideindex, prevSlide = None):
         method = "scale"
         if (self.size[0] < 1024) or (self.size[1] < 768):
             method = "stretch"
@@ -67,7 +67,13 @@ class PresentorsScreen(wx.Frame):
             self.hbox.SetCols(3)
             width = int(float(self.size[0]) / 3) - 5
             height = int(float(height) / 3)
-            for i in xrange(9):
+            update = (prevSlide != None) and ((prevSlide - ((prevSlide + 1) % 9)) ==
+                                              (slideindex - ((slideindex + 1) % 9)))
+            if update:
+                updateList = [(slideindex + 1) % 9, (prevSlide + 1) % 9]
+            else:
+                updateList = xrange(9)
+            for i in updateList:
                 slidelistindex = slideindex - ((slideindex + 1) % 9) + i
                 img = cfg.thumbnaillist[slidelistindex]
                 if i == (slideindex + 1) % 9:
@@ -75,12 +81,16 @@ class PresentorsScreen(wx.Frame):
 
                 bitmap = img.scaleImageToBitmap((width, height), method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
-            self.Layout()
-            for i in xrange(9):
-                slidelistindex = slideindex - ((slideindex + 1) % 9) + i
-                pos = self.static_bitmap[i].GetPosition()
-                self.numbers[i].SetPosition((pos[0]+5, pos[1]+5))
-                self.numbers[i].SetLabel(str(slidelistindex + 1))
+            if not update:
+                self.Layout()
+
+            if not update:
+                for i in xrange(9):
+                    slidelistindex = slideindex - ((slideindex + 1) % 9) + i
+                    pos = self.static_bitmap[i].GetPosition()
+                    self.numbers[i].SetPosition((pos[0]+5, pos[1]+5))
+                    self.numbers[i].SetLabel(str(slidelistindex + 1))
+
         else:
             self.hbox.SetRows(1)
             self.hbox.SetCols(2)

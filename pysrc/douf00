@@ -209,7 +209,7 @@ class MyApp(wx.App):
                 p.Show()
 
         for p in self.presentorsScreens:
-            p.load(self.slideindex)
+            p.load(self.slideindex, prevSlide = self.slideindex - step)
             p.Show()
          
     def PrevSlide(self, step = 1):
@@ -222,7 +222,7 @@ class MyApp(wx.App):
                 p.Show()
 
         for p in self.presentorsScreens:
-            p.load(self.slideindex)
+            p.load(self.slideindex, prevSlide = self.slideindex + step)
             p.Show()
          
 
