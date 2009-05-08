@@ -43,7 +43,7 @@ class DisplayChoice(wx.Frame):
         self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY,
                                     min = 1,
                                     max = 120,
-                                    initial = 20)
+                                    initial = cfg.defaultTime)
         hbox.Add(self.spinctrl, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
         box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.button = wx.Button(self, wx.ID_ANY, label = "OK")
