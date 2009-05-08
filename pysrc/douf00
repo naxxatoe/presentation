@@ -28,6 +28,7 @@ from SlideList import SlideList
 from NumberFrame import NumberFrame
 from DisplayChoice import DisplayChoice
 from ThumbnailList import ThumbnailList
+import atexit
 
 def printUsage():
     print("Usage: " + sys.argv[0] + " [path]")
@@ -37,13 +38,18 @@ class TriggerClock(wx.PyEvent):
         super(TriggerClock, self).__init__()
         self.SetEventType(cfg.EVT_CLOCK_ID)
 
+def die():
+    os.chdir(cfg.prevWD)
+
 class MyApp(wx.App):
     def OnInit(self):
-        print(cfg.title + "  Copyright (C) 2009  Martin Ptacek")
+        print(cfg.title + " " + cfg.__version__)
+        print("Copyright (C) 2009  " + cfg.__author__)
         print("This program comes with ABSOLUTELY NO WARRANTY.")
         print("This is free software, and you are welcome to redistribute it")
         print("under certain conditions.")
 
+        atexit.register(die)
         try:
             basedir = sys.argv[1]
         except IndexError:
@@ -53,6 +59,15 @@ class MyApp(wx.App):
             else:
                 printUsage()
                 sys.exit("No path specified")
+
+        self.td = None
+        if basedir[-4:].lower() == ".pdf":
+            import tempfile
+            self.td = tempfile.mkdtemp(prefix="douf00")
+            atexit.register(self.deleteTemp)
+            os.system("gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile="+ os.path.join(self.td, "douf00_%04d.jpeg") + " " + basedir)
+
+            basedir = self.td
 
         try:
             os.chdir(basedir)
@@ -92,6 +107,10 @@ class MyApp(wx.App):
         self.remainingTime = self.runTime
         self.elapsedTime = 0
         return True
+
+    def deleteTemp(self):
+        import shutil
+        shutil.rmtree(self.td)
 
     def OnKeyPress(self, event):
         event.Skip()

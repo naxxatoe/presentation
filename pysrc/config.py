@@ -15,9 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx
+import os
 
+prevWD = os.getcwd()
 title = "DouF00"
 __version__ = "1.0"
+__author__ = "Martin Ptacek"
 numberFontSize = 150
 preLoadCache = 5
 pictureFiles = None
