@@ -20,6 +20,7 @@ from MyImage import *
 
 class PresentorsScreen(wx.Frame):
     def __init__(self, displayindex = 0):
+        self.displayindex = displayindex
         geometry = wx.Display(displayindex).GetGeometry()
         position = (geometry[0], geometry[1])
         self.size = (geometry[2], geometry[3])
@@ -126,7 +127,9 @@ class PresentorsScreen(wx.Frame):
 
         self.Layout()
 
-    def index(self, slideindex):
+    def index(self, slideindex, force = False):
+        if force == True:
+            cfg.index = False
         if cfg.index:
             for i in xrange(2, 9):
                 self.static_bitmap[i].Show()
@@ -150,4 +153,5 @@ class PresentorsScreen(wx.Frame):
                 self.numbers[i].Hide()
 
             self.load(slideindex)
+
 

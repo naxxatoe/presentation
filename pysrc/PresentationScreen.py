@@ -20,6 +20,7 @@ from MyImage import *
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
+        self.displayindex = displayindex
         geometry = wx.Display(displayindex).GetGeometry()
         position = (geometry[0], geometry[1])
         self.size = (geometry[2], geometry[3])
