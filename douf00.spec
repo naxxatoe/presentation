@@ -1,9 +1,9 @@
 Name:		douf00
 Summary:	A simple and fatfree presentation software
-Version:	1.10
+Version:	1.0
 Release:	1
 Source0:	%{name}-%{version}.tar.gz
-License:	GPL
+License:	GPLv3
 Group:		Applications/Publishing
 Buildroot:	%{_tmppath}/root-%{name}-%{version}
 BuildRequires:	python >= 2.5
