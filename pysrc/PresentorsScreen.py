@@ -79,17 +79,18 @@ class PresentorsScreen(wx.Frame):
 
         width = int(float(self.size[0]) / 2) - 5
         height = int(float(self.size[1]) / 200 * 179)
+        update = (prevSlide != None) and ((prevSlide - ((prevSlide + 1) % 9)) ==
+                                          (slideindex - ((slideindex + 1) % 9)))
         if cfg.index:
             self.hbox.SetRows(3)
             self.hbox.SetCols(3)
             width = int(float(self.size[0]) / 3) - 5
             height = int(float(height) / 3)
-            update = (prevSlide != None) and ((prevSlide - ((prevSlide + 1) % 9)) ==
-                                              (slideindex - ((slideindex + 1) % 9)))
             if update:
                 updateList = [(slideindex + 1) % 9, (prevSlide + 1) % 9]
             else:
                 updateList = xrange(9)
+
             for i in updateList:
                 slidelistindex = slideindex - ((slideindex + 1) % 9) + i
                 img = cfg.thumbnaillist[slidelistindex]
@@ -98,13 +99,13 @@ class PresentorsScreen(wx.Frame):
 
                 bitmap = img.scaleImageToBitmap((width, height), method = "stretch")
                 self.static_bitmap[i].SetBitmap(bitmap)
-            if not update:
-                self.Layout()
 
             if not update:
+                self.Layout()
                 for i in xrange(9):
                     slidelistindex = slideindex - ((slideindex + 1) % 9) + i
                     self.numbers[i].SetLabel(str(slidelistindex + 1))
+
                 self.Layout()
                 for i in xrange(9):
                     pos = self.static_bitmap[i].GetPosition()
@@ -126,6 +127,8 @@ class PresentorsScreen(wx.Frame):
             self.static_bitmap[1].SetBitmap(bitmap2)
 
         self.Layout()
+        if not update:
+            self.Refresh()
 
     def index(self, slideindex, force = False):
         if force == True:
