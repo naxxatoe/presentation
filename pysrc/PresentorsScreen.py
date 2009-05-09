@@ -70,6 +70,7 @@ class PresentorsScreen(wx.Frame):
             self.numbers[i].Hide()
             self.numbers[i].SetForegroundColour(textcolor)
             self.numbers[i].SetFont(font)
+
         self.Layout()
 
     def load(self, slideindex, prevSlide = None):
@@ -102,6 +103,7 @@ class PresentorsScreen(wx.Frame):
 
             if not update:
                 self.Layout()
+
             for i in updateList:
                 slidelistindex = slideindex - ((slideindex + 1) % 9) + i
                 self.numbers[i].SetLabel(str(slidelistindex + 1))
