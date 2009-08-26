@@ -22,6 +22,7 @@
 # THE SOFTWARE..
 #
 # Author: natano (Martin Ptacek)
+# Author: naxxatoe (Sebastian Maier)
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
