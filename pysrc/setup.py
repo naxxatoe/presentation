@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # DouF00 - fat free presentations
 # Copyright (C) 2009  Martin Ptacek
 #
@@ -19,12 +17,31 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE..
+# THE SOFTWARE.
 #
 # Author: natano (Martin Ptacek)
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
-from DouF00 import douf00
-douf00.main()
+from distutils.core import setup
+import platform
+
+args = {'name' : 'DouF00',
+        'author' : 'Martin Ptacek',
+        'author_email' : 'natanoptacek@gmail.com',
+        'platforms': ['any'],
+        'url': 'http://nicenamecrew.com/',
+        'version' : '1',
+        'license' :'MIT',
+        'packages' : ['DouF00'],
+        'description': 'fat free presentations'
+       }
+
+if platform.system() == 'Windows':
+    import py2exe
+    args['console'] = ['douf00'];
+else:
+    args['scripts'] = ['douf00'];
+
+setup(**args)
 

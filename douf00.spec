@@ -1,7 +1,7 @@
 Name:		douf00
 Summary:	A simple and fatfree presentation software
 Version:	1.0
-Release:	1
+Release:	2
 Source0:	%{name}-%{version}.tar.gz
 License:	GPLv3
 Group:		Applications/Publishing
@@ -19,33 +19,22 @@ including timers, previews an audience and presentor screen
 %setup -q
 
 %build
-touch douf00
+cd pysrc && python setup.py build
 
 %install
 if test "%{buildroot}" != ""; then
 	rm -rf %{buildroot}
 	mkdir -p %{buildroot}
 fi
-mkdir -p %{buildroot}/usr/bin
-mkdir -p %{buildroot}/usr/share/doc/douf00/
-install -pm 0755 douf00 %{buildroot}/usr/bin/douf00
-install -pm 0644 README %{buildroot}/usr/share/doc/douf00/README
 
-mkdir -p %{buildroot}/%{python_sitelib}/douf00
-install -pm 0644 config.py %{buildroot}/%{python_sitelib}/douf00/config.py
-install -pm 0644 DisplayChoice.py %{buildroot}/%{python_sitelib}/douf00/DisplayChoice.py
-install -pm 0644 MyImage.py %{buildroot}/%{python_sitelib}/douf00/MyImage.py
-install -pm 0644 NumberFrame.py %{buildroot}/%{python_sitelib}/douf00/NumberFrame.py
-install -pm 0644 PresentationScreen.py %{buildroot}/%{python_sitelib}/douf00/PresentationScreen.py
-install -pm 0644 PresentorsScreen.py %{buildroot}/%{python_sitelib}/douf00/PresentorsScreen.py
-install -pm 0644 py2exe-setup.py %{buildroot}/%{python_sitelib}/douf00/py2exe-setup.py
-install -pm 0644 SlideList.py %{buildroot}/%{python_sitelib}/douf00/SlideList.py
-install -pm 0644 ThumbnailList.py %{buildroot}/%{python_sitelib}/douf00/ThumbnailList.py
+cd pysrc && python setup.py install --root=%{buildroot}
+mkdir -p %{buildroot}/usr/share/doc/douf00/
+install -pm 0644 README %{buildroot}/usr/share/doc/douf00/README
 
 %files
 %defattr(-,root,root)
 /usr/bin/douf00
-%{python_sitelib}/douf00/
+%{python_sitelib}/DouF00
 %doc /usr/share/doc/douf00/README
 
 %clean
@@ -54,6 +43,8 @@ if test "%{buildroot}" != ""; then
 fi
 
 %changelog
+* Sun Aug 23 2009 Bernd Zeimetz
+- Updated to use the new setup.py/distutils
 * Mon May 4 2009 Stefan Heinecke
 - updated specfile for python modules
 * Mon Apr 27 2009 Stefan Heinecke <tua.noc45@gmail.com> 1.0-1

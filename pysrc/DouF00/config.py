@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # DouF00 - fat free presentations
 # Copyright (C) 2009  Martin Ptacek
 #
@@ -19,12 +17,29 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE..
+# THE SOFTWARE.
 #
 # Author: natano (Martin Ptacek)
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
-from DouF00 import douf00
-douf00.main()
+import wx
+import os
 
+prevWD = os.getcwd()
+title = "DouF00"
+__version__ = "1.0"
+__author__ = "Martin Ptacek"
+numberFontSize = 150
+preLoadCache = 5
+pictureFiles = None
+blankslide = None
+slidelist = None
+thumbnaillist = None
+EVT_CLOCK_ID = wx.NewId()
+pause = False
+index = False
+presentorBackgroundColor = wx.Color(80, 80, 80)
+presentorBorderColor = (255, 0, 0)
+blankThumbnail = None
+defaultTime = 45
