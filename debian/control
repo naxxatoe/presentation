@@ -1,0 +1,16 @@
+Source: douf00
+Section: utils
+Priority: optional
+Maintainer: Bernd Zeimetz <bzed@debian.org>
+Build-Depends: debhelper (>= 7.0.14), python
+Build-Depends-Indep: python-support (>= 0.7.1)
+Standards-Version: 3.8.3
+Homepage: http://github.com/natano/presentation/tree/master
+Vcs-Git: git://github.com/natano/presentation.git
+Vcs-Browser: http://github.com/natano/presentation/tree/debian
+
+Package: douf00
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}, python-wxgtk2.8
+Description: fat free presentations
+ FIXME!
