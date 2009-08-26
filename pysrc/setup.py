@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # DouF00 - fat free presentations
 # Copyright (C) 2009  Martin Ptacek
 #
@@ -28,7 +29,7 @@ import platform
 
 args = {'name' : 'DouF00',
         'author' : 'Martin Ptacek',
-        'author_email' : 'natanoptacek@gmail.com',
+        'author_email' : 'natano@nicenamecrew.com',
         'platforms': ['any'],
         'url': 'http://nicenamecrew.com/',
         'version' : '1',
