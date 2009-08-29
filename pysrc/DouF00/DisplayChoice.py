@@ -29,6 +29,7 @@ import config as cfg
 
 class DisplayChoice(wx.Frame):
     def __init__(self):
+        geometry = wx.Display(0).GetGeometry()
         style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
         super(DisplayChoice, self).__init__(None, wx.ID_ANY, cfg.title,
                                             style = style)
@@ -60,5 +61,7 @@ class DisplayChoice(wx.Frame):
         box.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizerAndFit(box)
+        position = (geometry[0] + 50, geometry[1] + 50)
+        self.SetPosition(position)
         self.Show()
 
