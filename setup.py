@@ -26,19 +26,22 @@
 
 from distutils.core import setup
 
-args = {'name': 'DouF00',
-        'version': '1.0',
-        'description': 'fat free presentations',
+args = {
+    'name': 'DouF00',
+    'version': '1.0',
+    'description': 'fat free presentations',
 
-        'author': 'Martin Ptacek',
-        'author_email': 'natano@nicenamecrew.com',
-        'license': 'MIT',
-        'url': 'http://nicenamecrew.com/',
+    'author': 'Martin Ptacek',
+    'author_email': 'natano@nicenamecrew.com',
+    'license': 'MIT',
+    'url': 'http://nicenamecrew.com/',
 
-        'platforms': ['Linux'],
-        'packages': ['DouF00'],
-        'scripts': ['wrapper/douf00']
-       }
+    'platforms': ['Linux'],
+    'packages': ['DouF00'],
+    'package_dir': {'DouF00': 'pysrc/DouF00'},
+    'scripts': ['pysrc/wrapper/douf00'],
+    'data_files': [('share/man/man1', ['doc/douf00.1'])],
+}
 
 setup(**args)
 
