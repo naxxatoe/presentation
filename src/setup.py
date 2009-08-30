@@ -25,24 +25,20 @@
 # Web: http://nicenamecrew.com/
 
 from distutils.core import setup
-import platform
 
-args = {'name' : 'DouF00',
-        'author' : 'Martin Ptacek',
-        'author_email' : 'natano@nicenamecrew.com',
-        'platforms': ['any'],
+args = {'name': 'DouF00',
+        'version': '1.0',
+        'description': 'fat free presentations',
+
+        'author': 'Martin Ptacek',
+        'author_email': 'natano@nicenamecrew.com',
+        'license': 'MIT',
         'url': 'http://nicenamecrew.com/',
-        'version' : '1',
-        'license' :'MIT',
-        'packages' : ['DouF00'],
-        'description': 'fat free presentations'
-       }
 
-if platform.system() == 'Windows':
-    import py2exe
-    args['console'] = ['douf00'];
-else:
-    args['scripts'] = ['douf00'];
+        'platforms': ['Linux'],
+        'packages': ['DouF00'],
+        'scripts': ['wrapper/douf00']
+       }
 
 setup(**args)
 
