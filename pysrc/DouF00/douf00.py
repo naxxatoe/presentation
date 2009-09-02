@@ -93,22 +93,36 @@ class MyApp(wx.App):
             sys.exit("No such file or directory")
 
         basedir = os.getcwd()
-
         cfg.pictureFiles = []
         files = os.listdir(basedir)
+
+	# support for more picture types
+	supportedTypes = ["jpg","jpeg","png","bmp","pcx"]
         for file in files:
             try:
-                if (file[-4:].lower() == ".jpg") or (file[-5:].lower() == ".jpeg"):
-                    cfg.pictureFiles.append(file)
+		    for type in supportedTypes:
+			    if (file[-(len("." + type)):].lower() == "." + type):
+				    cfg.pictureFiles.append(file)
+				    break
             except IndexError:
                 pass
 
         cfg.pictureFiles.sort()
 
+	# DOC: if you place in your presentation directory a file with
+	#      the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
+	#      that will be your first slide, your title slide, which
+	#      shows up when you start douf00.
+	#      It was chosen that way, because some people prefer it when they
+	#      start the presentation to see a slide other don't prefer that
+	#      so more freedom to the presentator to organize their presentation
+
         cfg.blankslide = ""
-        if "blank.jpg" in cfg.pictureFiles:
-            cfg.blankslide = "blank.jpg"
-            cfg.pictureFiles.remove(cfg.blankslide)
+        for type in supportedTypes:
+            if ("blank" + "." + type) in cfg.pictureFiles:
+                cfg.blankslide = ("blank" + "." + type)
+                cfg.pictureFiles.remove(cfg.blankslide)
+                break
 
         cfg.slidelist = SlideList()
         cfg.thumbnaillist = ThumbnailList()
