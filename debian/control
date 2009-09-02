@@ -1,5 +1,5 @@
 Source: douf00
-Section: utils
+Section: x11
 Priority: optional
 Maintainer: Bernd Zeimetz <bzed@debian.org>
 Build-Depends: debhelper (>= 7.0.14), python
