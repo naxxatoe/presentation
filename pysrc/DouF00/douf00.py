@@ -100,10 +100,10 @@ class MyApp(wx.App):
 	supportedTypes = ["jpg","jpeg","png","bmp","pcx"]
         for file in files:
             try:
-		    for type in supportedTypes:
-			    if (file[-(len("." + type)):].lower() == "." + type):
-				    cfg.pictureFiles.append(file)
-				    break
+		for type in supportedTypes:
+		    if (file[-(len("." + type)):].lower() == "." + type):
+			cfg.pictureFiles.append(file)
+			break
             except IndexError:
                 pass
 
