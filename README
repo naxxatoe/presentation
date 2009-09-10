@@ -1,30 +1,34 @@
-. .  .  ..  .   .   . ....   .  .     ... ... . ...  .      .  .   .       ....  
-  .  .   .   ...      . . .   ..    .  .... . .        .  .  . .  ..  . ..    .
-.    .   ...      . .   ...  .          .  .         .       ..    . .   ...   
-. .DDDDDDDD  . .   .     .     ..  .. .. FFFFFFFFFFF 00000000000  00000000000..
-.  DDD    DDD..    ..  .  .       .  .   FFF.    .. 000       .0000        000.
-.. DDD .    DDD .        .        ..     FFF      . 000.      .0000.      .000
-  .DDD    .  DDD  . .   .  .  .    .     FFF   .    000 . . .. 0000.     ..000.
-   DDD.  .   DDD.   . . . .   .         .FFFFFFFFF  000.       0000.       000.
- . DDD.  .   DDD  ooooooooo  uu .   uu   FFF   .    000 .   .  0000  .     000
-...DDD  .  ..DDD  oo ..  oo .uu.  ..uu   FFF     ...000      ..0000 .  .   000.
-   DDD      DDD   oo.  ..oo..uu ..  uu   FFF       .000..  ... 0000        000.
- . DDDDDDDDDDD  . ooooooooo .uuuuuuuuu . FFF .  .  . 00000000000 .00000000000  
-. .      .    .   ..     . .    . ...      .. ..     .... .   ...   ...      .. 
-   . ...    .    .        . .  ..     .        ..    .   .      .    .  .  .  . 
-..  .. .  ...    ..    --==} FAT FREE PRESENTATIONS {==--  ..    .  .  .    .  
-.         .    ...   .    ..   . ...  ..  .. .        ... ...  ..    .   . . .
-.   .  ..    .....  ..  .     . .
- .Usage:.   .   ..   . ....  ..
-.. # DouF00 [path]  .  . . ..
-..  . .   .     . . .  ..  .
-. application design:. .
- . * Naxxatoe . .. .  .
-. .. ... .    . .. ..
- .codemonkey: . . ...
-. .* natano. ... . ..
-. . .   .     . .    . .  . . ..  . ..  .
-. massive respect to:  . ...      .   ..  .  .
-.  * Stefan Heinecke for the rpm spec file .  .
-..  . .  ...      .    .  .      . .    .  .   
-. . .    ..  . .  ...  .  .   .  ..  .  . 
+
+
+   DDDDDDDD                              FFFFFFFFFFF 00000000000  00000000000
+   DDD    DDD                            FFF        000        0000        000
+   DDD      DDD                          FFF        000        0000        000
+   DDD       DDD                         FFF        000        0000        000
+   DDD       DDD                         FFFFFFFFF  000        0000        000
+   DDD       DDD  ooooooooo  uu     uu   FFF        000        0000        000
+   DDD       DDD  oo     oo  uu     uu   FFF        000        0000        000
+   DDD      DDD   oo     oo  uu     uu   FFF        000        0000        000
+   DDDDDDDDDDD    ooooooooo  uuuuuuuuu   FFF         00000000000  00000000000
+
+
+                       --==} FAT FREE PRESENTATIONS {==--
+
+
+  Usage:
+   # DouF00 [path]
+
+  application design:
+   * Naxxatoe
+
+  codemonkey:
+   * natano
+
+  contributors:
+    mentioned in the man page
+
+
+  dependencies:
+    python >= 2.5.4
+    wxPython >= 2.8
+    wxversion
+
