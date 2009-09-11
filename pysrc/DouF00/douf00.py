@@ -173,13 +173,7 @@ class MyApp(wx.App):
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
         elif (key == wx.WXK_RETURN):
-            if cfg.index:
-                cfg.index = not cfg.index
-                for p in self.presentorsScreens:
-                    p.index(self.slideindex)
-                for p in self.presentationScreens:
-                    p.load(self.slideindex)
-                    p.Show()
+            self.exitIndex()
         elif (key == ord("s")) or (key == ord("S")):
             self.swapScreens()
 
@@ -226,6 +220,14 @@ class MyApp(wx.App):
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
 
+    def exitIndex(self):
+        if cfg.index:
+            cfg.index = not cfg.index
+            for p in self.presentorsScreens:
+                p.index(self.slideindex)
+            for p in self.presentationScreens:
+                p.load(self.slideindex)
+                p.Show()
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
