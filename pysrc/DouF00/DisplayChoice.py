@@ -39,7 +39,7 @@ class DisplayChoice(wx.Frame):
         self.selections = []
         for d in xrange(displays):
             choice = wx.Choice(self, wx.ID_ANY, choices = self.choices)
-            choice.SetSelection(0)
+            choice.SetSelection(1)
             self.selections.append(choice)
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             hbox.Add(wx.StaticText(self, wx.ID_ANY,
