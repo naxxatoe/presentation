@@ -43,6 +43,7 @@ except:
     print("wxpython >= %s required!" % WXVER_REQ)
     sys.exit(1)
 
+
 import config as cfg
 from PresentorsScreen import PresentorsScreen
 from PresentationScreen import PresentationScreen
@@ -63,6 +64,19 @@ class TriggerClock(wx.PyEvent):
 def die():
     os.chdir(cfg.prevWD)
 
+def filetype(path):
+    if os.path.isdir(path):
+        return "dir"
+
+    file = open(path, "r")
+    filemagic = file.read(8)
+    file.close()
+    for type, magic in cfg.filetypes:
+        if magic == filemagic[:len(magic)]:
+            return type
+
+    return None
+
 class MyApp(wx.App):
     def OnInit(self):
         print(cfg.title + " " + cfg.__version__)
@@ -73,60 +87,61 @@ class MyApp(wx.App):
 
         atexit.register(die)
         try:
-            basedir = sys.argv[1]
+            slidepath = sys.argv[1]
         except IndexError:
             dirdialog = wx.DirDialog(None)
             if (dirdialog.ShowModal() == wx.ID_OK):
-                basedir = dirdialog.GetPath()
+                slidepath = dirdialog.GetPath()
             else:
                 printUsage()
                 sys.exit("No path specified")
 
-        self.td = None
-        if basedir[-4:].lower() == ".pdf":
-            import tempfile
-            self.td = tempfile.mkdtemp(prefix="douf00")
-            atexit.register(self.deleteTemp)
-            os.system("gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile="+ os.path.join(self.td, "douf00_%04d.jpeg") + " " + basedir)
-
-            basedir = self.td
-
-        try:
-            os.chdir(basedir)
-        except OSError:
-            sys.exit("No such file or directory")
-
-        basedir = os.getcwd()
-        cfg.pictureFiles = []
-        files = os.listdir(basedir)
-
-	# support for more picture types
-	supportedTypes = ("jpg","jpeg","png","bmp","pcx")
-        for file in files:
+        slidetype = filetype(slidepath)
+        if slidetype == "dir":
             try:
-		for type in supportedTypes:
-		    if (file[-(len("." + type)):].lower() == "." + type):
-			cfg.pictureFiles.append(file)
-			break
-            except IndexError:
-                pass
+                os.chdir(slidepath)
+            except OSError:
+                sys.exit("No such file or directory")
+            cfg.pictureFiles = []
+            files = os.listdir(os.getcwd())
 
-        cfg.pictureFiles.sort()
+            # support for more picture types
+            supportedTypes = []
+            for file in files:
+                if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                    cfg.pictureFiles.append(file)
 
-	# DOC: if you place in your presentation directory a file with
-	#      the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
-	#      that will be your first slide, your title slide, which
-	#      shows up when you start douf00.
-	#      It was chosen that way, because some people prefer it when they
-	#      start the presentation to see a slide other don't prefer that
-	#      so more freedom to the presentator to organize their presentation
+            cfg.pictureFiles.sort()
 
-        cfg.blankslide = ""
-        for type in supportedTypes:
-            if ("blank" + "." + type) in cfg.pictureFiles:
-                cfg.blankslide = ("blank" + "." + type)
-                cfg.pictureFiles.remove(cfg.blankslide)
-                break
+            # DOC: if you place in your presentation directory a file with
+            #      the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
+            #      that will be your first slide, your title slide, which
+            #      shows up when you start douf00.
+            #      It was chosen that way, because some people prefer it when they
+            #      start the presentation to see a slide other don't prefer that
+            #      so more freedom to the presentator to organize their presentation
+
+            cfg.blankslide = ""
+            for type in supportedTypes:
+                if ("blank" + "." + type) in cfg.pictureFiles:
+                    cfg.blankslide = ("blank" + "." + type)
+                    cfg.pictureFiles.remove(cfg.blankslide)
+                    break
+        if slidetype == None:
+            print "Filetype not supported!"
+            sys.exit(1)
+
+
+
+#        self.td = None
+#        if basedir[-4:].lower() == ".pdf":
+#            import tempfile
+#            self.td = tempfile.mkdtemp(prefix="douf00")
+#            atexit.register(self.deleteTemp)
+#            os.system("gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile="+ os.path.join(self.td, "douf00_%04d.jpeg") + " " + basedir)
+#
+#            basedir = self.td
+
 
         cfg.slidelist = SlideList()
         cfg.thumbnaillist = ThumbnailList()

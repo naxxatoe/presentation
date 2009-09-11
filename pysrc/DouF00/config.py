@@ -44,3 +44,11 @@ presentorBackgroundColor = wx.Color(80, 80, 80)
 presentorBorderColor = (255, 0, 0)
 blankThumbnail = None
 defaultTime = 45
+
+filetypes = (
+    ('JPEG', '\xff\xd8'),
+    ('PNG', '\x89PNG\x0d\x0a\x1a\x0a'),
+    ('BMP', 'BM'),
+    ('PCX', '\x0a'),
+)
+
