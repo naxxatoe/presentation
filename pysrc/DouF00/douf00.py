@@ -129,23 +129,18 @@ class MyApp(wx.App):
                     break
 
         elif slidetype == 'PDF':
-            import tempfile
-            self.td = None
-            self.td = tempfile.mkdtemp(prefix='douf00')
-            atexit.register(self.deleteTemp)
-            os.system('gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile='+ os.path.join(self.td, 'douf00_%04d.jpeg') + ' ' + slidepath)
+            try:
+                import poppler
+            except ImportError:
+                print 'python-poppler required!'
+                sys.exit(1)
 
-            os.chdir(self.td)
-            basedir = os.getcwd()
-            cfg.blankslide = ''
+            cfg.pdfdoc = poppler.document_new_from_file('file://%s' % os.path.abspath(slidepath), '')
             cfg.pictureFiles = []
-            files = os.listdir(os.getcwd())
+            for i in xrange(cfg.pdfdoc.get_n_pages()):
+                cfg.pictureFiles.append(i)
 
-            for file in files:
-                if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
-                    cfg.pictureFiles.append(file)
-
-            cfg.pictureFiles.sort()
+            cfg.blankslide = ''
 
         elif slidetype == None:
             print('Filetype not supported!')

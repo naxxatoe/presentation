@@ -28,14 +28,38 @@ import wx
 import threading
 import config as cfg
 
+
 class ThumbnailList(list):
     def __init__(self):
+        if cfg.pdfdoc:
+            import cairo
+            import cStringIO
+            import sys
+
         super(ThumbnailList, self).__init__()
         self.list = []
         for filename in cfg.pictureFiles:
-            f = open(filename, 'rb')
+            if cfg.pdfdoc:
+                sys.stdout.write('\r%03d' % filename)
+                sys.stdout.flush()
+                page = cfg.pdfdoc.get_page(filename)
+                page_w, page_h = page.get_size()
+                img = cairo.ImageSurface(cairo.FORMAT_RGB24, 320, 240)
+                context = cairo.Context(img)
+                context.scale(320/page_w, 240/page_h)
+                context.set_source_rgb(1.0, 1.0, 1.0)
+                context.rectangle(0, 0, page_w, page_h)
+                context.fill()
+                page.render(context)
+                f = cStringIO.StringIO()
+                img.write_to_png(f)
+                f.seek(0)
+            else:
+                f = open(filename, 'rb')
+
             image = wx.ImageFromStream(f)
             f.close()
+
             size = (320, 240)
             ImageSize = image.GetSize()
             ratioX = float(size[0]) / ImageSize[0]                                  
@@ -49,6 +73,8 @@ class ThumbnailList(list):
 
             image.Rescale(ImageSize[0], ImageSize[1])
             self.list.append(image)
+        if cfg.pdfdoc:
+            sys.stdout.write('\n')
 
     def __getitem__(self, index):
         if (index < 0) or (index >= len(cfg.pictureFiles)):

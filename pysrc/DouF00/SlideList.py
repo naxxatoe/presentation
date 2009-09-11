@@ -28,6 +28,9 @@ import wx
 import config as cfg
 import threading
 import Queue
+import cairo
+import cStringIO
+
 
 class SlideList(list):
     def __init__(self):
@@ -60,11 +63,27 @@ class SlideList(list):
                 f.close()
         else:
             try:
-                f = open(cfg.pictureFiles[slideindex], 'rb')
+                if cfg.pdfdoc:
+                    page = cfg.pdfdoc.get_page(cfg.pictureFiles[slideindex])
+                    page_w, page_h = page.get_size()
+                    img = cairo.ImageSurface(cairo.FORMAT_RGB24, 1024, 768)
+                    context = cairo.Context(img)
+                    context.scale(1024/page_w, 768/page_h)
+                    context.set_source_rgb(1.0, 1.0, 1.0)
+                    context.rectangle(0, 0, page_w, page_h)
+                    context.fill()
+                    page.render(context)
+                    f = cStringIO.StringIO()
+                    img.write_to_png(f)
+                    f.seek(0)
+                else:
+                    f = open(cfg.pictureFiles[slideindex], 'rb')
+
                 image = wx.ImageFromStream(f)
                 f.close()
+
             except:
-                print('Cant load image: ')
+                print('Cant load page: %s' % cfg.pictureFiles[slideindex])
 
         return image
 
