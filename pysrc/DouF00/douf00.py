@@ -38,7 +38,6 @@ if 'wx' not in sys.modules and 'wxPython' not in sys.modules:
 
 try:
     import wx
-    #it would be more nice to print a useful message here....
     assert wx.VERSION_STRING >= WXVER_REQ
 except:
     print("wxpython >= %s required!" % WXVER_REQ)
