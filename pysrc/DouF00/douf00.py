@@ -102,7 +102,7 @@ class MyApp(wx.App):
         files = os.listdir(basedir)
 
 	# support for more picture types
-	supportedTypes = ["jpg","jpeg","png","bmp","pcx"]
+	supportedTypes = ("jpg","jpeg","png","bmp","pcx")
         for file in files:
             try:
 		for type in supportedTypes:
