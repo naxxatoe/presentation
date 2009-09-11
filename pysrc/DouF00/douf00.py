@@ -235,13 +235,29 @@ class MyApp(wx.App):
             p.load(self.slideindex)
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            for thing in (p, p.panel, p.static_bitmap):
+                thing.Bind(wx.EVT_LEFT_DOWN, self.OnLeftClick)
+                thing.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
+
             p.panel.SetFocus()
 
         for p in self.presentorsScreens:
             p.load(self.slideindex)
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            for thing in (p, p.panel, p.clock, p.countUp, p.countDown, p.static_bitmap[0], p.static_bitmap[1]):
+                thing.Bind(wx.EVT_LEFT_DOWN, self.OnLeftClick)
+                thing.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
+
             p.panel.SetFocus()
+
+    def OnLeftClick(self, event):
+        event.Skip()
+        self.NextSlide()
+
+    def OnRightClick(self, event):
+        event.Skip()
+        self.PrevSlide()
 
     def exitIndex(self):
         if cfg.index:
@@ -275,12 +291,20 @@ class MyApp(wx.App):
             p.load(self.slideindex)
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            for thing in (p, p.panel, p.static_bitmap):
+                thing.Bind(wx.EVT_LEFT_DOWN, self.OnLeftClick)
+                thing.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
+
             p.panel.SetFocus()
 
         for p in self.presentorsScreens:
             p.load(self.slideindex)
             p.Show()
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            for thing in (p, p.panel, p.clock, p.countUp, p.countDown, p.static_bitmap[0], p.static_bitmap[1]):
+                thing.Bind(wx.EVT_LEFT_DOWN, self.OnLeftClick)
+                thing.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
+
             p.panel.SetFocus()
 
         self.setClock('f00')
