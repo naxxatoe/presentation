@@ -28,8 +28,6 @@ import wx
 import config as cfg
 import threading
 import Queue
-import cairo
-import cStringIO
 
 
 class SlideList(list):
@@ -64,6 +62,8 @@ class SlideList(list):
         else:
             try:
                 if cfg.pdfdoc:
+                    import cairo
+                    import cStringIO
                     page = cfg.pdfdoc.get_page(cfg.pictureFiles[slideindex])
                     page_w, page_h = page.get_size()
                     img = cairo.ImageSurface(cairo.FORMAT_RGB24, 1024, 768)
