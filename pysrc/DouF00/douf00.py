@@ -187,38 +187,41 @@ class MyApp(wx.App):
                     p.load(self.slideindex)
                     p.Show()
         elif (key == ord("s")) or (key == ord("S")):
-            presentationScreens = []
-            presentorsScreens = []
-            for i in xrange(len(self.presentationScreens)):
-                displayindex = self.presentationScreens[i].displayindex
-                self.presentationScreens[i].Destroy()
-                p = PresentorsScreen(displayindex)
-                p.load(self.slideindex)
-                p.Show()
-                presentorsScreens.append(p)
+            self.swapScreens()
 
-            for i in xrange(len(self.presentorsScreens)):
-                displayindex = self.presentorsScreens[i].displayindex
-                self.presentorsScreens[i].index(self.slideindex, force = True)
-                self.presentorsScreens[i].Destroy()
-                p = PresentationScreen(displayindex)
-                p.load(self.slideindex)
-                p.Show()
-                presentationScreens.append(p)
+    def swapScreens(self):
+        presentationScreens = []
+        presentorsScreens = []
+        for i in xrange(len(self.presentationScreens)):
+            displayindex = self.presentationScreens[i].displayindex
+            self.presentationScreens[i].Destroy()
+            p = PresentorsScreen(displayindex)
+            p.load(self.slideindex)
+            p.Show()
+            presentorsScreens.append(p)
 
-            self.presentationScreens = presentationScreens
-            self.presentorsScreens = presentorsScreens
-            for p in self.presentationScreens:
-                p.load(self.slideindex)
-                p.Show()
-                p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
-                p.panel.SetFocus()
+        for i in xrange(len(self.presentorsScreens)):
+            displayindex = self.presentorsScreens[i].displayindex
+            self.presentorsScreens[i].index(self.slideindex, force = True)
+            self.presentorsScreens[i].Destroy()
+            p = PresentationScreen(displayindex)
+            p.load(self.slideindex)
+            p.Show()
+            presentationScreens.append(p)
 
-            for p in self.presentorsScreens:
-                p.load(self.slideindex)
-                p.Show()
-                p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
-                p.panel.SetFocus()
+        self.presentationScreens = presentationScreens
+        self.presentorsScreens = presentorsScreens
+        for p in self.presentationScreens:
+            p.load(self.slideindex)
+            p.Show()
+            p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            p.panel.SetFocus()
+
+        for p in self.presentorsScreens:
+            p.load(self.slideindex)
+            p.Show()
+            p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            p.panel.SetFocus()
 
 
     def Run(self, event):
