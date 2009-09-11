@@ -106,7 +106,6 @@ class MyApp(wx.App):
             files = os.listdir(os.getcwd())
 
             # support for more picture types
-            supportedTypes = []
             for file in files:
                 if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
                     cfg.pictureFiles.append(file)
@@ -122,7 +121,7 @@ class MyApp(wx.App):
             #      so more freedom to the presentator to organize their presentation
 
             cfg.blankslide = ''
-            for type in supportedTypes:
+            for type in ("jpg","jpeg","png","bmp","pcx"):
                 if ('blank' + '.' + type) in cfg.pictureFiles:
                     cfg.blankslide = ('blank' + '.' + type)
                     cfg.pictureFiles.remove(cfg.blankslide)
