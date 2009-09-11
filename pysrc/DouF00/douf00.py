@@ -158,13 +158,7 @@ class MyApp(wx.App):
             if cfg.index:
                 self.PrevSlide(3)
         elif (key == ord('q')) or (key == ord('Q')):
-            for p in self.presentationScreens:
-                p.Destroy()
-
-            for p in self.presentorsScreens:
-                p.Destroy()
-
-            sys.exit(0)
+            self.exit()
         elif (key == ord('r')) or (key == ord('R')):
             self.startTime = int(time.time())
             self.elapsedTime = 0
@@ -179,47 +173,61 @@ class MyApp(wx.App):
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
         elif (key == wx.WXK_RETURN):
-            if cfg.index:
-                cfg.index = not cfg.index
-                for p in self.presentorsScreens:
-                    p.index(self.slideindex)
-                for p in self.presentationScreens:
-                    p.load(self.slideindex)
-                    p.Show()
+            self.exitIndex()
         elif (key == ord("s")) or (key == ord("S")):
-            presentationScreens = []
-            presentorsScreens = []
-            for i in xrange(len(self.presentationScreens)):
-                displayindex = self.presentationScreens[i].displayindex
-                self.presentationScreens[i].Destroy()
-                p = PresentorsScreen(displayindex)
-                p.load(self.slideindex)
-                p.Show()
-                presentorsScreens.append(p)
+            self.swapScreens()
 
-            for i in xrange(len(self.presentorsScreens)):
-                displayindex = self.presentorsScreens[i].displayindex
-                self.presentorsScreens[i].index(self.slideindex, force = True)
-                self.presentorsScreens[i].Destroy()
-                p = PresentationScreen(displayindex)
-                p.load(self.slideindex)
-                p.Show()
-                presentationScreens.append(p)
+    def exit(self):
+        for p in self.presentationScreens:
+            p.Destroy()
 
-            self.presentationScreens = presentationScreens
-            self.presentorsScreens = presentorsScreens
+        for p in self.presentorsScreens:
+            p.Destroy()
+
+        sys.exit(0)
+
+    def swapScreens(self):
+        presentationScreens = []
+        presentorsScreens = []
+        for i in xrange(len(self.presentationScreens)):
+            displayindex = self.presentationScreens[i].displayindex
+            self.presentationScreens[i].Destroy()
+            p = PresentorsScreen(displayindex)
+            p.load(self.slideindex)
+            p.Show()
+            presentorsScreens.append(p)
+
+        for i in xrange(len(self.presentorsScreens)):
+            displayindex = self.presentorsScreens[i].displayindex
+            self.presentorsScreens[i].index(self.slideindex, force = True)
+            self.presentorsScreens[i].Destroy()
+            p = PresentationScreen(displayindex)
+            p.load(self.slideindex)
+            p.Show()
+            presentationScreens.append(p)
+
+        self.presentationScreens = presentationScreens
+        self.presentorsScreens = presentorsScreens
+        for p in self.presentationScreens:
+            p.load(self.slideindex)
+            p.Show()
+            p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            p.panel.SetFocus()
+
+        for p in self.presentorsScreens:
+            p.load(self.slideindex)
+            p.Show()
+            p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+            p.panel.SetFocus()
+
+    def exitIndex(self):
+        if cfg.index:
+            cfg.index = not cfg.index
+            for p in self.presentorsScreens:
+                p.index(self.slideindex)
             for p in self.presentationScreens:
                 p.load(self.slideindex)
                 p.Show()
-                p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
-                p.panel.SetFocus()
-
-            for p in self.presentorsScreens:
-                p.load(self.slideindex)
-                p.Show()
-                p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
-                p.panel.SetFocus()
-
 
     def Run(self, event):
         self.runTime = self.choice.spinctrl.GetValue() * 60
