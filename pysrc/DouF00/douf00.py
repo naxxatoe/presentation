@@ -124,9 +124,10 @@ class MyApp(wx.App):
             cfg.blankslide = ''
             for type in ("jpg","jpeg","png","bmp","pcx"):
                 if ('blank' + '.' + type) in cfg.pictureFiles:
-                    cfg.blankslide = ('blank' + '.' + type)
-                    cfg.pictureFiles.remove(cfg.blankslide)
-                    break
+                    if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                        cfg.blankslide = ('blank' + '.' + type)
+                        cfg.pictureFiles.remove(cfg.blankslide)
+                        break
 
         elif slidetype == 'PDF':
             try:
