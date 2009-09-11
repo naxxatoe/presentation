@@ -102,6 +102,7 @@ class MyApp(wx.App):
                 os.chdir(slidepath)
             except OSError:
                 sys.exit('No such file or directory')
+
             cfg.pictureFiles = []
             files = os.listdir(os.getcwd())
 
@@ -126,21 +127,29 @@ class MyApp(wx.App):
                     cfg.blankslide = ('blank' + '.' + type)
                     cfg.pictureFiles.remove(cfg.blankslide)
                     break
-        if slidetype == None:
+
+        elif slidetype == 'PDF':
+            import tempfile
+            self.td = None
+            self.td = tempfile.mkdtemp(prefix='douf00')
+            atexit.register(self.deleteTemp)
+            os.system('gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile='+ os.path.join(self.td, 'douf00_%04d.jpeg') + ' ' + slidepath)
+
+            os.chdir(self.td)
+            basedir = os.getcwd()
+            cfg.blankslide = ''
+            cfg.pictureFiles = []
+            files = os.listdir(os.getcwd())
+
+            for file in files:
+                if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                    cfg.pictureFiles.append(file)
+
+            cfg.pictureFiles.sort()
+
+        elif slidetype == None:
             print('Filetype not supported!')
             sys.exit(1)
-
-
-
-#        self.td = None
-#        if basedir[-4:].lower() == '.pdf':
-#            import tempfile
-#            self.td = tempfile.mkdtemp(prefix='douf00')
-#            atexit.register(self.deleteTemp)
-#            os.system('gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile='+ os.path.join(self.td, 'douf00_%04d.jpeg') + ' ' + basedir)
-#
-#            basedir = self.td
-
 
         cfg.slidelist = SlideList()
         cfg.thumbnaillist = ThumbnailList()
