@@ -41,7 +41,7 @@ class ThumbnailList(list):
         slidecount = cfg.pdfdoc.get_n_pages()
         for filename in cfg.pictureFiles:
             if cfg.pdfdoc:
-                sys.stdout.write('\rLoading Thumbnails: %03d/%03d' % (filename+1, slidecount))
+                sys.stdout.write('\r* Loading Thumbnails: %03d/%03d' % (filename+1, slidecount))
                 sys.stdout.flush()
                 page = cfg.pdfdoc.get_page(filename)
                 page_w, page_h = page.get_size()
