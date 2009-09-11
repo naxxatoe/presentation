@@ -34,8 +34,17 @@ class SlideList(list):
     def __init__(self):
         super(SlideList, self).__init__()
         self.list = [None for i in xrange(len(cfg.pictureFiles))]
-        self.queue = Queue.Queue()
-        self.ParallelLoad(self.queue).start()
+        if cfg.pdfdoc:
+            import sys
+            slidecount = cfg.pdfdoc.get_n_pages()
+            for i in xrange(len(cfg.pictureFiles)):
+                sys.stdout.write('\r* Loading Slides: %03d/%03d' % (i+1, slidecount))
+                sys.stdout.flush()
+                self.list[i] = self.loadImage(i)
+            sys.stdout.write('\n')
+        else:
+            self.queue = Queue.Queue()
+            self.ParallelLoad(self.queue).start()
 
     def __getitem__(self, slideindex):
         if (slideindex < 0) or (slideindex >= len(self.list)):
@@ -46,7 +55,8 @@ class SlideList(list):
         else:
             image = self.list[slideindex]
 
-        self.queue.put(slideindex)
+        if not cfg.pdfdoc:
+            self.queue.put(slideindex)
 
         return image
 

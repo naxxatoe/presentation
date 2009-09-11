@@ -27,22 +27,22 @@
 import wx
 import threading
 import config as cfg
-
+import sys
 
 class ThumbnailList(list):
     def __init__(self):
         if cfg.pdfdoc:
             import cairo
             import cStringIO
-            import sys
 
         super(ThumbnailList, self).__init__()
         self.list = []
-        slidecount = cfg.pdfdoc.get_n_pages()
-        for filename in cfg.pictureFiles:
+        slidecount = len(cfg.pictureFiles)
+        for i, filename in enumerate(cfg.pictureFiles):
+            sys.stdout.write('\r* Loading Thumbnails: %03d/%03d' % (i+1, slidecount))
+            sys.stdout.flush()
+
             if cfg.pdfdoc:
-                sys.stdout.write('\r* Loading Thumbnails: %03d/%03d' % (filename+1, slidecount))
-                sys.stdout.flush()
                 page = cfg.pdfdoc.get_page(filename)
                 page_w, page_h = page.get_size()
                 img = cairo.ImageSurface(cairo.FORMAT_RGB24, 320, 240)
@@ -74,8 +74,8 @@ class ThumbnailList(list):
 
             image.Rescale(ImageSize[0], ImageSize[1])
             self.list.append(image)
-        if cfg.pdfdoc:
-            sys.stdout.write('\n')
+
+        sys.stdout.write('\n')
 
     def __getitem__(self, index):
         if (index < 0) or (index >= len(cfg.pictureFiles)):

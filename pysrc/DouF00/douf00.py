@@ -147,8 +147,8 @@ class MyApp(wx.App):
             print('Filetype not supported!')
             sys.exit(1)
 
-        cfg.slidelist = SlideList()
         cfg.thumbnaillist = ThumbnailList()
+        cfg.slidelist = SlideList()
 
         displayCount = wx.Display.GetCount()
         self.numberFrames = []
