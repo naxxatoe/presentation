@@ -41,7 +41,7 @@ try:
     #it would be more nice to print a useful message here....
     assert wx.VERSION_STRING >= WXVER_REQ
 except:
-    print("You need wxpython >= %s installed!" % WXVER_REQ)
+    print("wxpython >= %s required!" % WXVER_REQ)
     sys.exit(1)
 
 import config as cfg
