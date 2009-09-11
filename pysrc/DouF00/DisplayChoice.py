@@ -33,7 +33,7 @@ class DisplayChoice(wx.Frame):
         style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
         super(DisplayChoice, self).__init__(None, wx.ID_ANY, cfg.title,
                                             style = style)
-        self.choices = ["-- Nothing --", "Audience", "Presentor"]
+        self.choices = ['-- Nothing --', 'Audience', 'Presentor']
         displays = wx.Display.GetCount()
         box = wx.BoxSizer(wx.VERTICAL)
         self.selections = []
@@ -43,13 +43,13 @@ class DisplayChoice(wx.Frame):
             self.selections.append(choice)
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             hbox.Add(wx.StaticText(self, wx.ID_ANY,
-                                   "Display " + str(d) + ": "),
+                                   'Display ' + str(d) + ': '),
                      0, wx.ALIGN_CENTER_VERTICAL)
             hbox.Add(choice, 0, wx.ALIGN_CENTER_VERTICAL)
             box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        timelabel = wx.StaticText(self, wx.ID_ANY, "Time:")
+        timelabel = wx.StaticText(self, wx.ID_ANY, 'Time:')
         hbox.Add(timelabel, 0, wx.ALIGN_CENTER_VERTICAL)
         self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY,
                                     min = 1,
@@ -57,7 +57,7 @@ class DisplayChoice(wx.Frame):
                                     initial = cfg.defaultTime)
         hbox.Add(self.spinctrl, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
         box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        self.button = wx.Button(self, wx.ID_ANY, label = "OK")
+        self.button = wx.Button(self, wx.ID_ANY, label = 'OK')
         box.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizerAndFit(box)

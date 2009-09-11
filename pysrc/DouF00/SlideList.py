@@ -51,20 +51,20 @@ class SlideList(list):
 
     def loadImage(self, slideindex):
         if (slideindex < 0) or (slideindex >= len(self.list)):
-            if (slideindex > len(self.list)) or (cfg.blankslide == ""):
-                buffer = "\0\0\0" * 320 * 240
+            if (slideindex > len(self.list)) or (cfg.blankslide == ''):
+                buffer = '\0\0\0' * 320 * 240
                 image = wx.ImageFromBuffer(320, 240, buffer)
             else:
-                f = open(cfg.blankslide, "rb")
+                f = open(cfg.blankslide, 'rb')
                 image = wx.ImageFromStream(f)
                 f.close()
         else:
             try:
-                f = open(cfg.pictureFiles[slideindex], "rb")
+                f = open(cfg.pictureFiles[slideindex], 'rb')
                 image = wx.ImageFromStream(f)
                 f.close()
             except:
-                print("Cant load image: ")
+                print('Cant load image: ')
 
         return image
 

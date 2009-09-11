@@ -40,9 +40,9 @@ def makeImageBorder(self, pixels = 5):
 
     return img
 
-def scaleImageToBitmap(self, size, method = "scale"):
+def scaleImageToBitmap(self, size, method = 'scale'):
     ImageSize = self.GetSize()
-    if method == "stretch":
+    if method == 'stretch':
         ImageSize = size
     else:
         ratioX = float(size[0]) / ImageSize[0]

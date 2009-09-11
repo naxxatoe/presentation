@@ -28,9 +28,9 @@ import wx
 import os
 
 prevWD = os.getcwd()
-title = "DouF00"
-__version__ = "1.0.1"
-__author__ = "Martin Ptacek"
+title = 'DouF00'
+__version__ = '1.0.1'
+__author__ = 'Martin Ptacek'
 numberFontSize = 150
 preLoadCache = 5
 pictureFiles = None
@@ -50,5 +50,6 @@ filetypes = (
     ('PNG', '\x89PNG\x0d\x0a\x1a\x0a'),
     ('BMP', 'BM'),
     ('PCX', '\x0a'),
+    ('PDF', '\x25\x50\x44\x46'),
 )
 

@@ -53,17 +53,17 @@ class PresentorsScreen(wx.Frame):
         font = wx.Font(30, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         textcolor = wx.Colour(210, 210 , 210)
-        self.clock = wx.StaticText(self, wx.ID_ANY, "13:37:00")
+        self.clock = wx.StaticText(self, wx.ID_ANY, '13:37:00')
         self.clock.SetForegroundColour(textcolor)
         self.clock.SetFont(font)
         hbox2.Add(self.clock , 3, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
-        self.countDown = wx.StaticText(self, wx.ID_ANY, "  10.00  ")
+        self.countDown = wx.StaticText(self, wx.ID_ANY, '  10.00  ')
         self.countDown.SetForegroundColour(textcolor)
         self.countDown.SetFont(font)
         hbox2.Add(self.countDown , 3, wx.ALIGN_CENTER_VERTICAL)
         hbox2.AddStretchSpacer(1)
-        self.countUp = wx.StaticText(self, wx.ID_ANY, "  00:00  ")
+        self.countUp = wx.StaticText(self, wx.ID_ANY, '  00:00  ')
         self.countUp.SetForegroundColour(textcolor)
         self.countUp.SetFont(font)
         hbox2.Add(self.countUp , 3, wx.ALIGN_CENTER_VERTICAL)
@@ -76,7 +76,7 @@ class PresentorsScreen(wx.Frame):
         textcolor = wx.Colour(210, 210 , 210)
         font = wx.Font(25, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         for i in xrange(9):
-            self.numbers.append(wx.StaticText(self, wx.ID_ANY, "0"))
+            self.numbers.append(wx.StaticText(self, wx.ID_ANY, '0'))
             self.numbers[i].Hide()
             self.numbers[i].SetForegroundColour(textcolor)
             self.numbers[i].SetFont(font)
@@ -84,9 +84,9 @@ class PresentorsScreen(wx.Frame):
         self.Layout()
 
     def load(self, slideindex, prevSlide = None):
-        method = "scale"
+        method = 'scale'
         if (self.size[0] < 1024) or (self.size[1] < 768):
-            method = "stretch"
+            method = 'stretch'
 
         width = int(float(self.size[0]) / 2) - 5
         height = int(float(self.size[1]) / 200 * 179)
@@ -108,7 +108,7 @@ class PresentorsScreen(wx.Frame):
                 if i == (slideindex + 1) % 9:
                     img = img.makeImageBorder()
 
-                bitmap = img.scaleImageToBitmap((width, height), method = "stretch")
+                bitmap = img.scaleImageToBitmap((width, height), method = 'stretch')
                 self.static_bitmap[i].SetBitmap(bitmap)
 
             if not update:

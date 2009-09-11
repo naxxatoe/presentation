@@ -40,7 +40,7 @@ try:
     import wx
     assert wx.VERSION_STRING >= WXVER_REQ
 except:
-    print("wxpython >= %s required!" % WXVER_REQ)
+    print('wxpython >= %s required!' % WXVER_REQ)
     sys.exit(1)
 
 
@@ -54,7 +54,7 @@ from ThumbnailList import ThumbnailList
 import atexit
 
 def printUsage():
-    print("Usage: %s [path]" % os.path.basename(sys.argv[0]))
+    print('Usage: %s [path]' % os.path.basename(sys.argv[0]))
 
 class TriggerClock(wx.PyEvent):
     def __init__(self):
@@ -66,9 +66,9 @@ def die():
 
 def filetype(path):
     if os.path.isdir(path):
-        return "dir"
+        return 'dir'
 
-    file = open(path, "r")
+    file = open(path, 'r')
     filemagic = file.read(8)
     file.close()
     for type, magic in cfg.filetypes:
@@ -79,11 +79,11 @@ def filetype(path):
 
 class MyApp(wx.App):
     def OnInit(self):
-        print(cfg.title + " " + cfg.__version__)
-        print("Copyright (C) 2009  " + cfg.__author__)
-        print("This program comes with ABSOLUTELY NO WARRANTY.")
-        print("This is free software, and you are welcome to redistribute it")
-        print("and/or modify it under the terms of the MIT license.")
+        print(cfg.title + ' ' + cfg.__version__)
+        print('Copyright (C) 2009  ' + cfg.__author__)
+        print('This program comes with ABSOLUTELY NO WARRANTY.')
+        print('This is free software, and you are welcome to redistribute it')
+        print('and/or modify it under the terms of the MIT license.')
 
         atexit.register(die)
         try:
@@ -94,14 +94,14 @@ class MyApp(wx.App):
                 slidepath = dirdialog.GetPath()
             else:
                 printUsage()
-                sys.exit("No path specified")
+                sys.exit('No path specified')
 
         slidetype = filetype(slidepath)
-        if slidetype == "dir":
+        if slidetype == 'dir':
             try:
                 os.chdir(slidepath)
             except OSError:
-                sys.exit("No such file or directory")
+                sys.exit('No such file or directory')
             cfg.pictureFiles = []
             files = os.listdir(os.getcwd())
 
@@ -121,24 +121,24 @@ class MyApp(wx.App):
             #      start the presentation to see a slide other don't prefer that
             #      so more freedom to the presentator to organize their presentation
 
-            cfg.blankslide = ""
+            cfg.blankslide = ''
             for type in supportedTypes:
-                if ("blank" + "." + type) in cfg.pictureFiles:
-                    cfg.blankslide = ("blank" + "." + type)
+                if ('blank' + '.' + type) in cfg.pictureFiles:
+                    cfg.blankslide = ('blank' + '.' + type)
                     cfg.pictureFiles.remove(cfg.blankslide)
                     break
         if slidetype == None:
-            print "Filetype not supported!"
+            print('Filetype not supported!')
             sys.exit(1)
 
 
 
 #        self.td = None
-#        if basedir[-4:].lower() == ".pdf":
+#        if basedir[-4:].lower() == '.pdf':
 #            import tempfile
-#            self.td = tempfile.mkdtemp(prefix="douf00")
+#            self.td = tempfile.mkdtemp(prefix='douf00')
 #            atexit.register(self.deleteTemp)
-#            os.system("gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile="+ os.path.join(self.td, "douf00_%04d.jpeg") + " " + basedir)
+#            os.system('gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dMaxStripSize=8192 -sOutputFile='+ os.path.join(self.td, 'douf00_%04d.jpeg') + ' ' + basedir)
 #
 #            basedir = self.td
 
@@ -193,7 +193,7 @@ class MyApp(wx.App):
                 p.index(self.slideindex)
         elif (key == wx.WXK_RETURN):
             self.exitIndex()
-        elif (key == ord("s")) or (key == ord("S")):
+        elif (key == ord('s')) or (key == ord('S')):
             self.swapScreens()
 
     def exit(self):
@@ -255,9 +255,9 @@ class MyApp(wx.App):
         self.presentationScreens = []
         self.presentorsScreens = []
         for displayindex in xrange(displayCount):
-            if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Audience":
+            if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == 'Audience':
                 self.presentationScreens.append(PresentationScreen(displayindex = displayindex))
-            elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == "Presentor":
+            elif self.choice.choices[self.choice.selections[displayindex].GetSelection()] == 'Presentor':
                 self.presentorsScreens.append(PresentorsScreen(displayindex = displayindex))
 
         self.choice.Destroy()
@@ -279,7 +279,7 @@ class MyApp(wx.App):
             p.panel.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
             p.panel.SetFocus()
 
-        self.setClock("f00")
+        self.setClock('f00')
         t = self.Clock(self, self.presentorsScreens)
         t.setDaemon(True)
         t.start()
@@ -302,11 +302,11 @@ class MyApp(wx.App):
 
         self.remainingTime = self.runTime - self.elapsedTime
         for s in self.presentorsScreens:
-            tstr = "%02d:%02d:%02d" % (t[3], t[4], t[5])
+            tstr = '%02d:%02d:%02d' % (t[3], t[4], t[5])
             s.clock.SetLabel(tstr)
-            countUpStr = "  %02d:%02d  " % (self.elapsedTime / 60,
+            countUpStr = '  %02d:%02d  ' % (self.elapsedTime / 60,
                                         self.elapsedTime % 60)
-            countDownStr = "  %02d:%02d  " % (self.remainingTime / 60,
+            countDownStr = '  %02d:%02d  ' % (self.remainingTime / 60,
                                           self.remainingTime % 60)
             s.countUp.SetLabel(countUpStr)
             s.countDown.SetLabel(countDownStr)
@@ -363,5 +363,5 @@ def main():
     app = MyApp()
     app.MainLoop()
 
-if __name__ == "__main__": main()
+if __name__ == '__main__': main()
 
