@@ -35,9 +35,14 @@ WXVER_REQ = '2.8'
 if 'wx' not in sys.modules and 'wxPython' not in sys.modules:
     import wxversion
     wxversion.ensureMinimal(WXVER_REQ)
-import wx
-#it would be more nice to print a useful message here....
-assert wx.VERSION_STRING >= WXVER_REQ
+
+try:
+    import wx
+    #it would be more nice to print a useful message here....
+    assert wx.VERSION_STRING >= WXVER_REQ
+except:
+    print("You need wxpython >= %s installed!" % WXVER_REQ)
+    sys.exit(1)
 
 import config as cfg
 from PresentorsScreen import PresentorsScreen
@@ -49,7 +54,7 @@ from ThumbnailList import ThumbnailList
 import atexit
 
 def printUsage():
-    print("Usage: " + sys.argv[0] + " [path]")
+    print("Usage: %s [path]" % os.path.basename(sys.argv[0]))
 
 class TriggerClock(wx.PyEvent):
     def __init__(self):
