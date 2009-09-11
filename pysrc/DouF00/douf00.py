@@ -158,13 +158,7 @@ class MyApp(wx.App):
             if cfg.index:
                 self.PrevSlide(3)
         elif (key == ord('q')) or (key == ord('Q')):
-            for p in self.presentationScreens:
-                p.Destroy()
-
-            for p in self.presentorsScreens:
-                p.Destroy()
-
-            sys.exit(0)
+            self.exit()
         elif (key == ord('r')) or (key == ord('R')):
             self.startTime = int(time.time())
             self.elapsedTime = 0
@@ -188,6 +182,15 @@ class MyApp(wx.App):
                     p.Show()
         elif (key == ord("s")) or (key == ord("S")):
             self.swapScreens()
+
+    def exit(self):
+        for p in self.presentationScreens:
+            p.Destroy()
+
+        for p in self.presentorsScreens:
+            p.Destroy()
+
+        sys.exit(0)
 
     def swapScreens(self):
         presentationScreens = []
