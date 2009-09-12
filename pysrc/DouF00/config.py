@@ -29,7 +29,7 @@ import os
 
 prevWD = os.getcwd()
 title = 'DouF00'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __author__ = 'Martin Ptacek'
 numberFontSize = 150
 preLoadCache = 5
