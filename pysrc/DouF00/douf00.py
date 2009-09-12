@@ -80,10 +80,6 @@ def filetype(path):
 class MyApp(wx.App):
     def OnInit(self):
         print(cfg.title + ' ' + cfg.__version__)
-        print('Copyright (C) 2009  ' + cfg.__author__)
-        print('This program comes with ABSOLUTELY NO WARRANTY.')
-        print('This is free software, and you are welcome to redistribute it')
-        print('and/or modify it under the terms of the MIT license.')
 
         atexit.register(die)
         try:
