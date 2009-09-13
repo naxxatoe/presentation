@@ -48,29 +48,11 @@ class SlideList(list):
             self.ParallelLoad(self.queue).start()
 
     def __getitem__(self, slideindex):
-        if (slideindex < 0) or (slideindex >= len(self.list)):
-            image = self.loadImage(slideindex)
-        elif (self.list[slideindex] == None):
-            self.list[slideindex] = self.loadImage(slideindex)
-            image = self.list[slideindex]
-        else:
-            image = self.list[slideindex]
-
-        if not appcfg.pdfdoc:
-            self.queue.put(slideindex)
-
-        return image
-
-    def loadImage(self, slideindex):
-        if slideindex > len(self.list):
-            buffer = '\0\0\0' * 320 * 240
-            image = wx.ImageFromBuffer(320, 240, buffer)
-
-        elif (slideindex < 0) or (slideindex == len(self.list)):
-            if  not self.blank:
+        if (slideindex < 0) or (slideindex == len(self.list)):
+            if not self.blank:
                 if appcfg.blankslide == '':
                     buffer = '\0\0\0' * 320 * 240
-                    image = wx.ImageFromBuffer(320, 240, buffer)
+                    self.blank = wx.ImageFromBuffer(320, 240, buffer)
                 else:
                     if appcfg.blankslide[0] == 'image':
                         f = open(appcfg.blankslide[1], 'rb')
@@ -95,7 +77,23 @@ class SlideList(list):
 
             image = self.blank
 
+        elif slideindex > len(self.list):
+            buffer = '\0\0\0' * 320 * 240
+            image = wx.ImageFromBuffer(320, 240, buffer)
+
         else:
+            if self.list[slideindex] == None:
+                self.list[slideindex] = self.loadImage(slideindex)
+
+            image = self.list[slideindex]
+
+        if not appcfg.pdfdoc:
+            self.queue.put(slideindex)
+
+        return image
+
+    def loadImage(self, slideindex):
+        if (slideindex >= 0) and (slideindex < len(self.list)):
             try:
                 if appcfg.pdfdoc:
                     import cairo
