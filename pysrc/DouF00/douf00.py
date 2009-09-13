@@ -40,7 +40,7 @@ try:
     import wx
     assert wx.VERSION_STRING >= WXVER_REQ
 except:
-    print('wxpython >= %s required!' % WXVER_REQ)
+    print('wxpython >= %s required' % WXVER_REQ)
     sys.exit(1)
 
 
@@ -64,7 +64,12 @@ def filetype(path):
     if os.path.isdir(path):
         return 'dir'
 
-    file = open(path, 'r')
+    try:
+        file = open(path, 'r')
+    except IOError:
+        print('No such file or directory: %s' % path)
+        sys.exit(1)
+
     filemagic = file.read(8)
     file.close()
     for type, magic in appcfg.filetypes:
@@ -87,12 +92,16 @@ class MyApp(wx.App):
         parser.add_option('-e', '--exit', help='exit after last slide', action='store_true', dest='exitAfterLastSlide')
         parser.add_option('-s', '--pre', help='command to be run when startin app', action='store', dest='preDouF00')
         parser.add_option('-p', '--post', help='command to be run after the app', action='store', dest='postDouF00')
+        parser.add_option('-B', '--blankpage', help='page of PDF file to use as blank slide', action='store', type='int', dest='blankpage')
 
         (options, args) = parser.parse_args()
         options = options.__dict__
         for key in options:
             if not options[key] == None:
                 usercfg.config[key] = options[key]
+
+        if usercfg.config['blankSlide'] and (not usercfg.config['blankpage'] == 0):
+            parser.error('Options -b and -B are mutually exclusive')
 
         self.preApp()
         atexit.register(self.postApp)
@@ -111,10 +120,14 @@ class MyApp(wx.App):
                     slidepath = dirdialog.GetPath()
                 else:
                     print parser.format_help()
-                    sys.exit('No path specified!')
+                    sys.exit('No path specified')
 
 
         slidetype = filetype(slidepath)
+
+        if (not slidetype == 'PDF') and (not usercfg.config['blankpage'] == 0):
+            parser.error('Option -B is only supported with PDF files')
+
         if slidetype == 'dir':
             try:
                 os.chdir(slidepath)
@@ -131,27 +144,23 @@ class MyApp(wx.App):
 
             appcfg.pictureFiles.sort()
 
-            # DOC: if you place in your presentation directory a file with
-            #      the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
-            #      that will be your first slide, your title slide, which
-            #      shows up when you start douf00.
-            #      It was chosen that way, because some people prefer it when they
-            #      start the presentation to see a slide other don't prefer that
-            #      so more freedom to the presentator to organize their presentation
+            if usercfg.config['blankSlide']:
+                if filetype(usercfg.config['blankSlide']) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                    appcfg.blankslide = ('image', usercfg.config['blankSlide'])
+                    if appcfg.blankslide[1] in appcfg.pictureFiles:
+                        appcfg.pictureFiles.remove(appcfg.blankslide[1])
+                else:
+                    print('File type not supported')
+                    sys.exit(1)
 
-            appcfg.blankslide = ''
-            for type in ("jpg","jpeg","png","bmp","pcx"):
-                if ('blank' + '.' + type) in appcfg.pictureFiles:
-                    if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
-                        appcfg.blankslide = ('blank' + '.' + type)
-                        appcfg.pictureFiles.remove(appcfg.blankslide)
-                        break
+            else:
+                appcfg.blankslide = ''
 
         elif slidetype == 'PDF':
             try:
                 import poppler
             except ImportError:
-                print 'python-poppler required!'
+                print 'python-poppler required'
                 sys.exit(1)
 
             appcfg.pdfdoc = poppler.document_new_from_file('file://%s' % os.path.abspath(slidepath), '')
@@ -159,10 +168,24 @@ class MyApp(wx.App):
             for i in xrange(appcfg.pdfdoc.get_n_pages()):
                 appcfg.pictureFiles.append(i)
 
-            appcfg.blankslide = ''
+            if usercfg.config['blankSlide']:
+                if filetype(usercfg.config['blankSlide']) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                    appcfg.blankslide = ('image', usercfg.config['blankSlide'])
+                    if appcfg.blankslide[1] in appcfg.pictureFiles:
+                        appcfg.pictureFiles.remove(appcfg.blankslide[1])
+                else:
+                    print('File type not supported')
+                    sys.exit(1)
+
+            elif not usercfg.config['blankpage'] == 0:
+                appcfg.blankslide = ('PDF', usercfg.config['blankpage'])
+                appcfg.pictureFiles.remove(appcfg.blankslide[1] - 1)
+
+            else:
+                appcfg.blankslide = ''
 
         elif slidetype == None:
-            print('Filetype not supported!')
+            print('File type not supported')
             sys.exit(1)
 
         appcfg.thumbnaillist = ThumbnailList()

@@ -34,6 +34,7 @@ defaults = {
     'postDouF00': '',
     'time': '45',
     'slidePath': '',
+    'blankpage': '0',
 }
 
 config = {}
@@ -51,6 +52,7 @@ def parseConfig():
         config['postDouF00'] = cfg.get('general', 'postDouF00')
         config['time'] = cfg.getint('general', 'time')
         config['slidePath'] = cfg.get('general', 'slidePath')
+        config['blankpage'] = cfg.getint('general', 'blankpage')
 
     except IOError:
         pass

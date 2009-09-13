@@ -37,6 +37,7 @@ class ThumbnailList(list):
 
         super(ThumbnailList, self).__init__()
         self.list = []
+        self.blank = None
         slidecount = len(appcfg.pictureFiles)
         for i, filename in enumerate(appcfg.pictureFiles):
             sys.stdout.write('\r* Loading Thumbnails: %03d/%03d' % (i+1, slidecount))
@@ -78,17 +79,42 @@ class ThumbnailList(list):
         sys.stdout.write('\n')
 
     def __getitem__(self, index):
-        if (index < 0) or (index >= len(appcfg.pictureFiles)):
-            if (index > len(appcfg.pictureFiles)) or (appcfg.blankslide == ''):
-                buffer = '\0\0\0' * 320 * 240
-                image = wx.ImageFromBuffer(320, 240, buffer)
-                return image
-            else:
-                f = open(appcfg.blankslide, 'rb')
-                image = wx.ImageFromStream(f)
-                image.Rescale(320, 240)
-                f.close()
-                return image
+        if index > len(appcfg.pictureFiles):
+            buffer = '\0\0\0' * 320 * 240
+            image = wx.ImageFromBuffer(320, 240, buffer)
+            return image
+
+        elif (index < 0) or (index == len(appcfg.pictureFiles)):
+            if not self.blank:
+                if appcfg.blankslide == '':
+                    buffer = '\0\0\0' * 320 * 240
+                    image = wx.ImageFromBuffer(320, 240, buffer)
+                    return image
+                else:
+                    if appcfg.blankslide[0] == 'image':
+                        f = open(appcfg.blankslide[1], 'rb')
+                    elif appcfg.blankslide[0] == 'PDF':
+                        import cairo
+                        import cStringIO
+                        page = appcfg.pdfdoc.get_page(appcfg.blankslide[1] - 1)
+                        page_w, page_h = page.get_size()
+                        img = cairo.ImageSurface(cairo.FORMAT_RGB24, 320, 240)
+                        context = cairo.Context(img)
+                        context.scale(320/page_w, 240/page_h)
+                        context.set_source_rgb(1.0, 1.0, 1.0)
+                        context.rectangle(0, 0, page_w, page_h)
+                        context.fill()
+                        page.render(context)
+                        f = cStringIO.StringIO()
+                        img.write_to_png(f)
+                        f.seek(0)
+
+                    image = wx.ImageFromStream(f)
+                    image.Rescale(320, 240)
+                    f.close()
+                    self.blank = image
+
+            return self.blank
 
         return self.list[index]
 

@@ -34,9 +34,10 @@ class SlideList(list):
     def __init__(self):
         super(SlideList, self).__init__()
         self.list = [None for i in xrange(len(appcfg.pictureFiles))]
+        self.blank = None
         if appcfg.pdfdoc:
             import sys
-            slidecount = appcfg.pdfdoc.get_n_pages()
+            slidecount = len(appcfg.pictureFiles)
             for i in xrange(len(appcfg.pictureFiles)):
                 sys.stdout.write('\r* Loading Slides: %03d/%03d' % (i+1, slidecount))
                 sys.stdout.flush()
@@ -61,14 +62,39 @@ class SlideList(list):
         return image
 
     def loadImage(self, slideindex):
-        if (slideindex < 0) or (slideindex >= len(self.list)):
-            if (slideindex > len(self.list)) or (appcfg.blankslide == ''):
-                buffer = '\0\0\0' * 320 * 240
-                image = wx.ImageFromBuffer(320, 240, buffer)
-            else:
-                f = open(appcfg.blankslide, 'rb')
-                image = wx.ImageFromStream(f)
-                f.close()
+        if slideindex > len(self.list):
+            buffer = '\0\0\0' * 320 * 240
+            image = wx.ImageFromBuffer(320, 240, buffer)
+
+        elif (slideindex < 0) or (slideindex == len(self.list)):
+            if  not self.blank:
+                if appcfg.blankslide == '':
+                    buffer = '\0\0\0' * 320 * 240
+                    image = wx.ImageFromBuffer(320, 240, buffer)
+                else:
+                    if appcfg.blankslide[0] == 'image':
+                        f = open(appcfg.blankslide[1], 'rb')
+                    elif appcfg.blankslide[0] == 'PDF':
+                        import cairo
+                        import cStringIO
+                        page = appcfg.pdfdoc.get_page(appcfg.blankslide[1] - 1)
+                        page_w, page_h = page.get_size()
+                        img = cairo.ImageSurface(cairo.FORMAT_RGB24, 1024, 768)
+                        context = cairo.Context(img)
+                        context.scale(1024/page_w, 768/page_h)
+                        context.set_source_rgb(1.0, 1.0, 1.0)
+                        context.rectangle(0, 0, page_w, page_h)
+                        context.fill()
+                        page.render(context)
+                        f = cStringIO.StringIO()
+                        img.write_to_png(f)
+                        f.seek(0)
+
+                    self.blank = wx.ImageFromStream(f)
+                    f.close()
+
+            image = self.blank
+
         else:
             try:
                 if appcfg.pdfdoc:
