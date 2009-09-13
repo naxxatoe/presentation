@@ -28,7 +28,7 @@ import wx
 import os
 
 title = 'DouF00'
-__version__ = '1.0.2'
+__version__ = '2.0.0'
 __author__ = 'Martin Ptacek'
 numberFontSize = 150
 preLoadCache = 5
