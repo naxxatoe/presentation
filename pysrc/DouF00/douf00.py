@@ -88,11 +88,12 @@ class MyApp(wx.App):
 
         parser = OptionParser(usage='%prog [options] [slidepath]', version=appcfg.__version__)
         parser.add_option('-t', '--time', help='presentation time', action='store', type='int', dest='time')
-        parser.add_option('-b', '--blank', help='blank slide', action='store', type='string', dest='blankSlide')
+        parser.add_option('-b', '--blank', help='blank slide', action='store', dest='blankSlide')
         parser.add_option('-e', '--exit', help='exit after last slide', action='store_true', dest='exitAfterLastSlide')
         parser.add_option('-s', '--pre', help='command to be run when startin app', action='store', dest='preDouF00')
         parser.add_option('-p', '--post', help='command to be run after the app', action='store', dest='postDouF00')
         parser.add_option('-B', '--blankpage', help='page of PDF file to use as blank slide', action='store', type='int', dest='blankpage')
+        parser.add_option('-S', '--password', help='PDF file is password protection', action='store_true', dest='password')
 
         (options, args) = parser.parse_args()
         options = options.__dict__
@@ -122,8 +123,13 @@ class MyApp(wx.App):
                     print parser.format_help()
                     sys.exit('No path specified')
 
-
         slidetype = filetype(slidepath)
+
+        if (not slidetype == 'PDF') and (usercfg.config['password']):
+            parser.error('Option -S is only suitable for PDF files')
+
+        if usercfg.config['password']:
+            appcfg.pdfpass = wx.GetPasswordFromUser('PDF password')
 
         if (not slidetype == 'PDF') and (not usercfg.config['blankpage'] == 0):
             parser.error('Option -B is only supported with PDF files')
@@ -163,7 +169,7 @@ class MyApp(wx.App):
                 print 'python-poppler required'
                 sys.exit(1)
 
-            appcfg.pdfdoc = poppler.document_new_from_file('file://%s' % os.path.abspath(slidepath), '')
+            appcfg.pdfdoc = poppler.document_new_from_file('file://%s' % os.path.abspath(slidepath), appcfg.pdfpass)
             appcfg.pictureFiles = []
             for i in xrange(appcfg.pdfdoc.get_n_pages()):
                 appcfg.pictureFiles.append(i)

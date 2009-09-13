@@ -35,6 +35,7 @@ defaults = {
     'time': '45',
     'slidePath': '',
     'blankpage': '0',
+    'password': 'False',
 }
 
 config = {}
@@ -53,6 +54,7 @@ def parseConfig():
         config['time'] = cfg.getint('general', 'time')
         config['slidePath'] = cfg.get('general', 'slidePath')
         config['blankpage'] = cfg.getint('general', 'blankpage')
+        config['password'] = cfg.getboolean('general', 'password')
 
     except IOError:
         pass

@@ -43,6 +43,7 @@ presentorBackgroundColor = wx.Color(80, 80, 80)
 presentorBorderColor = (255, 0, 0)
 blankThumbnail = None
 pdfdoc = None
+pdfpass = ''
 
 filetypes = (
     ('JPEG', '\xff\xd8'),
