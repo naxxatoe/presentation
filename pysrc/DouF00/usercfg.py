@@ -33,7 +33,7 @@ defaults = {
     'preDouF00': '',
     'postDouF00': '',
     'time': '45',
-    'slidePath': '.',
+    'slidePath': '',
 }
 
 config = {}
@@ -49,7 +49,7 @@ def parseConfig():
         config['exitAfterLastSlide'] = cfg.getboolean('general', 'exitAfterLastSlide')
         config['preDouF00'] = cfg.get('general', 'preDouF00')
         config['postDouF00'] = cfg.get('general', 'postDouF00')
-        config['time'] = cfg.get('general', 'time')
+        config['time'] = cfg.getint('general', 'time')
         config['slidePath'] = cfg.get('general', 'slidePath')
 
     except IOError:

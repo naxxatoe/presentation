@@ -53,9 +53,7 @@ from DisplayChoice import DisplayChoice
 from ThumbnailList import ThumbnailList
 import atexit
 import usercfg
-
-def printUsage():
-    print('Usage: %s [path]' % os.path.basename(sys.argv[0]))
+from optparse import OptionParser
 
 class TriggerClock(wx.PyEvent):
     def __init__(self):
@@ -77,26 +75,44 @@ def filetype(path):
 
 class MyApp(wx.App):
     def OnInit(self):
-        print(appcfg.title + ' ' + appcfg.__version__)
-
         self.presentationScreens = []
         self.presentorsScreens = []
         atexit.register(self.exit)
 
         usercfg.parseConfig()
+
+        parser = OptionParser(usage='%prog [options] [slidepath]', version=appcfg.__version__)
+        parser.add_option('-t', '--time', help='presentation time', action='store', type='int', dest='time')
+        parser.add_option('-b', '--blank', help='blank slide', action='store', type='string', dest='blankSlide')
+        parser.add_option('-e', '--exit', help='exit after last slide', action='store_true', dest='exitAfterLastSlide')
+        parser.add_option('-s', '--pre', help='command to be run when startin app', action='store', dest='preDouF00')
+        parser.add_option('-p', '--post', help='command to be run after the app', action='store', dest='postDouF00')
+
+        (options, args) = parser.parse_args()
+        options = options.__dict__
+        for key in options:
+            if not options[key] == None:
+                usercfg.config[key] = options[key]
+
         self.preApp()
         atexit.register(self.postApp)
 
-
-        try:
-            slidepath = sys.argv[1]
-        except IndexError:
-            dirdialog = wx.DirDialog(None)
-            if (dirdialog.ShowModal() == wx.ID_OK):
-                slidepath = dirdialog.GetPath()
+        if len(args) > 1:
+            print parser.format_help()
+            sys.exit(1)
+        elif len(args) == 1:
+            slidepath = args[0]
+        else:
+            if usercfg.config['slidePath']:
+                slidepath = usercfg.config['slidePath']
             else:
-                printUsage()
-                sys.exit('No path specified')
+                dirdialog = wx.DirDialog(None)
+                if (dirdialog.ShowModal() == wx.ID_OK):
+                    slidepath = dirdialog.GetPath()
+                else:
+                    print parser.format_help()
+                    sys.exit('No path specified!')
+
 
         slidetype = filetype(slidepath)
         if slidetype == 'dir':

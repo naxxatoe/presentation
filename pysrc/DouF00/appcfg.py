@@ -42,7 +42,6 @@ index = False
 presentorBackgroundColor = wx.Color(80, 80, 80)
 presentorBorderColor = (255, 0, 0)
 blankThumbnail = None
-defaultTime = 45
 pdfdoc = None
 
 filetypes = (
