@@ -135,6 +135,9 @@ class MyApp(wx.App):
             parser.error('Option -B is only supported with PDF files')
 
         if slidetype == 'dir':
+            if usercfg.config['blankSlide']:
+                usercfg.config['blankSlide'] = os.path.abspath(usercfg.config['blankSlide'])
+
             try:
                 os.chdir(slidepath)
             except OSError:
