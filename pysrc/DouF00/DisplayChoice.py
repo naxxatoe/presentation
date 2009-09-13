@@ -25,13 +25,13 @@
 # Web: http://nicenamecrew.com/
 
 import wx
-import config as cfg
+import appcfg
 
 class DisplayChoice(wx.Frame):
     def __init__(self):
         geometry = wx.Display(0).GetGeometry()
         style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
-        super(DisplayChoice, self).__init__(None, wx.ID_ANY, cfg.title,
+        super(DisplayChoice, self).__init__(None, wx.ID_ANY, appcfg.title,
                                             style = style)
         self.choices = ['-- Nothing --', 'Audience', 'Presentor']
         displays = wx.Display.GetCount()
@@ -54,7 +54,7 @@ class DisplayChoice(wx.Frame):
         self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY,
                                     min = 1,
                                     max = 120,
-                                    initial = cfg.defaultTime)
+                                    initial = appcfg.defaultTime)
         hbox.Add(self.spinctrl, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
         box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.button = wx.Button(self, wx.ID_ANY, label = 'OK')

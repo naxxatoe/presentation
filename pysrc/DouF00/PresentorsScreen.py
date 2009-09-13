@@ -25,7 +25,7 @@
 # Web: http://nicenamecrew.com/
 
 import wx
-import config as cfg
+import appcfg
 from MyImage import *
 
 class PresentorsScreen(wx.Frame):
@@ -35,11 +35,11 @@ class PresentorsScreen(wx.Frame):
         position = (geometry[0], geometry[1])
         self.size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentorsScreen, self).__init__(None, wx.ID_ANY, cfg.title,
+        super(PresentorsScreen, self).__init__(None, wx.ID_ANY, appcfg.title,
                                                style = style,
                                                size = self.size,
                                                pos = position)
-        self.SetBackgroundColour(cfg.presentorBackgroundColor)
+        self.SetBackgroundColour(appcfg.presentorBackgroundColor)
         self.static_bitmap = []
         for i in xrange(9):
             self.static_bitmap.append(wx.StaticBitmap(self, wx.ID_ANY))
@@ -92,7 +92,7 @@ class PresentorsScreen(wx.Frame):
         height = int(float(self.size[1]) / 200 * 179)
         update = (prevSlide != None) and ((prevSlide - ((prevSlide + 1) % 9)) ==
                                           (slideindex - ((slideindex + 1) % 9)))
-        if cfg.index:
+        if appcfg.index:
             self.hbox.SetRows(3)
             self.hbox.SetCols(3)
             width = int(float(self.size[0]) / 3) - 5
@@ -104,7 +104,7 @@ class PresentorsScreen(wx.Frame):
 
             for i in updateList:
                 slidelistindex = slideindex - ((slideindex + 1) % 9) + i
-                img = cfg.thumbnaillist[slidelistindex]
+                img = appcfg.thumbnaillist[slidelistindex]
                 if i == (slideindex + 1) % 9:
                     img = img.makeImageBorder()
 
@@ -128,11 +128,11 @@ class PresentorsScreen(wx.Frame):
         else:
             self.hbox.SetRows(1)
             self.hbox.SetCols(2)
-            image1 = cfg.slidelist[slideindex]
+            image1 = appcfg.slidelist[slideindex]
             image1 = image1.makeImageBorder()
             bitmap1 = image1.scaleImageToBitmap((width, height),
                                                 method = method)
-            bitmap2 = cfg.slidelist[slideindex + 1].scaleImageToBitmap(
+            bitmap2 = appcfg.slidelist[slideindex + 1].scaleImageToBitmap(
                                                         (width, height),
                                                         method = method)
             self.static_bitmap[0].SetBitmap(bitmap1)
@@ -144,15 +144,15 @@ class PresentorsScreen(wx.Frame):
 
     def index(self, slideindex, force = False):
         if force == True:
-            cfg.index = False
-        if cfg.index:
+            appcfg.index = False
+        if appcfg.index:
             for i in xrange(2, 9):
                 self.static_bitmap[i].Show()
                 self.hbox.Add(self.static_bitmap[i], 0, wx.ALIGN_CENTER_HORIZONTAL)
 
             self.thumbs = []
             for i in xrange(slideindex - 4, slideindex + 5):
-                self.thumbs.append(cfg.thumbnaillist[i])
+                self.thumbs.append(appcfg.thumbnaillist[i])
 
             for i in xrange(9):
                 self.numbers[i].Show()

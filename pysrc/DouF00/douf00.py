@@ -44,7 +44,7 @@ except:
     sys.exit(1)
 
 
-import config as cfg
+import appcfg
 from PresentorsScreen import PresentorsScreen
 from PresentationScreen import PresentationScreen
 from SlideList import SlideList
@@ -52,6 +52,7 @@ from NumberFrame import NumberFrame
 from DisplayChoice import DisplayChoice
 from ThumbnailList import ThumbnailList
 import atexit
+import usercfg
 
 def printUsage():
     print('Usage: %s [path]' % os.path.basename(sys.argv[0]))
@@ -59,10 +60,7 @@ def printUsage():
 class TriggerClock(wx.PyEvent):
     def __init__(self):
         super(TriggerClock, self).__init__()
-        self.SetEventType(cfg.EVT_CLOCK_ID)
-
-def die():
-    os.chdir(cfg.prevWD)
+        self.SetEventType(appcfg.EVT_CLOCK_ID)
 
 def filetype(path):
     if os.path.isdir(path):
@@ -71,7 +69,7 @@ def filetype(path):
     file = open(path, 'r')
     filemagic = file.read(8)
     file.close()
-    for type, magic in cfg.filetypes:
+    for type, magic in appcfg.filetypes:
         if magic == filemagic[:len(magic)]:
             return type
 
@@ -79,9 +77,17 @@ def filetype(path):
 
 class MyApp(wx.App):
     def OnInit(self):
-        print(cfg.title + ' ' + cfg.__version__)
+        print(appcfg.title + ' ' + appcfg.__version__)
 
-        atexit.register(die)
+        self.presentationScreens = []
+        self.presentorsScreens = []
+        atexit.register(self.exit)
+
+        usercfg.parseConfig()
+        self.preApp()
+        atexit.register(self.postApp)
+
+
         try:
             slidepath = sys.argv[1]
         except IndexError:
@@ -99,15 +105,15 @@ class MyApp(wx.App):
             except OSError:
                 sys.exit('No such file or directory')
 
-            cfg.pictureFiles = []
+            appcfg.pictureFiles = []
             files = os.listdir(os.getcwd())
 
             # support for more picture types
             for file in files:
                 if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
-                    cfg.pictureFiles.append(file)
+                    appcfg.pictureFiles.append(file)
 
-            cfg.pictureFiles.sort()
+            appcfg.pictureFiles.sort()
 
             # DOC: if you place in your presentation directory a file with
             #      the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
@@ -117,12 +123,12 @@ class MyApp(wx.App):
             #      start the presentation to see a slide other don't prefer that
             #      so more freedom to the presentator to organize their presentation
 
-            cfg.blankslide = ''
+            appcfg.blankslide = ''
             for type in ("jpg","jpeg","png","bmp","pcx"):
-                if ('blank' + '.' + type) in cfg.pictureFiles:
+                if ('blank' + '.' + type) in appcfg.pictureFiles:
                     if filetype(file) in ('JPEG', 'PNG', 'BMP', 'PCX'):
-                        cfg.blankslide = ('blank' + '.' + type)
-                        cfg.pictureFiles.remove(cfg.blankslide)
+                        appcfg.blankslide = ('blank' + '.' + type)
+                        appcfg.pictureFiles.remove(appcfg.blankslide)
                         break
 
         elif slidetype == 'PDF':
@@ -132,19 +138,19 @@ class MyApp(wx.App):
                 print 'python-poppler required!'
                 sys.exit(1)
 
-            cfg.pdfdoc = poppler.document_new_from_file('file://%s' % os.path.abspath(slidepath), '')
-            cfg.pictureFiles = []
-            for i in xrange(cfg.pdfdoc.get_n_pages()):
-                cfg.pictureFiles.append(i)
+            appcfg.pdfdoc = poppler.document_new_from_file('file://%s' % os.path.abspath(slidepath), '')
+            appcfg.pictureFiles = []
+            for i in xrange(appcfg.pdfdoc.get_n_pages()):
+                appcfg.pictureFiles.append(i)
 
-            cfg.blankslide = ''
+            appcfg.blankslide = ''
 
         elif slidetype == None:
             print('Filetype not supported!')
             sys.exit(1)
 
-        cfg.thumbnaillist = ThumbnailList()
-        cfg.slidelist = SlideList()
+        appcfg.thumbnaillist = ThumbnailList()
+        appcfg.slidelist = SlideList()
 
         displayCount = wx.Display.GetCount()
         self.numberFrames = []
@@ -159,9 +165,13 @@ class MyApp(wx.App):
         self.elapsedTime = 0
         return True
 
-    def deleteTemp(self):
-        import shutil
-        shutil.rmtree(self.td)
+    def preApp(self):
+        if usercfg.config['preDouF00']:
+            os.system(usercfg.config['preDouF00'])
+
+    def postApp(self):
+        if usercfg.config['postDouF00']:
+            os.system(usercfg.config['postDouF00'])
 
     def OnKeyPress(self, event):
         event.Skip()
@@ -171,24 +181,24 @@ class MyApp(wx.App):
         elif (key == wx.WXK_LEFT) or (key == wx.WXK_PAGEUP):
             self.PrevSlide()
         elif (key == wx.WXK_DOWN):
-            if cfg.index:
+            if appcfg.index:
                 self.NextSlide(3)
         elif (key == wx.WXK_UP):
-            if cfg.index:
+            if appcfg.index:
                 self.PrevSlide(3)
         elif (key == ord('q')) or (key == ord('Q')):
-            self.exit()
+            sys.exit()
         elif (key == ord('r')) or (key == ord('R')):
             self.startTime = int(time.time())
             self.elapsedTime = 0
         elif (key == ord('p')) or (key == ord('P')):
-            cfg.pause = not cfg.pause
+            appcfg.pause = not appcfg.pause
         elif (key == ord('i')) or (key == ord('I')) or (key == wx.WXK_ESCAPE) or (key == wx.WXK_F5):
-            if cfg.index:
+            if appcfg.index:
                 for p in self.presentationScreens:
                     p.load(self.slideindex)
                     p.Show()
-            cfg.index = not cfg.index
+            appcfg.index = not appcfg.index
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
         elif (key == wx.WXK_RETURN):
@@ -202,8 +212,6 @@ class MyApp(wx.App):
 
         for p in self.presentorsScreens:
             p.Destroy()
-
-        sys.exit(0)
 
     def swapScreens(self):
         presentationScreens = []
@@ -256,8 +264,8 @@ class MyApp(wx.App):
         self.PrevSlide()
 
     def exitIndex(self):
-        if cfg.index:
-            cfg.index = not cfg.index
+        if appcfg.index:
+            appcfg.index = not appcfg.index
             for p in self.presentorsScreens:
                 p.index(self.slideindex)
             for p in self.presentationScreens:
@@ -268,8 +276,6 @@ class MyApp(wx.App):
         self.runTime = self.choice.spinctrl.GetValue() * 60
         self.slideindex = -1
         displayCount = wx.Display.GetCount()
-        self.presentationScreens = []
-        self.presentorsScreens = []
         for displayindex in xrange(displayCount):
             if self.choice.choices[self.choice.selections[displayindex].GetSelection()] == 'Audience':
                 self.presentationScreens.append(PresentationScreen(displayindex = displayindex))
@@ -307,14 +313,14 @@ class MyApp(wx.App):
         t = self.Clock(self, self.presentorsScreens)
         t.setDaemon(True)
         t.start()
-        self.Connect(-1, -1, cfg.EVT_CLOCK_ID, self.setClock)
+        self.Connect(-1, -1, appcfg.EVT_CLOCK_ID, self.setClock)
 
     def setClock(self, event):
         t = time.localtime()
         now = int(time.time())
         is_running = 0
-        if ((0 <= self.slideindex < len(cfg.pictureFiles)) and \
-            (self.remainingTime > 0)) and (not cfg.pause):
+        if ((0 <= self.slideindex < len(appcfg.pictureFiles)) and \
+            (self.remainingTime > 0)) and (not appcfg.pause):
             is_running = 1
         else:
             self.startTime = now - self.elapsedTime
@@ -357,10 +363,13 @@ class MyApp(wx.App):
 
 
     def NextSlide(self, step = 1):
-        if self.slideindex + step <= len(cfg.pictureFiles):
+        if (self.slideindex + step > len(appcfg.pictureFiles)) and usercfg.config['exitAfterLastSlide'] and not appcfg.index:
+            sys.exit()
+
+        if self.slideindex + step <= len(appcfg.pictureFiles):
             self.slideindex += step
 
-        if not cfg.index:
+        if not appcfg.index:
             for p in self.presentationScreens:
                 p.load(self.slideindex)
                 p.Show()
@@ -373,7 +382,7 @@ class MyApp(wx.App):
         if self.slideindex - step >= -1:
             self.slideindex -= step
 
-        if not cfg.index:
+        if not appcfg.index:
             for p in self.presentationScreens:
                 p.load(self.slideindex)
                 p.Show()

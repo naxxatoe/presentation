@@ -25,7 +25,7 @@
 # Web: http://nicenamecrew.com/
 
 import wx
-import config as cfg
+import appcfg
 import threading
 import Queue
 
@@ -33,11 +33,11 @@ import Queue
 class SlideList(list):
     def __init__(self):
         super(SlideList, self).__init__()
-        self.list = [None for i in xrange(len(cfg.pictureFiles))]
-        if cfg.pdfdoc:
+        self.list = [None for i in xrange(len(appcfg.pictureFiles))]
+        if appcfg.pdfdoc:
             import sys
-            slidecount = cfg.pdfdoc.get_n_pages()
-            for i in xrange(len(cfg.pictureFiles)):
+            slidecount = appcfg.pdfdoc.get_n_pages()
+            for i in xrange(len(appcfg.pictureFiles)):
                 sys.stdout.write('\r* Loading Slides: %03d/%03d' % (i+1, slidecount))
                 sys.stdout.flush()
                 self.list[i] = self.loadImage(i)
@@ -55,26 +55,26 @@ class SlideList(list):
         else:
             image = self.list[slideindex]
 
-        if not cfg.pdfdoc:
+        if not appcfg.pdfdoc:
             self.queue.put(slideindex)
 
         return image
 
     def loadImage(self, slideindex):
         if (slideindex < 0) or (slideindex >= len(self.list)):
-            if (slideindex > len(self.list)) or (cfg.blankslide == ''):
+            if (slideindex > len(self.list)) or (appcfg.blankslide == ''):
                 buffer = '\0\0\0' * 320 * 240
                 image = wx.ImageFromBuffer(320, 240, buffer)
             else:
-                f = open(cfg.blankslide, 'rb')
+                f = open(appcfg.blankslide, 'rb')
                 image = wx.ImageFromStream(f)
                 f.close()
         else:
             try:
-                if cfg.pdfdoc:
+                if appcfg.pdfdoc:
                     import cairo
                     import cStringIO
-                    page = cfg.pdfdoc.get_page(cfg.pictureFiles[slideindex])
+                    page = appcfg.pdfdoc.get_page(appcfg.pictureFiles[slideindex])
                     page_w, page_h = page.get_size()
                     img = cairo.ImageSurface(cairo.FORMAT_RGB24, 1024, 768)
                     context = cairo.Context(img)
@@ -87,13 +87,13 @@ class SlideList(list):
                     img.write_to_png(f)
                     f.seek(0)
                 else:
-                    f = open(cfg.pictureFiles[slideindex], 'rb')
+                    f = open(appcfg.pictureFiles[slideindex], 'rb')
 
                 image = wx.ImageFromStream(f)
                 f.close()
 
             except:
-                print('Cant load page: %s' % cfg.pictureFiles[slideindex])
+                print('Cant load page: %s' % appcfg.pictureFiles[slideindex])
 
         return image
 
@@ -103,21 +103,21 @@ class SlideList(list):
             super(SlideList.ParallelLoad, self).__init__()
         def run(self):
             slideindex = self.queue.get()
-            minIndex = slideindex - cfg.preLoadCache
-            maxIndex = slideindex + cfg.preLoadCache
+            minIndex = slideindex - appcfg.preLoadCache
+            maxIndex = slideindex + appcfg.preLoadCache
             if minIndex < 0:
                 minIndex = 0
 
-            if maxIndex > len(cfg.pictureFiles):
-                maxIndex = len(cfg.pictureFiles)
+            if maxIndex > len(appcfg.pictureFiles):
+                maxIndex = len(appcfg.pictureFiles)
 
             for i in xrange(minIndex, maxIndex):
-                if cfg.slidelist[i] == None:
-                    cfg.slidelist[i] = loadImage(i)
+                if appcfg.slidelist[i] == None:
+                    appcfg.slidelist[i] = loadImage(i)
 
             for i in xrange(minIndex):
-                cfg.slidelist[i] = None
+                appcfg.slidelist[i] = None
 
-            for i in xrange(maxIndex, len(cfg.slidelist)):
-                cfg.slidelist[i] = None
+            for i in xrange(maxIndex, len(appcfg.slidelist)):
+                appcfg.slidelist[i] = None
 

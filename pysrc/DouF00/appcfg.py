@@ -27,7 +27,6 @@
 import wx
 import os
 
-prevWD = os.getcwd()
 title = 'DouF00'
 __version__ = '1.0.2'
 __author__ = 'Martin Ptacek'
@@ -53,4 +52,6 @@ filetypes = (
     ('PCX', '\x0a'),
     ('PDF', '\x25\x50\x44\x46'),
 )
+
+configFile = os.path.expanduser('~/.douf00/douf00.conf')
 

@@ -25,7 +25,7 @@
 # Web: http://nicenamecrew.com/
 
 import wx
-import config as cfg
+import appcfg
 from MyImage import *
 
 class PresentationScreen(wx.Frame):
@@ -35,7 +35,7 @@ class PresentationScreen(wx.Frame):
         position = (geometry[0], geometry[1])
         self.size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentationScreen, self).__init__(None, wx.ID_ANY, cfg.title,
+        super(PresentationScreen, self).__init__(None, wx.ID_ANY, appcfg.title,
                                                  style = style,
                                                  pos = position,
                                                  size = self.size)
@@ -48,7 +48,7 @@ class PresentationScreen(wx.Frame):
         self.panel.SetBackgroundColour(wx.Colour(0, 0, 0))
 
     def load(self, slideindex):
-        bitmap = cfg.slidelist[slideindex].scaleImageToBitmap(self.size)
+        bitmap = appcfg.slidelist[slideindex].scaleImageToBitmap(self.size)
         self.static_bitmap.SetBitmap(bitmap)
         self.Layout()
 

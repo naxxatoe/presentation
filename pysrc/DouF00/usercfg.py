@@ -24,41 +24,37 @@
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
-import wx
 import appcfg
+import ConfigParser
 
-def makeImageBorder(self, pixels = 5):
-    img = self.Copy()
-    color = appcfg.presentorBorderColor
-    size = img.GetSize()
-    for (x, y, width, height) in [(0, 0,                size[0], pixels ),
-                                  (0, 0,                pixels,  size[1]),
-                                  (0, size[1] - pixels, size[0], pixels ),
-                                  (size[0] - pixels, 0, pixels,  size[1])]:
-        rect = wx.Rect(x, y, width, height)
-        img.SetRGBRect(rect, color[0], color[1], color[2])
+defaults = {
+    'blankSlide': '',
+    'exitAfterLastSlide': 'False',
+    'preDouF00': '',
+    'postDouF00': '',
+    'time': '45',
+    'slidePath': '.',
+}
 
-    return img
+config = {}
 
-def scaleImageToBitmap(self, size, method = 'scale'):
-    ImageSize = self.GetSize()
-    if method == 'stretch':
-        ImageSize = size
-    else:
-        ratioX = float(size[0]) / ImageSize[0]
-        ratioY = float(size[1]) / ImageSize[1]
-        if ratioX < ratioY:
-            ImageSize[0] = int(ImageSize[0] * ratioX)
-            ImageSize[1] = int(ImageSize[1] * ratioX)
-        else:
-            ImageSize[0] = int(ImageSize[0] * ratioY)
-            ImageSize[1] = int(ImageSize[1] * ratioY)
-                
-    image = self.Scale(ImageSize[0], ImageSize[1])
-    bitmap = wx.BitmapFromImage(image)
+def parseConfig():
+    try:
+        f = open(appcfg.configFile, 'r')
+        cfg = ConfigParser.SafeConfigParser(defaults)
+        cfg.readfp(f)
+        f.close
 
-    return bitmap
+        config['blankSlide'] = cfg.get('general', 'blankSlide')
+        config['exitAfterLastSlide'] = cfg.getboolean('general', 'exitAfterLastSlide')
+        config['preDouF00'] = cfg.get('general', 'preDouF00')
+        config['postDouF00'] = cfg.get('general', 'postDouF00')
+        config['time'] = cfg.get('general', 'time')
+        config['slidePath'] = cfg.get('general', 'slidePath')
 
-wx.Image.makeImageBorder = makeImageBorder
-wx.Image.scaleImageToBitmap = scaleImageToBitmap
+    except IOError:
+        pass
+
+    except ConfigParser.NoSectionError:
+        pass
 

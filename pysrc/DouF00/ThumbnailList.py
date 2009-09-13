@@ -26,24 +26,24 @@
 
 import wx
 import threading
-import config as cfg
+import appcfg
 import sys
 
 class ThumbnailList(list):
     def __init__(self):
-        if cfg.pdfdoc:
+        if appcfg.pdfdoc:
             import cairo
             import cStringIO
 
         super(ThumbnailList, self).__init__()
         self.list = []
-        slidecount = len(cfg.pictureFiles)
-        for i, filename in enumerate(cfg.pictureFiles):
+        slidecount = len(appcfg.pictureFiles)
+        for i, filename in enumerate(appcfg.pictureFiles):
             sys.stdout.write('\r* Loading Thumbnails: %03d/%03d' % (i+1, slidecount))
             sys.stdout.flush()
 
-            if cfg.pdfdoc:
-                page = cfg.pdfdoc.get_page(filename)
+            if appcfg.pdfdoc:
+                page = appcfg.pdfdoc.get_page(filename)
                 page_w, page_h = page.get_size()
                 img = cairo.ImageSurface(cairo.FORMAT_RGB24, 320, 240)
                 context = cairo.Context(img)
@@ -78,13 +78,13 @@ class ThumbnailList(list):
         sys.stdout.write('\n')
 
     def __getitem__(self, index):
-        if (index < 0) or (index >= len(cfg.pictureFiles)):
-            if (index > len(cfg.pictureFiles)) or (cfg.blankslide == ''):
+        if (index < 0) or (index >= len(appcfg.pictureFiles)):
+            if (index > len(appcfg.pictureFiles)) or (appcfg.blankslide == ''):
                 buffer = '\0\0\0' * 320 * 240
                 image = wx.ImageFromBuffer(320, 240, buffer)
                 return image
             else:
-                f = open(cfg.blankslide, 'rb')
+                f = open(appcfg.blankslide, 'rb')
                 image = wx.ImageFromStream(f)
                 image.Rescale(320, 240)
                 f.close()
