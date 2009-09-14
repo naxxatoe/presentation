@@ -11,6 +11,10 @@ Vcs-Browser: http://github.com/natano/presentation/tree/debian
 
 Package: douf00
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}, python-wxgtk2.8
-Description: fat free presentations
- FIXME!
+Depends: ${python:Depends}, ${misc:Depends}, python-wxgtk2.8, python-cairo, python-poppler
+Description: lightweight, slim and straight forward Presentation Tool
+ It assists novice as well as experienced speakers when giving lectures
+ and business meetings. With its simple presenters Screen that includes
+ current slide - next slide (preview) as well as timers it is designed
+ to assist those of us, that are willing to step up their lectures
+ to the next level.
