@@ -1,5 +1,5 @@
-douf00 (1-1) UNRELEASED; urgency=low
+douf00 (2.0.1-1) unstable; urgency=low
 
   * Initial release. (Closes: #543783)
 
- -- Bernd Zeimetz <bzed@debian.org>  Wed, 26 Aug 2009 23:55:58 +0200
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 15 Sep 2009 00:15:42 +0200
