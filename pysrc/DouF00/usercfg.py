@@ -31,7 +31,7 @@ defaults = {
     'blankslide': '',
     'exitafterlastslide': 'False',
     'predouf00': '',
-    'postdouF00': '',
+    'postdouf00': '',
     'time': '45',
     'slidepath': '',
     'blankpage': '0',
