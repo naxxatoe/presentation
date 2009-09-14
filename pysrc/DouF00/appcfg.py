@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # DouF00 - fat free presentations
 # Copyright (C) 2009  Martin Ptacek
 #
@@ -21,28 +20,38 @@
 # THE SOFTWARE.
 #
 # Author: natano (Martin Ptacek)
+# Author: naxxatoe (Sebastian Maier)
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
-from distutils.core import setup
-import platform
+import wx
+import os
 
-args = {'name' : 'DouF00',
-        'author' : 'Martin Ptacek',
-        'author_email' : 'natano@nicenamecrew.com',
-        'platforms': ['any'],
-        'url': 'http://nicenamecrew.com/',
-        'version' : '1',
-        'license' :'MIT',
-        'packages' : ['DouF00'],
-        'description': 'fat free presentations'
-       }
+title = 'DouF00'
+__version__ = '2.0.1'
+__author__ = 'Martin Ptacek'
+numberFontSize = 150
+preLoadCache = 5
+pictureFiles = None
+blankslide = None
+slidelist = None
+thumbnaillist = None
+EVT_CLOCK_ID = wx.NewId()
+pause = False
+index = False
+presentorBackgroundColor = wx.Color(80, 80, 80)
+presentorBorderColor = (255, 0, 0)
+blankThumbnail = None
+pdfdoc = None
+pdfpass = ''
 
-if platform.system() == 'Windows':
-    import py2exe
-    args['console'] = ['douf00'];
-else:
-    args['scripts'] = ['douf00'];
+filetypes = (
+    ('JPEG', '\xff\xd8'),
+    ('PNG', '\x89PNG\x0d\x0a\x1a\x0a'),
+    ('BMP', 'BM'),
+    ('PCX', '\x0a'),
+    ('PDF', '\x25\x50\x44\x46'),
+)
 
-setup(**args)
+configFile = os.path.expanduser('~/.douf00/douf00.conf')
 

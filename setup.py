@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # DouF00 - fat free presentations
 # Copyright (C) 2009  Martin Ptacek
 #
@@ -20,27 +21,27 @@
 # THE SOFTWARE.
 #
 # Author: natano (Martin Ptacek)
-# Author: naxxatoe (Sebastian Maier)
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
-import wx
-import os
+from distutils.core import setup
 
-prevWD = os.getcwd()
-title = "DouF00"
-__version__ = "1.0"
-__author__ = "Martin Ptacek"
-numberFontSize = 150
-preLoadCache = 5
-pictureFiles = None
-blankslide = None
-slidelist = None
-thumbnaillist = None
-EVT_CLOCK_ID = wx.NewId()
-pause = False
-index = False
-presentorBackgroundColor = wx.Color(80, 80, 80)
-presentorBorderColor = (255, 0, 0)
-blankThumbnail = None
-defaultTime = 45
+args = {
+    'name': 'DouF00',
+    'version': '2.0.1',
+    'description': 'fat free presentations',
+
+    'author': 'Martin Ptacek',
+    'author_email': 'natano@nicenamecrew.com',
+    'license': 'MIT',
+    'url': 'http://nicenamecrew.com/',
+
+    'platforms': ['Linux'],
+    'packages': ['DouF00'],
+    'package_dir': {'DouF00': 'pysrc/DouF00'},
+    'scripts': ['pysrc/wrapper/douf00'],
+    'data_files': [('share/man/man1', ['doc/douf00.1'])],
+}
+
+setup(**args)
+

@@ -24,41 +24,56 @@
 # Email: natanoptacek@gmail.com
 # Web: http://nicenamecrew.com/
 
-import wx
 import appcfg
+import ConfigParser
 
-def makeImageBorder(self, pixels = 5):
-    img = self.Copy()
-    color = appcfg.presentorBorderColor
-    size = img.GetSize()
-    for (x, y, width, height) in [(0, 0,                size[0], pixels ),
-                                  (0, 0,                pixels,  size[1]),
-                                  (0, size[1] - pixels, size[0], pixels ),
-                                  (size[0] - pixels, 0, pixels,  size[1])]:
-        rect = wx.Rect(x, y, width, height)
-        img.SetRGBRect(rect, color[0], color[1], color[2])
+defaults = {
+    'blankslide': '',
+    'exitafterlastslide': 'False',
+    'predouf00': '',
+    'postdouf00': '',
+    'time': '45',
+    'slidepath': '',
+    'blankpage': '0',
+    'password': 'False',
+}
 
-    return img
+config = defaults.copy()
 
-def scaleImageToBitmap(self, size, method = 'scale'):
-    ImageSize = self.GetSize()
-    if method == 'stretch':
-        ImageSize = size
-    else:
-        ratioX = float(size[0]) / ImageSize[0]
-        ratioY = float(size[1]) / ImageSize[1]
-        if ratioX < ratioY:
-            ImageSize[0] = int(ImageSize[0] * ratioX)
-            ImageSize[1] = int(ImageSize[1] * ratioX)
+def parseConfig():
+    cfg = ConfigParser.SafeConfigParser(defaults)
+    try:
+        f = open(appcfg.configFile, 'r')
+        cfg.readfp(f)
+        try:
+            userconfig = cfg.items('general')
+            for item in userconfig:
+                key, value = item
+                if value:
+                    config[key] = value
+
+        except ConfigParser.NoSectionError:
+            print "Config file error"
+            sys.exit(1)
+
+        f.close
+
+    except IOError:
+        pass
+
+    for key in ('exitafterlastslide', 'password'):
+        if config[key] == 'True':
+            config[key] = True
+        elif config[key] == 'False':
+            config[key] = False
         else:
-            ImageSize[0] = int(ImageSize[0] * ratioY)
-            ImageSize[1] = int(ImageSize[1] * ratioY)
-                
-    image = self.Scale(ImageSize[0], ImageSize[1])
-    bitmap = wx.BitmapFromImage(image)
+            print "Config file error"
+            sys.exit(1)
 
-    return bitmap
-
-wx.Image.makeImageBorder = makeImageBorder
-wx.Image.scaleImageToBitmap = scaleImageToBitmap
+    for key in ('time', 'blankpage'):
+        try:
+            config[key] = int(config[key])
+        except ValueError:
+            print "Config file error"
+            sys.exit(1)
 

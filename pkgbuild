@@ -1,0 +1,27 @@
+# Package-Maintaner: not me
+
+pkgname=DouF00
+pkgver=20090902
+pkgrel=1
+pkgdesc="Fat free presentation program"
+arch=(i686)
+url="http://nicenamecrew.com/"
+license=('MIT')
+groups=
+provides=
+depends=('wxpython' 'python')
+makedepends=('git' 'python')
+_gitroot='git://github.com/natano/presentation.git'
+_gitname='presentation' 
+
+
+build()
+{
+	cd ${srcdir}
+	msg "Connecting to github" 
+	git clone $_gitroot
+	cd $_gitname
+	python setup.py install --prefix=/usr --root="$pkgdir" || return 1
+}
+
+

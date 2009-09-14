@@ -1,30 +1,243 @@
-. .  .  ..  .   .   . ....   .  .     ... ... . ...  .      .  .   .       ....  
-  .  .   .   ...      . . .   ..    .  .... . .        .  .  . .  ..  . ..    .
-.    .   ...      . .   ...  .          .  .         .       ..    . .   ...   
-. .DDDDDDDD  . .   .     .     ..  .. .. FFFFFFFFFFF 00000000000  00000000000..
-.  DDD    DDD..    ..  .  .       .  .   FFF.    .. 000       .0000        000.
-.. DDD .    DDD .        .        ..     FFF      . 000.      .0000.      .000
-  .DDD    .  DDD  . .   .  .  .    .     FFF   .    000 . . .. 0000.     ..000.
-   DDD.  .   DDD.   . . . .   .         .FFFFFFFFF  000.       0000.       000.
- . DDD.  .   DDD  ooooooooo  uu .   uu   FFF   .    000 .   .  0000  .     000
-...DDD  .  ..DDD  oo ..  oo .uu.  ..uu   FFF     ...000      ..0000 .  .   000.
-   DDD      DDD   oo.  ..oo..uu ..  uu   FFF       .000..  ... 0000        000.
- . DDDDDDDDDDD  . ooooooooo .uuuuuuuuu . FFF .  .  . 00000000000 .00000000000  
-. .      .    .   ..     . .    . ...      .. ..     .... .   ...   ...      .. 
-   . ...    .    .        . .  ..     .        ..    .   .      .    .  .  .  . 
-..  .. .  ...    ..    --==} FAT FREE PRESENTATIONS {==--  ..    .  .  .    .  
-.         .    ...   .    ..   . ...  ..  .. .        ... ...  ..    .   . . .
-.   .  ..    .....  ..  .     . .
- .Usage:.   .   ..   . ....  ..
-.. # DouF00 [path]  .  . . ..
-..  . .   .     . . .  ..  .
-. application design:. .
- . * Naxxatoe . .. .  .
-. .. ... .    . .. ..
- .codemonkey: . . ...
-. .* natano. ... . ..
-. . .   .     . .    . .  . . ..  . ..  .
-. massive respect to:  . ...      .   ..  .  .
-.  * Stefan Heinecke for the rpm spec file .  .
-..  . .  ...      .    .  .      . .    .  .   
-. . .    ..  . .  ...  .  .   .  ..  .  . 
+
+
+   DDDDDDDD                              FFFFFFFFFFF 00000000000  00000000000
+   DDD    DDD                            FFF        000        0000        000
+   DDD      DDD                          FFF        000        0000        000
+   DDD       DDD                         FFF        000        0000        000
+   DDD       DDD                         FFFFFFFFF  000        0000        000
+   DDD       DDD  ooooooooo  uu     uu   FFF        000        0000        000
+   DDD       DDD  oo     oo  uu     uu   FFF        000        0000        000
+   DDD      DDD   oo     oo  uu     uu   FFF        000        0000        000
+   DDDDDDDDDDD    ooooooooo  uuuuuuuuu   FFF         00000000000  00000000000
+
+
+                       --==} FAT FREE PRESENTATIONS {==--
+
+
+Douf00 is a lightweight, slim and straight forward Presentation Tool.
+It assists novice as well as experienced speakers when giving lectures
+and business meetings. With its simple presenters Screen that includes
+current slide - next slide (preview) as well as timers it is designed
+to assist those of us, that are willing to step up their lectures
+to the next level.
+
+
+x_AUTHORS:
+Natano	(Martin Ptacek)   <natano@nicenamecrew.com>
+Naxxatoe	(Sebastian Maier) <naxx@nicenamecrew.com>
+
+
+x_Thanks.to()
+Bernd Zeimetz	<bzed@debian.org>
+Stefan Heinecke	<nosleep@chilloutzone.eu>
+Josef Philip Bernhart <bernhartjp@yahoo.de>
+
+
+x_INSTALLATION
+    x Dependencies
+        python >= 2.5.4
+        wxPython >= 2.8
+        wxversion
+        python-poppler
+
+    Before you Jump right into it, there is a couple of things you want to get first!
+    make shure you have PYTHON 2.5.4 or newer on your System.
+    The second step is to install wxpython and python-poppler.
+
+    After you are done - feel free to do the following:
+        $ wget http://data.nicenamecrew.com/tools/DouF00/DouF00-current.tar.gz
+        $ tar xfv DouF00-current.tar.gz
+        $ cd DouF00-2.0.1/
+        $ chmod +x setup.py
+        $ su root
+        # ./setup.py install
+
+x_CONFIGURATION
+    x Default config
+        Before i am going to talk about the configuration, we need
+        to take a look at some of the common terms that you may
+        not be familiar with.
+
+        * Time:
+            A value used for the timers (i.e.: countdown,..)
+            to keep track of your remaining presentation time.
+            We use minutes ;)
+        * Blank:
+            This one often caused confusion. A blank slide is
+            a slide that just holds your company logo, or the
+            the title of the talk. It is used while you wait for
+            somebody to inderduce you to the audience before you
+            give your presentation. It will be shown before your
+            first slide. and after the last (so you don't have to
+            put a "blank" or "spacer" slide at the beginning and
+            the end of your presentation files.
+            (please note that unless this value is set, the first
+            and last slide will always be black)
+        * Pre Douf00 and Post douf00:
+            This is simply a system command being executed before
+            douf00 starts up and post douf00 is the command executed
+            automatically after you close douf00.
+            (this feature is nice for automatic beamer configuration.
+            we will go into this later on)
+        * Slides:
+            Douf00 uses pdf or jpeg or tiff or png exports of your slides
+            that have been created with any slide creation tool as the
+            input material. We recommend pdf as it is seemingly the fastest
+            one at the moment. (?wtf? pdf xD)
+
+    x Configuration files
+        Like most configuration files the douf00 config is located in your
+        home directory. Or to be exact ~/.douf00/douf00.conf
+        In my case this would be /home/presentation/.douf00/douf00.conf
+
+        THERE IS NO REQUIREMENT for having this file. As the program will
+        use some acceptable default settings, however if you have a speakers
+        remote that you would want to work with douf00, i highly suggest you
+        try to set it up int he configuration file.
+
+        Also, if you feel like me and prefer douf00 to automatically configure
+        your beamer for you. (i do this using xrandr) i suggest you make use of
+        the pre and post douf00 options.
+
+    x Beamer-Setup
+        Beamer auto configuration is simple on most systems. If they are compatible
+        with xrandr, its literally one line in the configuration file.
+        However if you use a window manager that overwrites those settings or you
+        prefer a graphical tool to take on this job for you, it will still be
+        be possible.
+        Note from natano&naxxatoe: We use douf00 on our notebooks.
+        (naxxatoe has one of the first eeepc's that doesn't work with
+        external screens bigger than 800x600 for some odd reason! This is a
+        excerpt from this config file!)
+            *naxxatoe:
+                preDouF00: xrandr --output VGA --mode 800x600 --above LVDS
+            *natano:
+                preDouF00: xrandr --output VGA --mode 1024x768 --above LVDS --output LVDS --mode 1024x600
+
+    x Advanced Configuration
+        The most advanced setup possible is of corse to have a separate user on your machine to
+        take care of your presentations (naxxatoe has this). The reason why i like it is simple.
+        i will just log in with the username presentation and a password. Afterwards connect the
+        VGA jack to my netbook and hit startx!
+
+        After that my graphical interface starts, sets my background, loads a small window manager
+        that only allows me to move my windows around if i feel like it AND startds douf00.
+        Setting it up is less complicated than most of you think.
+        After adding a user on my machine using 'adduser presentation' i switched to /home/presentation/
+        and created my douf00.conf in .douf00/douf00.conf
+
+        I also took the time do set it up, so that my background (gets automatically set when x11 starts)
+        is my blank slide (so it gets displayed before and after the presentation.
+        Making use of preDouf00 i automatically set my external monitor/beamer to 800x600 resolution and
+        attach it above my notebooks display.
+
+        To automatically set your background for x11 and launch douf00 as well as the window manager,
+        i suggest you make use of the .xinitrc !
+        Mine looks somewhat like this:
+
+            fbsetbg /home/presentation/nnc.jpeg&
+            tinywm &
+            exec douf00 /home/presentation/slides.pdf
+
+        Since you may wonder what my configuration file looks like at this point i decided to include
+        it here, to help everybody understand what it does.
+
+            #
+            ## Sample douf00.conf
+            #
+            [general]
+            # comments start at the beginning of the line with #
+            blankSlide: /home/presentation/logo.jpg
+            exitAfterLastSlide: False
+            preDouF00: xrandr --auto
+            postDouF00: echo "Bye"
+            time: 45
+            slidePath: /home/presentation/my_presentation.pdf
+            # the pdf is password protected, so i need the next line
+            password: my_secret_password
+
+
+    x Command line options
+        Usage: douf00 [options] [slidepath]
+
+        Options:
+            --version             show program's version number and exit
+            -h, --help            show this help message and exit
+            -t TIME, --time=TIME  presentation time
+            -b BLANKSLIDE, --blank=BLANKSLIDE    blank slide
+            -e, --exit            exit after last slide
+            -s PREDOUF00, --pre=PREDOUF00
+                                   			command to be run when startin app
+            -p POSTDOUF00, --post=POSTDOUF00
+                                   			command to be run after the app
+            -B BLANKPAGE, --blankpage=BLANKPAGE
+                                   			page of PDF file to use as blank slide
+             -S, --password       PDF file password
+
+x_FEEDBACK&SUPPORT
+    If you experience problems using douf00 please contact us.
+    Bugs&Feature Requests go to support@nicenamecrew.com !
+    Please keep in mind that we are not planning to build a slide
+    creation tool and we wont integrate with other projects.
+    Keeping it as a standalone tool seems to be the best choice
+    for us. However we would love to have others learn from us!
+
+    Feedback, Problems and so on... Mail us at:
+                            SUPPORT@NICENAMECREW.COM
+
+x_NOTES
+    The main reason why we created douf00 is because
+    we (nice name crew) travel to conferences very often.
+    AS a matter of fact i always carried my macbook pro to
+    every event. I always loved keynote and how the presenters
+    screen works. Not having to worry about your beamer configuration
+    and presenters screen is really comforting.
+    However since i love to pack small and play big (on it stuff)
+    i really felt we had to do something about it.
+    Given the current situation presenters using linux have to deal
+    with, we decided to simplify it.
+    Of corse as a geek i would love to travel just with my netback
+    saving valuable space in my backpack. In reality i was always
+    caring my heavy macbook pro 15" everywhere just to lecture.
+    Not only is it bad to give a presentation standing behind your
+    machine because your presenters remote doesn't work.
+    It is also highly annoying to always have to fumble around with
+    your graphics card.
+    Given the large verity of tools for creating your slides.
+    (i.e.: powerpoint, open office impress, apple's keynote,
+    latech-beamer,....)
+    We felt there was no room for yet another slide creation tool.
+    Nonetheless i noticed my desire to jump onstage, give a really
+    good presentation without the usual worries.
+    To be honest i use Keynote from apple on my home computer as i
+    find it the most comforting tool to create slides.
+    But now that we have created doufoo i save up on baggage space,
+    and i finally managed to get rid of all the worries beforehand.
+
+    But what is doufoo? - The perfect choice for every presenter that
+    has more important stuff todo than care about beamer configuration
+    more than once. Its fast, simple and lightweight.
+    We think that caring less about your gear and focusing on the
+    presentation itself is the best way to keep your audience
+    enthusiastic and entertained.
+
+    Now i know some of you will be very disappointed due to the
+    fact that we deliver the best presentation screen there is
+    at the moment. And the best part about it is that this project
+    is entirely open source.
+    I have been using my linux system for years and now finally
+    we have something good to give back (except for exploits and
+    bug reports).
+    Since we lack the option of configuring a beamer (due to
+    not all systems working with xrandr or having standardized
+    pa for it. We simply provide you with a pre douf00 and post
+    douf00 option.
+
+    But without further due, i highly suggest you try douf00 yourself
+    and see if it helps you. - ENJOY
+
+x_LINKS
+    Web: http://nicenamecrew.com/
+    GiT: http://github.com/natano/presentation/
+    AlwaysUpToDate_Version: http://data.nicenamecrew.com/tools/DouF00/
+
