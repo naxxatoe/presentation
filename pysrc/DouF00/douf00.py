@@ -116,10 +116,8 @@ class MyApp(wx.App):
             if usercfg.config['slidepath']:
                 slidepath = usercfg.config['slidepath']
             else:
-                dirdialog = wx.DirDialog(None)
-                if (dirdialog.ShowModal() == wx.ID_OK):
-                    slidepath = dirdialog.GetPath()
-                else:
+                slidepath = wx.FileSelector('Choose a file to open', wildcard='*.pdf')
+                if not slidepath:
                     print parser.format_help()
                     sys.exit('No path specified')
 
