@@ -88,10 +88,10 @@ class MyApp(wx.App):
 
         parser = OptionParser(usage='%prog [options] [slidepath]', version=appcfg.__version__)
         parser.add_option('-t', '--time', help='presentation time', action='store', type='int', dest='time')
-        parser.add_option('-b', '--blank', help='blank slide', action='store', dest='blankSlide')
-        parser.add_option('-e', '--exit', help='exit after last slide', action='store_true', dest='exitAfterLastSlide')
-        parser.add_option('-s', '--pre', help='command to be run when startin app', action='store', dest='preDouF00')
-        parser.add_option('-p', '--post', help='command to be run after the app', action='store', dest='postDouF00')
+        parser.add_option('-b', '--blank', help='blank slide', action='store', dest='blankslide')
+        parser.add_option('-e', '--exit', help='exit after last slide', action='store_true', dest='exitafterlastslide')
+        parser.add_option('-s', '--pre', help='command to be run when startin app', action='store', dest='predouf00')
+        parser.add_option('-p', '--post', help='command to be run after the app', action='store', dest='postdouf00')
         parser.add_option('-B', '--blankpage', help='page of PDF file to use as blank slide', action='store', type='int', dest='blankpage')
         parser.add_option('-S', '--password', help='PDF file is password protection', action='store_true', dest='password')
 
@@ -101,7 +101,7 @@ class MyApp(wx.App):
             if not options[key] == None:
                 usercfg.config[key] = options[key]
 
-        if usercfg.config['blankSlide'] and (not usercfg.config['blankpage'] == 0):
+        if usercfg.config['blankslide'] and (not usercfg.config['blankpage'] == 0):
             parser.error('Options -b and -B are mutually exclusive')
 
         self.preApp()
@@ -113,8 +113,8 @@ class MyApp(wx.App):
         elif len(args) == 1:
             slidepath = args[0]
         else:
-            if usercfg.config['slidePath']:
-                slidepath = usercfg.config['slidePath']
+            if usercfg.config['slidepath']:
+                slidepath = usercfg.config['slidepath']
             else:
                 dirdialog = wx.DirDialog(None)
                 if (dirdialog.ShowModal() == wx.ID_OK):
@@ -135,8 +135,8 @@ class MyApp(wx.App):
             parser.error('Option -B is only supported with PDF files')
 
         if slidetype == 'dir':
-            if usercfg.config['blankSlide']:
-                usercfg.config['blankSlide'] = os.path.abspath(usercfg.config['blankSlide'])
+            if usercfg.config['blankslide']:
+                usercfg.config['blankslide'] = os.path.abspath(usercfg.config['blankslide'])
 
             try:
                 os.chdir(slidepath)
@@ -153,9 +153,9 @@ class MyApp(wx.App):
 
             appcfg.pictureFiles.sort()
 
-            if usercfg.config['blankSlide']:
-                if filetype(usercfg.config['blankSlide']) in ('JPEG', 'PNG', 'BMP', 'PCX'):
-                    appcfg.blankslide = ('image', usercfg.config['blankSlide'])
+            if usercfg.config['blankslide']:
+                if filetype(usercfg.config['blankslide']) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                    appcfg.blankslide = ('image', usercfg.config['blankslide'])
                     if appcfg.blankslide[1] in appcfg.pictureFiles:
                         appcfg.pictureFiles.remove(appcfg.blankslide[1])
                 else:
@@ -177,9 +177,9 @@ class MyApp(wx.App):
             for i in xrange(appcfg.pdfdoc.get_n_pages()):
                 appcfg.pictureFiles.append(i)
 
-            if usercfg.config['blankSlide']:
-                if filetype(usercfg.config['blankSlide']) in ('JPEG', 'PNG', 'BMP', 'PCX'):
-                    appcfg.blankslide = ('image', usercfg.config['blankSlide'])
+            if usercfg.config['blankslide']:
+                if filetype(usercfg.config['blankslide']) in ('JPEG', 'PNG', 'BMP', 'PCX'):
+                    appcfg.blankslide = ('image', usercfg.config['blankslide'])
                     if appcfg.blankslide[1] in appcfg.pictureFiles:
                         appcfg.pictureFiles.remove(appcfg.blankslide[1])
                 else:
@@ -214,12 +214,12 @@ class MyApp(wx.App):
         return True
 
     def preApp(self):
-        if usercfg.config['preDouF00']:
-            os.system(usercfg.config['preDouF00'])
+        if usercfg.config['predouf00']:
+            os.system(usercfg.config['predouf00'])
 
     def postApp(self):
-        if usercfg.config['postDouF00']:
-            os.system(usercfg.config['postDouF00'])
+        if usercfg.config['postdouf00']:
+            os.system(usercfg.config['postdouf00'])
 
     def OnKeyPress(self, event):
         event.Skip()
@@ -411,7 +411,7 @@ class MyApp(wx.App):
 
 
     def NextSlide(self, step = 1):
-        if (self.slideindex + step > len(appcfg.pictureFiles)) and usercfg.config['exitAfterLastSlide'] and not appcfg.index:
+        if (self.slideindex + step > len(appcfg.pictureFiles)) and usercfg.config['exitafterlastslide'] and not appcfg.index:
             sys.exit()
 
         if self.slideindex + step <= len(appcfg.pictureFiles):

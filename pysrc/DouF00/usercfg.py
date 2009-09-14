@@ -28,37 +28,52 @@ import appcfg
 import ConfigParser
 
 defaults = {
-    'blankSlide': '',
-    'exitAfterLastSlide': 'False',
-    'preDouF00': '',
-    'postDouF00': '',
+    'blankslide': '',
+    'exitafterlastslide': 'False',
+    'predouf00': '',
+    'postdouF00': '',
     'time': '45',
-    'slidePath': '',
+    'slidepath': '',
     'blankpage': '0',
     'password': 'False',
 }
 
-config = {}
+config = defaults.copy()
 
 def parseConfig():
+    cfg = ConfigParser.SafeConfigParser(defaults)
     try:
         f = open(appcfg.configFile, 'r')
-        cfg = ConfigParser.SafeConfigParser(defaults)
         cfg.readfp(f)
-        f.close
+        try:
+            userconfig = cfg.items('general')
+            for item in userconfig:
+                key, value = item
+                if value:
+                    config[key] = value
 
-        config['blankSlide'] = cfg.get('general', 'blankSlide')
-        config['exitAfterLastSlide'] = cfg.getboolean('general', 'exitAfterLastSlide')
-        config['preDouF00'] = cfg.get('general', 'preDouF00')
-        config['postDouF00'] = cfg.get('general', 'postDouF00')
-        config['time'] = cfg.getint('general', 'time')
-        config['slidePath'] = cfg.get('general', 'slidePath')
-        config['blankpage'] = cfg.getint('general', 'blankpage')
-        config['password'] = cfg.getboolean('general', 'password')
+        except ConfigParser.NoSectionError:
+            print "Config file error"
+            sys.exit(1)
+
+        f.close
 
     except IOError:
         pass
 
-    except ConfigParser.NoSectionError:
-        pass
+    for key in ('exitafterlastslide', 'password'):
+        if config[key] == 'True':
+            config[key] = True
+        elif config[key] == 'False':
+            config[key] = False
+        else:
+            print "Config file error"
+            sys.exit(1)
+
+    for key in ('time', 'blankpage'):
+        try:
+            config[key] = int(config[key])
+        except ValueError:
+            print "Config file error"
+            sys.exit(1)
 
