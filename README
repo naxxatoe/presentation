@@ -47,7 +47,7 @@ x_INSTALLATION
     After you are done - feel free to do the following:
         $ wget http://data.nicenamecrew.com/tools/DouF00/DouF00-current.tar.gz
         $ tar xfv DouF00-current.tar.gz
-        $ cd DouF00-2.0.0/
+        $ cd DouF00-2.0.1/
         $ chmod +x setup.py
         $ su root
         # ./setup.py install
