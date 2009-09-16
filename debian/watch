@@ -1,2 +1,2 @@
 version=3
-http://data.nicenamecrew.com/tools/DouF00/DouF00-(.*)\.tar\.gz
+http://data.nicenamecrew.com/tools/DouF00/DouF00-([0-9.]*)\.tar\.gz
