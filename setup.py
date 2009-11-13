@@ -28,7 +28,7 @@ from distutils.core import setup
 
 args = {
     'name': 'DouF00',
-    'version': '2.0.1',
+    'version': '2.0.2',
     'description': 'fat free presentations',
 
     'author': 'Martin Ptacek',
