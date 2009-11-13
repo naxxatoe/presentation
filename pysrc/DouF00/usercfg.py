@@ -61,7 +61,7 @@ def parseConfig():
     except IOError:
         pass
 
-    for key in ('exitafterlastslide', 'password'):
+    for key in ('exitafterlastslide', 'password', 'autostart'):
         if config[key] == 'True':
             config[key] = True
         elif config[key] == 'False':
@@ -69,6 +69,10 @@ def parseConfig():
         else:
             print "Config file error"
             sys.exit(1)
+
+    for key in ('presentor', 'audience'):
+       if key in config:
+           config[key] = config[key].split(' ').split('\t')
 
     for key in ('time', 'blankpage'):
         try:
