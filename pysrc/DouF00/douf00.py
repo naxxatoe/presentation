@@ -94,6 +94,7 @@ class MyApp(wx.App):
         parser.add_option('-p', '--post', help='command to be run after the app', action='store', dest='postdouf00')
         parser.add_option('-B', '--blankpage', help='page of PDF file to use as blank slide', action='store', type='int', dest='blankpage')
         parser.add_option('-S', '--password', help='PDF file is password protection', action='store_true', dest='password')
+        parser.add_option('-a', '--autostart', help='Automatically start presentation', action='store_true', dest='autostart')
 
         (options, args) = parser.parse_args()
         options = options.__dict__
@@ -209,6 +210,9 @@ class MyApp(wx.App):
         self.startTime = int(time.mktime(time.localtime()))
         self.remainingTime = self.runTime
         self.elapsedTime = 0
+        if usercfg.config['autostart']:
+            self.Run(None)
+
         return True
 
     def preApp(self):
