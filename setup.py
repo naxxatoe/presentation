@@ -1,46 +1,53 @@
 #!/usr/bin/env python
-# DouF00 - fat free presentations
-# Copyright (C) 2009  Martin Ptacek
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# Author: natano (Martin Ptacek)
-# Email: natanoptacek@gmail.com
-# Web: http://nicenamecrew.com/
+# $Id: setup.py,v 1.5 2011-02-04 17:26:33 natano Exp $
+# 
+# Copyright (c) 2010 Martin Natano <natano@natano.net>
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. The name of the author may not be used to endorse or promote products
+#    derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from distutils.core import setup
+import os
+
+dirname = os.path.dirname(__file__)
 
 args = {
     'name': 'DouF00',
-    'version': '2.0.1',
+    'version': '3.0.0',
     'description': 'fat free presentations',
 
-    'author': 'Martin Ptacek',
-    'author_email': 'natano@nicenamecrew.com',
+    'author': 'Martin Natano',
+    'author_email': 'natanoptacek@gmail.com',
     'license': 'MIT',
-    'url': 'http://nicenamecrew.com/',
+    'url': 'http://www.natano.net/',
 
     'platforms': ['Linux'],
     'packages': ['DouF00'],
-    'package_dir': {'DouF00': 'pysrc/DouF00'},
-    'scripts': ['pysrc/wrapper/douf00'],
-    'data_files': [('share/man/man1', ['doc/douf00.1'])],
+    'package_dir': {'DouF00': os.path.join(dirname, 'pysrc/DouF00')},
+    'scripts': [os.path.join(dirname, 'pysrc/wrapper/douf00')],
+    'data_files': [('share/man/man1', [
+        os.path.join(dirname, 'doc/douf00.1'),
+    ])],
 }
 
 setup(**args)

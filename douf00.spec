@@ -1,13 +1,13 @@
 Name:		douf00
 Summary:	A simple and fatfree presentation software
-Version:	1.0.2
-Release:	2
+Version:	3.0.0
+Release:	3
 Source0:	%{name}-%{version}.tar.gz
-License:	GPLv3
+License:	BSD
 Group:		Applications/Publishing
 Buildroot:	%{_tmppath}/root-%{name}-%{version}
 BuildRequires:	python >= 2.5
-Requires:	python >= 2.5, wxPython
+Requires:	python >= 2.5, wxPython, pypoppler
 
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 

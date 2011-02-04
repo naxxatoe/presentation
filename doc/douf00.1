@@ -1,40 +1,124 @@
-.TH DOUF00 "1" "August 2009" "NiceNameCrew.com" "douf00 presentation software"
-.SH NAME
-douf00 \- fat free presentations
-.SH SYNOPSIS
-.B douf00
-[\fISlideDir|PDF\fR]
-.SH DESCRIPTION
-.PP
-Douf00 is a lightweight, slim and straight forward Presentation Tool.
-.PP
+.\"     $Id: douf00.1,v 1.6 2011-02-04 17:26:33 natano Exp $
+.\"
+.\" Copyright (c) 2010 Martin Natano <natano@natano.net>
+.\" All rights reserved.
+.\" 
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. The name of the author may not be used to endorse or promote products
+.\"    derived from this software without specific prior written permission.
+.\" 
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+.\" INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+.\" NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+.Dd $Mdocdate$
+.Dt DOUF00 1
+.Os
+.Sh NAME
+.Nm douf00
+.Nd fat free presentation tool
+.Sh SYNOPSIS
+.Nm douf00
+.Op Fl t|--time Ar TIME
+.Op Fl b|--blank Ar BLANKSLIDE
+.Op Fl e|--exit
+.Op Fl s|--pre Ar PREDOUF00
+.Op Fl p|--post Ar POSTDOUF00
+.Op Fl B|--blankpage Ar BLANKPAGE
+.Op Fl S|--password
+.Op Fl a|--autostart
+.Op Ar SlideDir|PDF
+.Nm
+.Fl h|--help
+.Nm
+.Fl -version
+
+.Sh DESCRIPTION
+.Nm
+is a lightweight, slim and straight forward presentation tool.
+.Pp
 It assists novice as well as expierienced speakers when giving lectures
 and buissness meetings. With its simple presentors Screen that includes
 current slide - next slide (preview) aswell as timers it is designed
 to assist thoose of us, that are willing to step up their lectures
 to the next level.
-
+.Pp
 If you place in your presentation directory a file with
 the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
-that will be your blank slide, which shows up when you start douf00.
-.SH AUTHORS
-natano, <natano@nicenamecrew.com>
-.br
-Naxxatoe, <naxx@nicenamecrew.com>
-.SH CONTRIBUTORS
-Bernd Zeimetz, <bzed@debian.org>
-.br
-Stefan Heinecke
-.br
-Josef Philip Bernhart, <bernhartjp@yahoo.de>
-.SH "REPORTING BUGS"
-Report douf00 bugs to natano@nicenamecrew.com
-.br
-NiceNameCrew home page: <http://nicenamecrew.com/>
-.SH COPYRIGHT
-.PP
-Copyright (c) 2009  Martin Ptacek
-.PP
-This program comes with ABSOLUTELY NO WARRANTY.
-This is free software, and you are welcome to redistribute it
-and/or modify it under the terms of the MIT license.
+that will be your blank slide, which shows up when you start
+.Nm
+
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl -version
+Show the version number and exit
+.It Fl h|--help
+Show the help message and exit
+.It Fl t|--time Ar TIME
+The duration of your presentation in minutes.
+.It Fl b|--blank Ar BLANKSLIDE
+A blank slide which is shown before the first and after the last slide.
+Please note, that unless this value is set, the first and last slide will
+always be black.
+.It Fl e|--exit
+Exit after the last slide
+.It Fl s|--pre Ar PREDOUF00
+Run command PREDOUF00 after startup
+.It Fl p|--post Ar POSTDOUF00
+Run command POSTDOUF00 before the exit
+.It Fl B|--blankpage Ar BLANKPAGE
+The 1-based index of the PDF page to use as the blank slide.
+.It Fl S|--password
+Ask for the password of the PDF file
+.It Fl a|--autostart
+Automatically start the presentation
+
+.Sh "CONFIGURATION FILE"
+There is no requirement for having any configuration file at all. If you do
+not have a configuration file, the program will use some sane default
+settings. However, if you have a speakers remote, that you want to work with
+.Nm
+you should set it up in the configuration file.
+
+.Sh FILES
+.Bl -tag -width "~/.douf00/douf00.confXXX" -compact
+.It Pa ~/.douf00/douf00.conf
+Default
+.Nm
+configuration file
+
+.Sh BUGS
+There is a bug which prevents
+.Nm
+from going fullscreen under the
+.Xr compiz 1
+window manager. To work around this enable the "Legacy Fullscreen Support"
+for compiz. Therefor you can use compizconfig-settings-manager.
+.Pp
+If you experience problems using
+.Nm
+please write a bug report to natanoptacek@gmail.com
+
+.Sh "SEE ALSO"
+.Xr impressive 1 ,
+.Xr keyjnote 1 ,
+.Xr ooimpress 1
+
+.Sh AUTHORS
+.An Martin Natano Aq natano@natano.net
+

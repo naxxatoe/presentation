@@ -1,12 +1,12 @@
 # Package-Maintaner: not me
 
 pkgname=DouF00
-pkgver=20090902
-pkgrel=1
+pkgver=20110204
+pkgrel=2
 pkgdesc="Fat free presentation program"
 arch=(i686)
-url="http://nicenamecrew.com/"
-license=('MIT')
+url="http://www.natano.net/"
+license=('BSD')
 groups=
 provides=
 depends=('wxpython' 'python')
