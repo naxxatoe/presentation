@@ -1,4 +1,4 @@
-# $Id: ImageList.py,v 1.1 2011-02-02 16:49:06 natano Exp $
+# $Id: ImageList.py,v 1.2 2011-02-04 17:41:56 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -55,7 +55,7 @@ class ImageList(list):
 
         slidecount = len(appcfg.pictureFiles)
         for i, j in enumerate(appcfg.pictureFiles):
-            sys.stdout.write('\r* Loading {0}: {1:03}/{1:03} '.format(
+            sys.stdout.write('\r* Loading {0}: {1:03}/{2:03} '.format(
                 imagelist_name, i+1, slidecount))
             sys.stdout.flush()
 
