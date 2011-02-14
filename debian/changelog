@@ -1,3 +1,12 @@
+douf00 (3.0.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * [ba7cc02c] Add debian/pyversions to ensure to use 2.5 or later.
+  * [6f3dd2a8] Ignore `current' version in debian/watch.
+  * [fca81f62] Updating copyright information.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 14 Feb 2011 16:07:45 +0100
+
 douf00 (2.0.1-1) unstable; urgency=low
 
   * Initial release. (Closes: #543783)
