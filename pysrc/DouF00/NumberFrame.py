@@ -1,4 +1,4 @@
-# $Id: NumberFrame.py,v 1.3 2011-02-01 14:04:55 natano Exp $
+# $Id: NumberFrame.py,v 1.4 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -34,7 +34,7 @@ class NumberFrame(wx.Frame):
         geometry = wx.Display(displayindex).GetGeometry()
         style = wx.NO_BORDER | wx.STAY_ON_TOP | wx.FRAME_TOOL_WINDOW
         super(NumberFrame, self).__init__(None, wx.ID_ANY, appcfg.title,
-                                          style = style)
+            style = style)
         self.SetBackgroundColour(wx.Colour(255, 255, 255))
         box = wx.BoxSizer(wx.VERTICAL)
         font = wx.Font(appcfg.numberFontSize, wx.DEFAULT, wx.NORMAL, wx.BOLD)

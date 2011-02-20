@@ -1,4 +1,4 @@
-# $Id: DisplayChoice.py,v 1.3 2011-02-01 14:04:55 natano Exp $
+# $Id: DisplayChoice.py,v 1.5 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -27,46 +27,36 @@
 
 import wx
 
-from DouF00 import appcfg, usercfg
+from DouF00 import appcfg
+from DouF00.usercfg import config
 
 class DisplayChoice(wx.Frame):
     def __init__(self):
         geometry = wx.Display(0).GetGeometry()
         style = wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP
         super(DisplayChoice, self).__init__(None, wx.ID_ANY, appcfg.title,
-                                            style = style)
+            style = style)
         self.choices = ['-- Nothing --', 'Audience', 'Presentor']
         displays = wx.Display.GetCount()
         box = wx.BoxSizer(wx.VERTICAL)
         self.selections = []
         for d in xrange(displays):
             choice = wx.Choice(self, wx.ID_ANY, choices = self.choices)
-            
-            if str(d) in usercfg.config['presentor']:
-                choice.SetSelection(2)
-            else:
-                choice.SetSelection(1)
+            choice.SetSelection(2 if str(d) in config['presentor'] else 1)
             
             self.selections.append(choice)
             hbox = wx.BoxSizer(wx.HORIZONTAL)
-            hbox.Add(wx.StaticText(
-                    self, wx.ID_ANY,
-                    'Display ' + str(d) + ': '
-                ),
-                0, wx.ALIGN_CENTER_VERTICAL
-            )
+            hbox.Add(
+                wx.StaticText(self, wx.ID_ANY, 'Display ' + str(d) + ': '),
+                0, wx.ALIGN_CENTER_VERTICAL)
             hbox.Add(choice, 0, wx.ALIGN_CENTER_VERTICAL)
             box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         timelabel = wx.StaticText(self, wx.ID_ANY, 'Time:')
         hbox.Add(timelabel, 0, wx.ALIGN_CENTER_VERTICAL)
-        self.spinctrl = wx.SpinCtrl(
-            self, wx.ID_ANY,
-            min = 0,
-            max = 120,
-            initial = usercfg.config['time']
-        )
+        self.spinctrl = wx.SpinCtrl(self, wx.ID_ANY, min = 0, max = 120,
+            initial = config['time'])
         hbox.Add(self.spinctrl, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
         box.Add(hbox, 0, wx.ALIGN_CENTER_HORIZONTAL)
         self.button = wx.Button(self, wx.ID_ANY, label = 'OK')

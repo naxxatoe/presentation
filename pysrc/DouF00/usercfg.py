@@ -1,4 +1,4 @@
-# $Id: usercfg.py,v 1.4 2011-02-01 14:04:56 natano Exp $
+# $Id: usercfg.py,v 1.4 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -25,64 +25,35 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import ConfigParser
-
 from DouF00 import appcfg
+from DouF00.OptionParser import *
 
-defaults = {
-    'blankslide': '',
-    'exitafterlastslide': 'False',
-    'predouf00': '',
-    'postdouf00': '',
-    'time': '45',
-    'slidepath': '',
-    'blankpage': '0',
-    'password': 'False',
-    'autostart': 'False',
-    'presentor': '',
-}
+_options = OptList(
+    IntOpt('t', 'time', 'time', 45, 'presentation time'),
+    IntOpt('B', 'blankpage', 'blankpage', 0,
+        'page of PDF file to use as blank slide'),
+    BoolOpt('e', 'exit', 'exitafterlastslide', False,
+        'exit after the last slide'),
+    BoolOpt('S', 'password', 'password', False,
+        'PDF file is password protected'),
+    BoolOpt('a', 'autostart', 'autostart', False,
+        'automatically start presentation'),
+    ArrOpt(None, None, 'presentor', [],
+        'Display numbers to use as a presentors screen'),
+    ArrOpt(None, None, 'audience', [],
+        'Display numbers to use as an audience screen'),
+    StrOpt('b', 'blank', 'blankslide', '', 'file to use as blank slide'),
+    StrOpt('s', 'pre', 'predouf00', '',
+        'command to be run when starting the application'),
+    StrOpt('p', 'post', 'postdouf00', '',
+        'command to be run after the application'),
+    StrOpt(None, None, 'slidepath', '', 'The path for the slides'),
+)
 
-config = defaults.copy()
-
-def parseConfig():
-    cfg = ConfigParser.SafeConfigParser(defaults)
-    try:
-        f = open(appcfg.configFile, 'r')
-        cfg.readfp(f)
-        try:
-            userconfig = cfg.items('general')
-            for item in userconfig:
-                key, value = item
-                if value:
-                    config[key] = value
-
-        except ConfigParser.NoSectionError:
-            print "Config file error"
-            sys.exit(1)
-
-        f.close
-
-    except IOError:
-        pass
-
-    for key in ('exitafterlastslide', 'password', 'autostart'):
-        if config[key] == 'True':
-            config[key] = True
-        elif config[key] == 'False':
-            config[key] = False
-        else:
-            print "Config file error"
-            sys.exit(1)
-
-    for key in ('presentor', 'audience'):
-       if key in config:
-           config[key] = config[key].split(' ')
-
-    for key in ('time', 'blankpage'):
-        try:
-            config[key] = int(config[key])
-        except ValueError:
-            print "Config file error"
-            sys.exit(1)
+config = Options(_options, usage='%prog [options] [slidepath]',
+    version=appcfg.__version__,
+    mexclusive=(
+        ('blankslide', 'blankpage'),
+    ),
+)
 

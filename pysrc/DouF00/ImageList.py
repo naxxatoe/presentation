@@ -1,4 +1,4 @@
-# $Id: ImageList.py,v 1.2 2011-02-04 17:41:56 natano Exp $
+# $Id: ImageList.py,v 1.3 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -25,8 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import threading
+import sys, threading
 from Queue import Queue
 from cStringIO import StringIO
 
@@ -34,7 +33,6 @@ import wx
 import cairo
 
 from DouF00 import appcfg
-
 
 class ImageList(list):
     def __init__(self, imagelist_name, images_size=None):
@@ -91,7 +89,7 @@ class ImageList(list):
         return f
 
     def __getitem__(self, slideindex):
-        if (slideindex < 0) or (slideindex == len(self)):
+        if slideindex < 0 or slideindex == len(self):
             return self.blank
 
         elif slideindex > len(self):

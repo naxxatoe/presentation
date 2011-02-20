@@ -1,4 +1,4 @@
-# $Id: MyImage.py,v 1.5 2011-02-02 16:49:06 natano Exp $
+# $Id: MyImage.py,v 1.5 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -27,17 +27,14 @@
 
 import wx
 
-from DouF00 import appcfg
-
-
-def makeImageBorder(self, pixels=5):
+def makeImageBorder(self, color, pixels=5):
+    from DouF00 import appcfg
     img = self.Copy()
-    color = appcfg.presentorBorderColor
     size = img.GetSize()
-    for (x, y, width, height) in [(0, 0,                size[0], pixels ),
-                                  (0, 0,                pixels,  size[1]),
-                                  (0, size[1] - pixels, size[0], pixels ),
-                                  (size[0] - pixels, 0, pixels,  size[1])]:
+    for x, y, width, height in [(0, 0,                size[0], pixels ),
+                                (0, 0,                pixels,  size[1]),
+                                (0, size[1] - pixels, size[0], pixels ),
+                                (size[0] - pixels, 0, pixels,  size[1])]:
         rect = wx.Rect(x, y, width, height)
         img.SetRGBRect(rect, color[0], color[1], color[2])
 
@@ -59,6 +56,7 @@ def scaleImageToBitmap(self, size, method='scale'):
     image = self.scaleTo(size, method=method)
     return wx.BitmapFromImage(image)
 
+# monkey patch the wx.Image class
 wx.Image.makeImageBorder = makeImageBorder
 wx.Image.scaleTo = scaleTo
 wx.Image.scaleImageToBitmap = scaleImageToBitmap

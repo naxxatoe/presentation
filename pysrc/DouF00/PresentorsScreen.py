@@ -1,4 +1,4 @@
-# $Id: PresentorsScreen.py,v 1.5 2011-02-04 17:26:33 natano Exp $
+# $Id: PresentorsScreen.py,v 1.5 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -28,7 +28,6 @@
 import wx
 
 from DouF00 import appcfg
-from DouF00.MyImage import *
 
 class PresentorsScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -85,13 +84,15 @@ class PresentorsScreen(wx.Frame):
 
     def load(self, slideindex, prevSlide = None):
         method = 'scale'
-        if (self.size[0] < 1024) or (self.size[1] < 768):
+        if self.size[0] < 1024 or self.size[1] < 768:
             method = 'stretch'
 
         width = int(float(self.size[0]) / 2) - 5
         height = int(float(self.size[1]) / 200 * 179)
-        update = (prevSlide != None) and ((prevSlide - ((prevSlide + 1) % 9)) ==
-                                          (slideindex - ((slideindex + 1) % 9)))
+        update = prevSlide != None and (
+            prevSlide - ((prevSlide + 1) % 9) ==
+            slideindex - ((slideindex + 1) % 9))
+
         if appcfg.index:
             self.hbox.SetRows(3)
             self.hbox.SetCols(3)
@@ -106,9 +107,10 @@ class PresentorsScreen(wx.Frame):
                 slidelistindex = slideindex - ((slideindex + 1) % 9) + i
                 img = appcfg.thumbnaillist[slidelistindex]
                 if i == (slideindex + 1) % 9:
-                    img = img.makeImageBorder()
+                    img = img.makeImageBorder(appcfg.presentorBorderColor)
 
-                bitmap = img.scaleImageToBitmap((width, height), method=method)
+                bitmap = img.scaleImageToBitmap((width, height),
+                    method=method)
                 self.static_bitmap[i].SetBitmap(bitmap)
 
             if not update:
@@ -121,7 +123,8 @@ class PresentorsScreen(wx.Frame):
             self.Layout()
             for i in updateList:
                 pos = self.static_bitmap[i].GetPosition()
-                x = pos[0] + self.static_bitmap[i].GetSize()[0] - self.numbers[i].GetSize()[0] - 5
+                x = pos[0] + self.static_bitmap[i].GetSize()[0] - \
+                    self.numbers[i].GetSize()[0] - 5
                 y = pos[1] + 5
                 self.numbers[i].SetPosition((x, y))
 
@@ -129,12 +132,11 @@ class PresentorsScreen(wx.Frame):
             self.hbox.SetRows(1)
             self.hbox.SetCols(2)
             image1 = appcfg.slidelist[slideindex]
-            image1 = image1.makeImageBorder()
+            image1 = image1.makeImageBorder(appcfg.presentorBorderColor)
             bitmap1 = image1.scaleImageToBitmap((width, height),
-                                                method = method)
+                method = method)
             bitmap2 = appcfg.slidelist[slideindex + 1].scaleImageToBitmap(
-                                                        (width, height),
-                                                        method = method)
+                (width, height), method = method)
             self.static_bitmap[0].SetBitmap(bitmap1)
             self.static_bitmap[1].SetBitmap(bitmap2)
 
@@ -148,7 +150,8 @@ class PresentorsScreen(wx.Frame):
         if appcfg.index:
             for i in xrange(2, 9):
                 self.static_bitmap[i].Show()
-                self.hbox.Add(self.static_bitmap[i], 0, wx.ALIGN_CENTER_HORIZONTAL)
+                self.hbox.Add(self.static_bitmap[i], 0,
+                    wx.ALIGN_CENTER_HORIZONTAL)
 
             self.thumbs = []
             for i in xrange(slideindex - 4, slideindex + 5):

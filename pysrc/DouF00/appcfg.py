@@ -1,4 +1,4 @@
-# $Id: appcfg.py,v 1.6 2011-02-04 17:26:33 natano Exp $
+# $Id: appcfg.py,v 1.6 2011-02-20 01:42:09 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -25,11 +25,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import wx
 import os
 
+import wx
+
 title = 'DouF00'
-__version__ = '3.0.0'
+__version__ = '3.0.1'
 __author__ = 'Martin Natano'
 numberFontSize = 150
 preLoadCache = 5
@@ -45,14 +46,6 @@ presentorBorderColor = (255, 0, 0)
 blankThumbnail = None
 pdfdoc = None
 pdfpass = ''
-
-filetypes = (
-    ('JPEG', '\xff\xd8'),
-    ('PNG', '\x89PNG\x0d\x0a\x1a\x0a'),
-    ('BMP', 'BM'),
-    ('PCX', '\x0a'),
-    ('PDF', '\x25\x50\x44\x46'),
-)
 
 configFile = os.path.expanduser('~/.douf00/douf00.conf')
 

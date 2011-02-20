@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# $Id: setup.py,v 1.6 2011-02-20 01:42:09 natano Exp $
+# $Id: utils.py,v 1.1 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -26,29 +25,32 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from distutils.core import setup
-import os
+import os, sys
 
-dirname = os.path.dirname(__file__)
+__all__ = ['guessFiletype']
 
-args = {
-    'name': 'DouF00',
-    'version': '3.0.1',
-    'description': 'fat free presentations',
+filetypes = (
+    ('JPEG', '\xff\xd8'),
+    ('PNG', '\x89PNG\x0d\x0a\x1a\x0a'),
+    ('BMP', 'BM'),
+    ('PCX', '\x0a'),
+    ('PDF', '\x25\x50\x44\x46'),
+)
 
-    'author': 'Martin Natano',
-    'author_email': 'natanoptacek@gmail.com',
-    'license': 'MIT',
-    'url': 'http://www.natano.net/',
+def guessFiletype(path):
+    if os.path.isdir(path):
+        return 'dir'
 
-    'platforms': ['Linux'],
-    'packages': ['DouF00'],
-    'package_dir': {'DouF00': os.path.join(dirname, 'pysrc/DouF00')},
-    'scripts': [os.path.join(dirname, 'pysrc/wrapper/douf00')],
-    'data_files': [('share/man/man1', [
-        os.path.join(dirname, 'doc/douf00.1'),
-    ])],
-}
+    if not os.path.isfile(path):
+        print >>sys.stderr, 'No such file or directory: {0}'.format(path)
+        sys.exit(1)
 
-setup(**args)
+    with open(path, 'r') as f:
+        filemagic = f.read(8)
+
+    for ftype, magic in filetypes:
+        if magic == filemagic[:len(magic)]:
+            return ftype
+    
+    return None
 

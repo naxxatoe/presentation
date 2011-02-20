@@ -1,4 +1,4 @@
-# $Id: PresentationScreen.py,v 1.4 2011-02-04 17:26:33 natano Exp $
+# $Id: PresentationScreen.py,v 1.4 2011-02-20 01:38:12 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -28,7 +28,6 @@
 import wx
 
 from DouF00 import appcfg
-from DouF00.MyImage import *
 
 class PresentationScreen(wx.Frame):
     def __init__(self, displayindex = 0):
@@ -37,8 +36,8 @@ class PresentationScreen(wx.Frame):
         position = (geometry[0], geometry[1])
         self.size = (geometry[2], geometry[3])
         style = wx.NO_BORDER | wx.STAY_ON_TOP
-        super(PresentationScreen, self).__init__(None, wx.ID_ANY, appcfg.title,
-            style = style, pos = position, size = self.size)
+        super(PresentationScreen, self).__init__(None, wx.ID_ANY,
+            appcfg.title, style = style, pos = position, size = self.size)
         box = wx.BoxSizer(wx.VERTICAL)
         self.SetBackgroundColour(wx.Colour(0, 0, 0))
         self.static_bitmap = wx.StaticBitmap(self, wx.ID_ANY)
