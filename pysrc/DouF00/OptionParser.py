@@ -1,4 +1,4 @@
-# $Id: OptionParser.py,v 1.1 2011-02-20 01:38:12 natano Exp $
+# $Id: OptionParser.py,v 1.2 2011-02-25 18:02:35 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -25,6 +25,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
 import os, sys
 import ConfigParser
 from optparse import OptionParser
@@ -45,9 +47,9 @@ class OptBase(object):
         if not self.sname:
             return None
 
-        args = ['-{0}'.format(self.sname)]
+        args = ['-%s' % (self.sname)]
         if self.lname:
-            args.append('--{0}'.format(self.lname))
+            args.append('--%s' % (self.lname))
 
         kwargs = {'help': self.help, 'dest': self.cname}
         kwargs.update(self.opt_extra_kwargs)
@@ -74,7 +76,7 @@ class BoolOpt(OptBase):
             return False
         else:
             raise ValueError(
-                'Invalid expression "{0}" for boolean value'.format(v))
+                'Invalid expression "%s" for boolean value' % (v))
 
 class StrOpt(OptBase):
     opt_extra_kwargs = {'action': 'store'}
@@ -105,7 +107,7 @@ class OptList(list):
 
 class Options(dict):
     def die(self, message):
-        print >>sys.stderr, 'Config file error: {0}'.format(message)
+        print >>sys.stderr, 'Config file error: %s' % (message)
         sys.exit(1)
 
     def __init__(self, options, usage=None, version=None, mexclusive=None):
@@ -131,8 +133,8 @@ class Options(dict):
                 v = cfg.get('general', opt.cname)
                 try:
                     self[opt.cname] = opt.parseCf(v)
-                except ValueError as e:
-                    die('{0}: {1}'.format(opt.cname, e))
+                except ValueError, e:
+                    die('%s: %s' % (opt.cname, e))
             except ConfigParser.NoOptionError:
                 pass
             except ConfigParser.NoSectionError:
@@ -161,7 +163,7 @@ class Options(dict):
             if count <= 1:
                 continue
 
-            parser.error('Options {0} and {1} are mutually exclusive'.format(
+            parser.error('Options %s and %s are mutually exclusive' % (
                 ', '.join(t[:-1]), t[-1]))
 
         return parser, args

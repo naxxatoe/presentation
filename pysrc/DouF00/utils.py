@@ -1,4 +1,4 @@
-# $Id: utils.py,v 1.1 2011-02-20 01:38:12 natano Exp $
+# $Id: utils.py,v 1.2 2011-02-25 18:02:35 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -25,6 +25,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
 import os, sys
 
 __all__ = ['guessFiletype']
@@ -42,7 +44,7 @@ def guessFiletype(path):
         return 'dir'
 
     if not os.path.isfile(path):
-        print >>sys.stderr, 'No such file or directory: {0}'.format(path)
+        print >>sys.stderr, 'No such file or directory: %s' % (path)
         sys.exit(1)
 
     with open(path, 'r') as f:

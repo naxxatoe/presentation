@@ -1,6 +1,6 @@
 Name:		douf00
 Summary:	A simple and fatfree presentation software
-Version:	3.0.1
+Version:	3.0.2
 Release:	3
 Source0:	%{name}-%{version}.tar.gz
 License:	BSD

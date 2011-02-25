@@ -1,4 +1,4 @@
-# $Id: appcfg.py,v 1.6 2011-02-20 01:42:09 natano Exp $
+# $Id: appcfg.py,v 1.7 2011-02-25 19:46:26 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -30,7 +30,7 @@ import os
 import wx
 
 title = 'DouF00'
-__version__ = '3.0.1'
+__version__ = '3.0.2'
 __author__ = 'Martin Natano'
 numberFontSize = 150
 preLoadCache = 5

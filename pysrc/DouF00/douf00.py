@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# $Id: douf00.py,v 1.7 2011-02-20 01:38:12 natano Exp $
+# $Id: douf00.py,v 1.8 2011-02-25 18:02:35 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -121,7 +121,7 @@ class MyApp(wx.App):
                 sys.exit(1)
 
             appcfg.pdfdoc = poppler.document_new_from_file(
-                'file://{0}'.format(os.path.abspath(slidepath)),
+                'file://%s' % (os.path.abspath(slidepath)),
                 appcfg.pdfpass)
             appcfg.pictureFiles = []
             for i in xrange(appcfg.pdfdoc.get_n_pages()):
@@ -340,11 +340,11 @@ class MyApp(wx.App):
 
         self.remainingTime = self.runTime - self.elapsedTime
         for s in self.presentorsScreens:
-            tstr = '{0:02}:{1:02}:{2:02}'.format(t[3], t[4], t[5])
+            tstr = '%02d:%02d:%02d' % (t[3], t[4], t[5])
             s.clock.SetLabel(tstr)
-            countUpStr = '  {0:02}:{1:02}  '.format(
+            countUpStr = '  %02d:%02d  ' % (
                 self.elapsedTime / 60, self.elapsedTime % 60)
-            countDownStr = '  {0:02}:{1:02}  '.format(
+            countDownStr = '  %02d:%02d  ' % (
                 self.remainingTime / 60, self.remainingTime % 60)
             s.countUp.SetLabel(countUpStr)
             s.countDown.SetLabel(countDownStr)

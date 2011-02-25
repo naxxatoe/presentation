@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# $Id: setup.py,v 1.6 2011-02-20 01:42:09 natano Exp $
+# $Id: setup.py,v 1.8 2011-02-25 19:46:26 natano Exp $
 # 
 # Copyright (c) 2010 Martin Natano <natano@natano.net>
 # All rights reserved.
@@ -27,13 +27,19 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from distutils.core import setup
-import os
+import os, platform
 
 dirname = os.path.dirname(__file__)
 
+osname = platform.system()
+if osname == 'Linux':
+    manpath = 'share/man/man1'
+else:
+    manpath = 'man/man1'
+
 args = {
     'name': 'DouF00',
-    'version': '3.0.1',
+    'version': '3.0.2',
     'description': 'fat free presentations',
 
     'author': 'Martin Natano',
@@ -45,7 +51,7 @@ args = {
     'packages': ['DouF00'],
     'package_dir': {'DouF00': os.path.join(dirname, 'pysrc/DouF00')},
     'scripts': [os.path.join(dirname, 'pysrc/wrapper/douf00')],
-    'data_files': [('share/man/man1', [
+    'data_files': [(manpath, [
         os.path.join(dirname, 'doc/douf00.1'),
     ])],
 }
