@@ -1,4 +1,4 @@
-.\"     $Id: douf00.1,v 1.4 2011-02-06 16:41:27 natano Exp $
+.\"     $Id: douf00.1,v 1.5 2011-03-02 15:14:08 natano Exp $
 .\"
 .\" Copyright (c) 2010 Martin Natano <natano@natano.net>
 .\" All rights reserved.
@@ -24,7 +24,6 @@
 .\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 .\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 .Dd $Mdocdate$
 .Dt DOUF00 1
 .Os
@@ -46,7 +45,6 @@
 .Fl h|--help
 .Nm
 .Fl -version
-
 .Sh DESCRIPTION
 .Nm
 is a lightweight, slim and straight forward presentation tool.
@@ -61,7 +59,6 @@ If you place in your presentation directory a file with
 the name blank.foo where foo can be: jpeg,jpg,png,bmp or pcx
 that will be your blank slide, which shows up when you start
 .Nm
-
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
@@ -87,21 +84,26 @@ The 1-based index of the PDF page to use as the blank slide.
 Ask for the password of the PDF file
 .It Fl a|--autostart
 Automatically start the presentation
-
-.Sh "CONFIGURATION FILE"
-There is no requirement for having any configuration file at all. If you do
-not have a configuration file, the program will use some sane default
-settings. However, if you have a speakers remote, that you want to work with
-.Nm
-you should set it up in the configuration file.
-
+.El
 .Sh FILES
 .Bl -tag -width "~/.douf00/douf00.confXXX" -compact
 .It Pa ~/.douf00/douf00.conf
 Default
 .Nm
 configuration file
-
+.El
+.Pp
+There is no requirement for having any configuration file at all. If you do
+not have a configuration file, the program will use some sane default
+settings. However, if you have a speakers remote, that you want to work with
+.Nm
+you should set it up in the configuration file.
+.Sh "SEE ALSO"
+.Xr impressive 1 ,
+.Xr keyjnote 1 ,
+.Xr ooimpress 1
+.Sh AUTHORS
+.An Martin Natano Aq natano@natano.net
 .Sh BUGS
 There is a bug which prevents
 .Nm
@@ -113,12 +115,3 @@ for compiz. Therefor you can use compizconfig-settings-manager.
 If you experience problems using
 .Nm
 please write a bug report to natanoptacek@gmail.com
-
-.Sh "SEE ALSO"
-.Xr impressive 1 ,
-.Xr keyjnote 1 ,
-.Xr ooimpress 1
-
-.Sh AUTHORS
-.An Martin Natano Aq natano@natano.net
-
